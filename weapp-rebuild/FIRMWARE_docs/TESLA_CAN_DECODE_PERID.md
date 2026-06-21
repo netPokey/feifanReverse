@@ -150,15 +150,15 @@ D0 = mux 索引；D1..D6 = 3 × u16 单体电压
 | 0x25a | ? | custom | D0,D1,D2,D3 | **gp+0x184..0x187(b)** | 4字节(温度?) |
 | 0x266 | RearTorque | custom idx1 | (经SCALE) | — | 后电机功率 |
 | 0x292 | BMS_socStatus | STATE idx3 | memcpy | 状态表[3] | SOC(§5) |
-| 0x293 | UI_powertrain | TXINJECT | D6, @2 | **gp+0x166(b)** | 动力总成 |
+| 0x293 | **UI_chassisControl** ✔ref | TXINJECT | D6, @2 | **gp+0x166(b)** | 底盘/驾驶辅助控制 |
 | 0x2b6 | ? | TXINJECT | D0 | **gp+0x165(b)** | 门禁/状态 |
 | 0x2e1 | VCFRONT_status | custom | D0&7>>3 | (尾跳0x09158) gp+0x1e8 | 前车体 |
-| 0x2f3 | UI_status | custom | D4[6], D2[4:5], D2[0:1], D3[2:4] | (auipc RAM) | UI 复合状态 |
+| 0x2f3 | **UI_hvacRequest** ✔ref | custom | D4[6], D2[4:5], D2[0:1], D3[2:4] | (auipc RAM) | 空调请求 |
 | 0x31f | ? | custom | D0,D2,D4,D6 | **gp+0x184..0x187(b)** | 4字节(温度?) |
 | 0x321 | VCFRONT_temps | custom | **D5→环境温度** | (尾跳0x09158) gp+0x1e8 | 环境温度×0.5-40 |
 | 0x332 | BMS_bmbMinMax | STATE idx4 | memcpy | 状态表[4] | 单体max/min(§5) |
 | 0x333 | UI_chargeReq | TXINJECT | D0&3, D3 | — | 充电请求(回注) |
-| 0x339 | ? | custom | D1>>4 | — | — |
+| 0x339 | **VCSEC_authentication** ✔ref | custom | D1>>4 | — | 认证/第三方前备箱·尾门(改装核心) |
 | 0x352 | BMS_energy | STATE idx6 | memcpy | 状态表[6] | 容量/能量(§5) |
 | 0x39d | ? | custom | D1[9],D3 | **gp+0x189,gp+0x18c(b)** | — |
 | 0x3b6 | ? | custom | D0,D1,D2,D3(拼32bit) | (auipc RAM) | — |
@@ -300,4 +300,7 @@ STATE 型解码器只把整帧 `memcpy` 进 12B 状态表，**位含义由 0xD0/
 3. **STATE 型补位**：0x292/0x332/0x352 经打包器位重组的原始位，结合 §5 + 小程序 `batteryParser` 补全。
 4. **gp 地址精确化**：对 `auipc+sb` 写入手解 raw32，补全状态变量地图绝对偏移。
 
+> **官方命名**：53 监控 ID 的权威 frame_name + 信号名见 **`TESLA_CAN_OFFICIAL_NAMES.md`**
+> （固件 2026.2 提取数据交叉验证，41/47 命中，含 0x339=VCSEC_authentication 等关键修正）。
+>
 > 每一步都用本仓库 `scripts/` 复现，无外部依赖。完成后即得可直接据以重写解析层的完整位定义。
