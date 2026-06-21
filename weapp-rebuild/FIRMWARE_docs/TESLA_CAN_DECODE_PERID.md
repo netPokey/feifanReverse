@@ -125,9 +125,25 @@ raw = D5 ; 变化检测后 尾跳 0x08009158 写 gp+0x1E8
 | 0x3d2 | BMS_kwhCounter | **STATE idx10** | memcpy | →电池包[4..11] | 累计充/放电(§5) |
 | 0x4e3 | ? | STATE idx16 | memcpy | 状态表[16] | — |
 | 0x678 | ? | TXINJECT 0x08007414 | D1 | gp+0x1c9(b) | 回注 |
+| 0x273 | UI_vehicleControl | **STATE idx2** | memcpy | 状态表[2] | 车辆控制状态 |
+| 0x3e9 | 事件+入表 | **STATE idx12** | memcpy | 状态表[12] | 事件检测+整帧入表 |
+| 0x3c2 | ? | inline custom | D0&3 | (内联) | 位标志 |
+| 0x3fd | AP/DAS_control | inline custom | D0&7 | (内联) | AP/限速/盲区/手扶 |
 
-> ✔ **idx10=0x3d2** 与电池打包器读 idx10=充放电量完全一致，交叉印证。
-> 待补 3 个（节点结构略异）：0x273 UI_vehicleControl / 0x3c2 / 0x3e9(事件)；及电池包 idx5(容量帧) 的 CAN ID。
+> ✔ **idx10=0x3d2** 与电池打包器一致；**idx2=0x273, idx12=0x3e9** 补全。**53 监控 ID 已全部分类**。
+> 电池包 idx5(容量帧) 来源 ID 待定位（不在 53 表也不在扩展 ID 的 STATE 中，疑为某解码器内部二次 `signal_state(write,5)`）。
+
+### 3.2 分发器多认的 8 个扩展 ID（注入/事件用，非监控表）✔FW
+
+解码分发器除 53 监控 ID 外多认 8 个，**全部用于改写回注/注入/事件**（不做状态解析）：
+
+| 扩展 ID | 去向 | 类型 |
+|---------|------|------|
+| 0x0a9, 0x21c | →0x08007c16 | re-sign 改写回注(D0=0x0a) |
+| 0x37a, 0x3a1 | →0x08007d5c | re-sign 改写回注(D2=0x30) |
+| 0x3b0, 0x4a8 | →0x0800a4ea(idx1) | 注入入口 |
+| 0x189 | →(事件) | 事件检测 |
+| 0x68c | →0x08007ba4 | 门禁/状态 |
 
 ---
 
@@ -182,13 +198,12 @@ STATE 型解码器只把整帧 `memcpy` 进 12B 状态表，**位含义由 0xD0/
 
 ## 6. 进度与续作方法
 
-**本文已实证（持续更新）**：**50/53 dispatched ID** 的"读位+写状态变量"（含 §3.1 子树叶子补全）；
+**本文已实证（持续更新）**：**53 监控 ID + 8 扩展 ID 全部分类**（STATE/custom/inline/TXINJECT，§2/§3.1/§3.2）；
 6 个核心 ID 逐位精确公式（0x118 挡位/0x257 车速/0x3fe 刹车温/0x321 环境温/0x102-0x103 车门）；
-状态变量地图；**电池包逐字节来源**（0x132/0x3d2 直传 ✔FW，§5）；idx→CAN ID 映射。
+状态变量地图；**电池包逐字节来源**（0x132/0x3d2 直传 ✔FW，§5）；idx→CAN ID 映射（除 idx5/8/13）。
 
-**待续（逐 ID 齐全）**：
-1. **分发器剩余**：0x273 UI_vehicleControl / 0x3c2 / 0x3e9(事件) / 0x3fd AP-DAS（节点结构略异）
-   + 电池包 idx5(容量帧) 的 CAN ID —— 补全即 53 全齐。
+**待续（逐 ID 精修到位级）**：
+1. **电池包 idx5 容量帧来源 ID**：疑某解码器内部二次 `signal_state(write,5)` 写入，待追（53+8 ID 已分类）。
 2. **custom 型逐位精修**：`python3 scripts/fwdecode.py <decoder>` 把 `lbu/sh off(gp)`+位运算写成
    `Dn[a:b]=信号`。剩余约 25 个 custom ID（已有读位骨架，精修为精确公式）。
 3. **STATE 型补位**：0x292/0x332/0x352 经打包器位重组的原始位，结合 §5 + 小程序 `batteryParser` 补全。
