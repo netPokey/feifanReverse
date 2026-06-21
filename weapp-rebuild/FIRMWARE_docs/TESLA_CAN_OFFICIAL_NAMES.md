@@ -74,3 +74,23 @@
 
 > 这些官方命名使本仓库的"读哪个 ID→什么语义"从位级精确升级到**信号级语义**，重写时可直接对照
 > 2026.2 信号表（40484 信号）补全字段名。
+
+## 4. 改写帧的信号级语义 —— feifan 控制注入的**确切车辆功能**
+
+把路径1（§4.9）的改写帧与 2026.2 信号表对照，**控制注入的目标功能完全明确**：
+
+| 改写帧 | 关键信号（功能） | feifan 注入的控制 |
+|--------|----------------|------------------|
+| **0x339 VCSEC_authentication** | `VCSEC_3rdPartyFrunkPLGRequest`(第三方前备箱)、`VCSEC_3rdPartyPLGRequest`(电动尾门)、`VCSEC_frunkLockStatus`、`VCSEC_chargePortLockStatus`(充电口锁)、`VCSEC_immobilizerState`(防盗) | **前备箱/电动尾门/充电口/门锁开闭** |
+| **0x229 SCCM_rightStalk** | `SCCM_rightStalkStatus`(挡位 D/R/N)、`SCCM_parkButtonStatus`(驻车) | **远程换挡 / 驻车（P）** |
+| **0x249 SCCM_leftStalk** | `SCCM_turnIndicatorStalkStatus`(转向灯)、`SCCM_highBeamStalkStatus`(远光)、`SCCM_washWipeButtonStatus`(雨刮) | **转向灯 / 远光 / 雨刮** |
+
+### 闭环验证：CRC/Counter ↔ re-sign 机制
+这三个帧的信号表都含 **`*Counter` + `*Crc`**（如 `SCCM_rightStalkCounter`/`SCCM_rightStalkCrc`、
+`VCSEC_...` 帧的计数器/校验）。这**精确印证**了固件的 re-sign 改写位（§4.7/§4.9）：
+> 改写控制信号位后 → **重算 D6 滚动计数器 + D7 CRC**（`0x08007c72` 等 re-sign 点的 `D6 计数器/D7 CRC`），
+> 否则特斯拉 ECU 会因 Counter/CRC 校验失败丢弃。这就是固件**必须 re-sign 而非构造新帧**的根本原因。
+
+> 结论：feifan 改装件 = **拦截 SCCM 拨杆帧（挡位/灯光/雨刮）与 VCSEC 帧（前备箱/尾门/锁），
+> 按 App 命令改写对应控制信号位 + 重算 Counter/CRC + 原 ID 回注**。读链路监控这些帧的当前状态，
+> 控链路改写注入——与本仓库固件逆向（§2–§5）完全吻合。
