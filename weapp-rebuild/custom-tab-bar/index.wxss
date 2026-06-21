@@ -1,0 +1,174 @@
+.tab-shell {
+    bottom: 0;
+    left: 0;
+    padding: 0 0 env(safe-area-inset-bottom);
+    pointer-events: none;
+    position: fixed;
+    right: 0;
+    z-index: 999
+}
+
+.tab-bar,.tab-shell {
+    box-sizing: border-box
+}
+
+.tab-bar {
+    -webkit-align-items: center;
+    align-items: center;
+    background: linear-gradient(180deg,rgba(17,24,39,.99),#080c16);
+    border: 1rpx solid rgba(148,163,184,.16);
+    border-bottom: 0;
+    border-radius: 54rpx 54rpx 0 0;
+    box-shadow: 0 -22rpx 64rpx rgba(0,0,0,.68),inset 0 1rpx 0 hsla(0,0%,100%,.12);
+    display: -webkit-flex;
+    display: flex;
+    gap: 8rpx;
+    height: 162rpx;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    overflow: hidden;
+    padding: 22rpx 48rpx 18rpx;
+    pointer-events: auto;
+    position: relative
+}
+
+.tab-shell--day .tab-bar {
+    background: radial-gradient(circle at 12% 32%,rgba(8,145,178,.08) 0,rgba(8,145,178,0) 34%),radial-gradient(circle at 86% 18%,rgba(245,158,11,.06) 0,rgba(245,158,11,0) 38%),linear-gradient(180deg,hsla(0,0%,100%,.98),rgba(243,249,254,.99));
+    border-color: rgba(15,23,42,.09);
+    box-shadow: 0 -16rpx 48rpx rgba(15,23,42,.09),inset 0 1rpx 0 hsla(0,0%,100%,.82)
+}
+
+.tab-shell--day .tab-label {
+    color: #5a6a7e;
+    text-shadow: none
+}
+
+.tab-shell--day .tab-item.is-active .tab-label {
+    color: #0f172a
+}
+
+.tab-shell.is-access-locked .tab-bar {
+    opacity: .42
+}
+
+.tab-shell.is-access-locked .tab-item {
+    pointer-events: none
+}
+
+.tab-bar::after {
+    background: linear-gradient(90deg,transparent,rgba(148,163,184,.16),transparent);
+    content: "";
+    height: 1rpx;
+    left: 56rpx;
+    position: absolute;
+    right: 56rpx;
+    top: 1rpx
+}
+
+.tab-item {
+    -webkit-align-items: center;
+    align-items: center;
+    border-radius: 32rpx;
+    box-sizing: border-box;
+    color: #a8b8cc;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex: 1;
+    flex: 1;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    height: 116rpx;
+    -webkit-justify-content: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative
+}
+
+.tab-item.is-active {
+    background: transparent;
+    box-shadow: none;
+    color: #d7f7ff
+}
+
+.tab-glow {
+    background: rgba(125,211,252,0);
+    border-radius: 999rpx;
+    height: 74rpx;
+    left: 16rpx;
+    opacity: 0;
+    position: absolute;
+    right: 16rpx;
+    top: 12rpx
+}
+
+.tab-item.is-active .tab-glow {
+    background: radial-gradient(circle,rgba(125,211,252,.18) 0,rgba(125,211,252,.08) 42%,rgba(125,211,252,0) 76%);
+    opacity: 1
+}
+
+.tab-icon {
+    -webkit-align-items: center;
+    align-items: center;
+    border-radius: 20rpx;
+    box-sizing: border-box;
+    display: -webkit-flex;
+    display: flex;
+    height: 54rpx;
+    -webkit-justify-content: center;
+    justify-content: center;
+    position: relative;
+    width: 54rpx;
+    z-index: 1
+}
+
+.tab-item.is-active .tab-icon {
+    background: transparent;
+    box-shadow: none;
+    -webkit-transform: translateY(-2rpx) scale(1.06);
+    transform: translateY(-2rpx) scale(1.06)
+}
+
+.tab-icon__image {
+    display: block;
+    height: 42rpx;
+    width: 42rpx
+}
+
+.tab-item:active .tab-icon__image {
+    opacity: .76
+}
+
+.tab-item.is-active .tab-icon__image {
+    height: 48rpx;
+    width: 48rpx
+}
+
+.tab-label {
+    font-size: calc(21rpx * var(--app-font-scale));
+    font-weight: 800;
+    line-height: 1;
+    margin-top: 10rpx;
+    position: relative;
+    text-align: center;
+    text-shadow: 0 2rpx 10rpx rgba(0,0,0,.52);
+    white-space: nowrap;
+    z-index: 1
+}
+
+.tab-item.is-active .tab-label {
+    color: #f8fafc
+}
+
+.tab-item.is-active::after {
+    background: #7dd3fc;
+    border-radius: 50%;
+    bottom: 3rpx;
+    box-shadow: 0 0 10rpx rgba(125,211,252,.36);
+    content: "";
+    height: 11rpx;
+    left: 50%;
+    position: absolute;
+    -webkit-transform: translateX(-50%);
+    transform: translateX(-50%);
+    width: 11rpx
+}

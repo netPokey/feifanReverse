@@ -1,0 +1,37 @@
+<view class="page theme-{{appTheme}} font-{{appFontSizeClass}} page-shell" style="{{appFontSizeStyle}}">
+    <view class="page-titlebar page-titlebar--with-back" style="{{titlebarStyle}}">
+        <view bindtap="back" class="page-titlebar__back">
+            <image class="page-titlebar__back-icon" mode="aspectFit" src="{{backIconPath}}"></image>
+        </view>
+    </view>
+    <view class="panel section debug-terminal">
+        <view class="debug-terminal__head">
+            <view>
+                <view class="debug-terminal__title">收发日志</view>
+                <view class="debug-terminal__sub">显示当前蓝牙链路监听到的协议包</view>
+            </view>
+            <view class="debug-terminal__badge">HEX</view>
+        </view>
+        <textarea disabled class="debug-log" value="{{text}}"></textarea>
+    </view>
+    <view class="panel section debug-command">
+        <view class="debug-command__label">调试发送</view>
+        <input bindinput="setTx" placeholder="发送格式：00C0,01 02 03" value="{{inputtx}}"></input>
+    </view>
+    <view class="button-row">
+        <view bindtap="sendTx" class="btn">
+            <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-send@48.png"></image>
+            <text>发送</text>
+        </view>
+        <view bindtap="listenAll" class="btn secondary">
+            <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-read@48.png"></image>
+            <text>接收全部</text>
+        </view>
+        <view bindtap="clearLog" class="btn secondary">
+            <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-clear@48.png"></image>
+            <text>清空</text>
+        </view>
+    </view>
+</view>
+<app-toast toast="{{__appToast}}"></app-toast>
+<app-modal modal="{{__appModal}}"></app-modal>

@@ -1,0 +1,4 @@
+<view ariaLabel="{{nextLabel}}" bindtap="toggleTheme" class="theme-toggle theme-toggle--{{themeMode}}" style="{{customStyle}}">
+    <image class="theme-toggle__icon" mode="aspectFit" src="{{iconPath}}"></image>
+    <view class="theme-toggle__dot"></view>
+</view>

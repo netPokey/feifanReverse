@@ -1,0 +1,126 @@
+<view class="page theme-{{appTheme}} font-{{appFontSizeClass}} page-shell" style="{{appFontSizeStyle}}">
+    <view class="page-titlebar page-titlebar--with-back" style="{{titlebarStyle}}">
+        <view bindtap="back" class="page-titlebar__back">
+            <image class="page-titlebar__back-icon" mode="aspectFit" src="{{backIconPath}}"></image>
+        </view>
+    </view>
+    <view class="panel section shortcut-hero">
+        <view class="shortcut-toolbar">
+            <view>
+                <view class="strong">硬件按键联动</view>
+                <view class="muted">{{loadMessage}}</view>
+            </view>
+            <view class="shortcut-toolbar__actions">
+                <view bindtap="load" class="btn secondary shortcut-read">
+                    <image class="icon-btn__image" mode="aspectFit" src="/assets/icons/generated/button-read@48.png"></image>
+                    <text>读取</text>
+                </view>
+            </view>
+        </view>
+    </view>
+    <view class="empty panel" wx:if="{{items.length===0}}">{{loading?'正在读取模块配置...':loadMessage}}</view>
+    <view class="button-row shortcut-empty-actions" wx:if="{{items.length===0}}">
+        <view bindtap="add" class="shortcut-add-row">
+            <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-add@48.png"></image>
+            <text>新增按键联动规则</text>
+        </view>
+    </view>
+    <view class="exec-strip exec-strip--{{execState}}" wx:if="{{execMessage}}">
+        <view class="exec-dot"></view>
+        <text>{{execMessage}}</text>
+    </view>
+    <view class="panel shortcut-map" wx:for="{{items}}" wx:key="index">
+        <view class="shortcut-map__meta">
+            <view class="shortcut-map__index">{{index+1}}</view>
+        </view>
+        <view class="shortcut-map__link">
+            <view bindtap="openOptionSelector" class="shortcut-select" data-field="btn" data-idx="{{index}}">
+                <view class="shortcut-select__label">指令</view>
+                <view class="shortcut-select__value">{{item.btnname}}</view>
+                <view class="shortcut-select__chevron"></view>
+            </view>
+            <view class="shortcut-map__arrow">→</view>
+            <view bindtap="openOptionSelector" class="shortcut-select shortcut-select--action" data-field="fun" data-idx="{{index}}">
+                <view class="shortcut-select__label">动作</view>
+                <view class="shortcut-select__value">{{item.funname}}</view>
+                <view class="shortcut-select__chevron"></view>
+            </view>
+        </view>
+        <view class="shortcut-map__actions">
+            <view bindtap="attemptField" class="mini-action {{item.funAttempt?'':'is-disabled'}}" data-field="fun" data-idx="{{index}}">
+                <image class="mini-action__image" mode="aspectFit" src="/assets/icons/generated/button-send@48.png"></image>
+            </view>
+            <view bindtap="remove" class="mini-action" data-idx="{{index}}">
+                <image class="mini-action__image" mode="aspectFit" src="/assets/icons/generated/button-clear@48.png"></image>
+            </view>
+        </view>
+    </view>
+    <view class="shortcut-save-row" wx:if="{{items.length}}">
+        <view bindtap="add" class="shortcut-add-row">
+            <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-add@48.png"></image>
+            <text>新增按键联动规则</text>
+        </view>
+        <view class="shortcut-save-row__actions">
+            <view bindtap="removeAll" class="btn secondary shortcut-clear">
+                <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-clear@48.png"></image>
+                <text>清空</text>
+            </view>
+            <view bindtap="save" class="btn warn shortcut-save">
+                <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-write@48.png"></image>
+                <text>写入车辆模块</text>
+            </view>
+        </view>
+    </view>
+    <view catchtouchmove="catchTouchMove" class="config-selector-page" wx:if="{{selector.show}}">
+        <view class="config-selector-bg"></view>
+        <view class="config-selector-header">
+            <view bindtap="backSelector" class="config-selector-back">
+                <image class="config-selector-back__icon" mode="aspectFit" src="{{backIconPath}}"></image>
+            </view>
+            <view class="config-selector-heading">
+                <view class="config-selector-eyebrow">快捷指令配置</view>
+                <view class="config-selector-title">{{selector.title}}</view>
+                <view class="config-selector-sub">{{selector.mode==='groups'?'先选择分类，再进入具体功能':'选择后可立即尝试或保存到模块'}}</view>
+            </view>
+        </view>
+        <view class="config-selector-current">
+            <view>
+                <view class="config-selector-current__label">当前选择</view>
+                <view class="config-selector-current__value">{{selector.selectedName||'未选择'}}</view>
+            </view>
+            <view class="config-selector-current__tag">{{selector.field==='btn'?'指令':'动作'}}</view>
+        </view>
+        <scroll-view scrollY class="config-selector-body">
+            <view class="config-selector-list">
+                <block wx:if="{{selector.mode==='groups'}}">
+                    <view bindtap="openSelectorGroup" class="config-option-row {{item.hasSelected?'is-selected':''}}" data-idx="{{index}}" wx:for="{{selector.groups}}" wx:key="index">
+                        <view class="config-option-main">
+                            <view class="config-option-name">{{item.name}}</view>
+                            <view class="config-option-sub">{{item.count}} 项{{item.hasSelected?' · 当前已选':''}}</view>
+                        </view>
+                        <view class="config-option-arrow"></view>
+                    </view>
+                </block>
+                <block wx:if="{{selector.mode==='options'}}">
+                    <view bindtap="chooseSelectorOption" class="config-option-row {{item.selected?'is-selected':''}}" data-val="{{item.val}}" wx:for="{{selector.options}}" wx:key="val">
+                        <view class="config-option-main">
+                            <view class="config-option-name">{{item.name}}</view>
+                            <view class="config-option-sub">编号 {{item.val}}{{item.canAttempt?' · 可尝试':''}}</view>
+                        </view>
+                        <view class="config-option-check">{{item.selected?'✓':''}}</view>
+                    </view>
+                </block>
+            </view>
+        </scroll-view>
+        <view class="config-selector-footer">
+            <view bindtap="backSelector" class="config-selector-action config-selector-action--ghost">
+                <text>{{selector.mode==='options'?'返回分类':'关闭'}}</text>
+            </view>
+            <view class="config-selector-spacer"></view>
+            <view bindtap="attemptSelector" class="config-selector-action config-selector-action--attempt {{selector.field==='fun'&&selector.selectedCanAttempt?'':'is-disabled'}}">尝试</view>
+            <view bindtap="saveSelector" class="config-selector-action config-selector-action--save {{selector.saveEnabled?'':'is-disabled'}}">保存</view>
+        </view>
+    </view>
+</view>
+<app-toast toast="{{__appToast}}"></app-toast>
+<app-modal modal="{{__appModal}}"></app-modal>

@@ -1,0 +1,135 @@
+<view class="page theme-{{appTheme}} font-{{appFontSizeClass}} page-shell" style="{{appFontSizeStyle}}">
+    <view class="page-titlebar page-titlebar--with-back" style="{{titlebarStyle}}">
+        <view bindtap="back" class="page-titlebar__back">
+            <image class="page-titlebar__back-icon" mode="aspectFit" src="{{backIconPath}}"></image>
+        </view>
+    </view>
+    <view class="panel section">
+        <view class="row">
+            <view>
+                <view class="strong">蓝牙按钮</view>
+                <view class="muted">{{loadMessage}}</view>
+            </view>
+            <view bindtap="load" class="btn secondary">
+                <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-read@48.png"></image>
+                <text>读取</text>
+            </view>
+            <view bindtap="openHost" class="btn secondary">
+                <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-pair@48.png"></image>
+                <text>蓝牙配对</text>
+            </view>
+        </view>
+    </view>
+    <view class="empty panel" wx:if="{{items.length===0}}">{{loading?'正在读取模块配置...':loadMessage}}</view>
+    <view class="exec-strip exec-strip--{{execState}}" wx:if="{{execMessage}}">
+        <view class="exec-dot"></view>
+        <text>{{execMessage}}</text>
+    </view>
+    <view class="panel item-row" wx:for="{{items}}" wx:key="id">
+        <view class="item-row__head">
+            <view>
+                <view class="strong">{{item.name}}</view>
+                <view class="muted">ID {{item.id}}{{item.hasBattery?' / 电量 '+item.batText:''}}</view>
+            </view>
+            <view class="tag" wx:if="{{item.hasBattery}}">{{item.batText}}</view>
+        </view>
+        <view class="picker-row">
+            <view bindtap="openActionSelector" class="picker-cell" data-field="Click" data-idx="{{index}}">
+                <view class="picker-label">单击</view>
+                <view class="picker-value">{{item.ClickName}}</view>
+            </view>
+            <view bindtap="openActionSelector" class="picker-cell" data-field="dbClick" data-idx="{{index}}">
+                <view class="picker-label">双击</view>
+                <view class="picker-value">{{item.dbClickName}}</view>
+            </view>
+        </view>
+        <view class="button-row item-actions">
+            <view bindtap="rename" class="btn secondary" data-idx="{{index}}">
+                <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-select@48.png"></image>
+                <text>重命名</text>
+            </view>
+            <view bindtap="test" class="btn secondary" data-idx="{{index}}">
+                <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-send@48.png"></image>
+                <text>执行按钮</text>
+            </view>
+            <view bindtap="attemptAction" class="btn secondary {{item.ClickAttempt?'':'is-disabled'}}" data-field="Click" data-idx="{{index}}">
+                <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-send@48.png"></image>
+                <text>尝试单击</text>
+            </view>
+            <view bindtap="attemptAction" class="btn secondary {{item.dbClickAttempt?'':'is-disabled'}}" data-field="dbClick" data-idx="{{index}}">
+                <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-send@48.png"></image>
+                <text>尝试双击</text>
+            </view>
+            <view bindtap="remove" class="btn secondary" data-idx="{{index}}">
+                <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-clear@48.png"></image>
+                <text>删除</text>
+            </view>
+        </view>
+    </view>
+    <view class="button-row">
+        <view bindtap="add" class="btn">
+            <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-add@48.png"></image>
+            <text>添加按钮</text>
+        </view>
+        <view bindtap="save" class="btn warn">
+            <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-write@48.png"></image>
+            <text>写入模块</text>
+        </view>
+        <view bindtap="removeAll" class="btn secondary">
+            <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-clear@48.png"></image>
+            <text>删除全部</text>
+        </view>
+    </view>
+    <view catchtouchmove="catchTouchMove" class="config-selector-page" wx:if="{{selector.show}}">
+        <view class="config-selector-bg"></view>
+        <view class="config-selector-header">
+            <view bindtap="backSelector" class="config-selector-back">
+                <image class="config-selector-back__icon" mode="aspectFit" src="{{backIconPath}}"></image>
+            </view>
+            <view class="config-selector-heading">
+                <view class="config-selector-eyebrow">蓝牙按钮配置</view>
+                <view class="config-selector-title">{{selector.title}}</view>
+                <view class="config-selector-sub">{{selector.mode==='groups'?'先选择分类，再进入具体功能':'选择后可立即尝试或保存到模块'}}</view>
+            </view>
+        </view>
+        <view class="config-selector-current">
+            <view>
+                <view class="config-selector-current__label">当前选择</view>
+                <view class="config-selector-current__value">{{selector.selectedName||'未选择'}}</view>
+            </view>
+            <view class="config-selector-current__tag">{{selector.field==='dbClick'?'双击':'单击'}}</view>
+        </view>
+        <scroll-view scrollY class="config-selector-body">
+            <view class="config-selector-list">
+                <block wx:if="{{selector.mode==='groups'}}">
+                    <view bindtap="openSelectorGroup" class="config-option-row {{item.hasSelected?'is-selected':''}}" data-idx="{{index}}" wx:for="{{selector.groups}}" wx:key="index">
+                        <view class="config-option-main">
+                            <view class="config-option-name">{{item.name}}</view>
+                            <view class="config-option-sub">{{item.count}} 项{{item.hasSelected?' · 当前已选':''}}</view>
+                        </view>
+                        <view class="config-option-arrow"></view>
+                    </view>
+                </block>
+                <block wx:if="{{selector.mode==='options'}}">
+                    <view bindtap="chooseSelectorOption" class="config-option-row {{item.selected?'is-selected':''}}" data-val="{{item.val}}" wx:for="{{selector.options}}" wx:key="val">
+                        <view class="config-option-main">
+                            <view class="config-option-name">{{item.name}}</view>
+                            <view class="config-option-sub">编号 {{item.val}}{{item.canAttempt?' · 可尝试':''}}</view>
+                        </view>
+                        <view class="config-option-check">{{item.selected?'✓':''}}</view>
+                    </view>
+                </block>
+            </view>
+        </scroll-view>
+        <view class="config-selector-footer">
+            <view bindtap="backSelector" class="config-selector-action config-selector-action--ghost">
+                <text>{{selector.mode==='options'?'返回分类':'关闭'}}</text>
+            </view>
+            <view class="config-selector-spacer"></view>
+            <view bindtap="attemptSelector" class="config-selector-action config-selector-action--attempt {{selector.selectedCanAttempt?'':'is-disabled'}}">尝试</view>
+            <view bindtap="saveSelector" class="config-selector-action config-selector-action--save {{selector.saveEnabled?'':'is-disabled'}}">保存</view>
+        </view>
+    </view>
+</view>
+<app-toast toast="{{__appToast}}"></app-toast>
+<app-modal modal="{{__appModal}}"></app-modal>

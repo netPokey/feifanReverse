@@ -1,0 +1,11 @@
+{
+  "navigationStyle": "custom",
+  "pageOrientation": "portrait",
+  "backgroundColor": "#05070B",
+  "navigationBarTitleText": "仪表设置",
+  "usingComponents": {
+    "app-modal": "/components/app-modal/app-modal",
+    "app-toast": "/components/app-toast/app-toast",
+    "theme-toggle": "/components/theme-toggle/theme-toggle"
+  }
+}

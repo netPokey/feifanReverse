@@ -1,0 +1,27 @@
+<view class="page theme-{{appTheme}} font-{{appFontSizeClass}} page-shell" style="{{appFontSizeStyle}}">
+    <view class="page-titlebar page-titlebar--with-back" style="{{titlebarStyle}}">
+        <view bindtap="goBack" class="page-titlebar__back">
+            <image class="page-titlebar__back-icon" mode="aspectFit" src="{{backIconPath}}"></image>
+        </view>
+    </view>
+    <view class="panel section setting-summary">
+        <view>
+            <view class="strong">{{pageTitle}}</view>
+            <view class="muted">{{connected?configMessage:pageDesc}}</view>
+        </view>
+        <view class="tag {{connected?'is-ready':''}}">{{connected?'可编辑':'只读'}}</view>
+    </view>
+    <view class="section setting-section" wx:for="{{settingGroups}}" wx:key="name">
+        <view class="section-title">{{item.name}}</view>
+        <view class="setting-subsection {{sectionIndex===0?'is-first':''}}" wx:for="{{item.sections}}" wx:for-index="sectionIndex" wx:for-item="section" wx:key="name">
+            <view class="setting-subsection__title">{{section.name}}</view>
+            <setting-list bind:change="changeSetting" items="{{section.items}}" theme="{{appTheme}}"></setting-list>
+        </view>
+    </view>
+    <view class="panel section setting-empty" wx:if="{{hardwareMessage}}">
+        <view class="strong">当前固件不支持</view>
+        <view class="muted">{{hardwareMessage}}</view>
+    </view>
+</view>
+<app-toast toast="{{__appToast}}"></app-toast>
+<app-modal modal="{{__appModal}}"></app-modal>

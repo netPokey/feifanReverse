@@ -1,0 +1,23 @@
+<view class="setting-list setting-list--{{theme}}">
+    <view class="setting-list__row {{item.disabled?'is-disabled':''}}" wx:for="{{items}}" wx:key="id">
+        <view class="setting-list__main">
+            <view class="setting-list__icon">
+                <image class="setting-list__icon-image" mode="aspectFit" src="{{item.iconPath}}" wx:if="{{item.iconPath}}"></image>
+                <text class="setting-list__icon-text" wx:else>{{item.shortName}}</text>
+            </view>
+            <view class="setting-list__copy">
+                <view class="setting-list__name">{{item.name}}</view>
+                <view class="setting-list__desc">{{item.desc}}</view>
+                <view class="setting-list__value" wx:if="{{item.kind==='select'}}">{{item.displayValueName}}</view>
+            </view>
+        </view>
+        <view bindtap="handleToggle" class="setting-list__switch-control" data-id="{{item.id}}" wx:if="{{item.kind==='switch'}}">
+            <view class="neo-switch neo-switch--sm {{item.checked?'is-on':''}} {{item.disabled?'is-disabled':''}}">
+                <view class="neo-switch__thumb"></view>
+            </view>
+        </view>
+        <picker bindchange="handleSelect" data-id="{{item.id}}" disabled="{{item.disabled}}" range="{{item.optionNames}}" value="{{item.valueIndex}}" wx:else>
+            <view class="setting-list__select {{item.disabled?'is-disabled':''}}">选择</view>
+        </picker>
+    </view>
+</view>

@@ -1,0 +1,92 @@
+.module-auto-hero,.option-panel {
+    background: radial-gradient(circle at 86% 12%,rgba(0,210,255,.13),transparent 230rpx),linear-gradient(145deg,rgba(20,28,46,.96),rgba(10,14,24,.99));
+    border-color: rgba(148,226,255,.17)
+}
+
+.module-auto-hero {
+    -webkit-align-items: center;
+    align-items: center;
+    display: -webkit-flex;
+    display: flex;
+    gap: 22rpx;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    min-height: 128rpx
+}
+
+.module-auto-hero > wx-view:first-child {
+    -webkit-flex: 1;
+    flex: 1;
+    min-width: 0
+}
+
+.tag.is-ready {
+    background: linear-gradient(135deg,rgba(13,242,163,.1),rgba(0,240,255,.035));
+    border-color: rgba(13,242,163,.18);
+    color: #0df2a3
+}
+
+.option-panel {
+    overflow: hidden;
+    padding: 0
+}
+
+.setting-row {
+    -webkit-align-items: center;
+    align-items: center;
+    border-bottom: 1rpx solid rgba(148,226,255,.12);
+    box-sizing: border-box;
+    display: -webkit-flex;
+    display: flex;
+    gap: 24rpx;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    min-height: 128rpx;
+    padding: 24rpx 28rpx
+}
+
+.setting-row:last-child {
+    border-bottom: 0
+}
+
+.setting-row:active {
+    background: linear-gradient(90deg,rgba(0,210,255,.1),rgba(0,245,212,.035),transparent)
+}
+
+.setting-row__copy {
+    -webkit-flex: 1;
+    flex: 1;
+    min-width: 0
+}
+
+.setting-row__title {
+    color: #f8fafc;
+    font-size: calc(28rpx * var(--app-font-scale));
+    font-weight: 900;
+    line-height: 1.25
+}
+
+.setting-row__desc {
+    color: #8fa0b4;
+    font-size: calc(23rpx * var(--app-font-scale));
+    font-weight: 700;
+    line-height: 1.35;
+    margin-top: 8rpx
+}
+
+.theme-day .module-auto-hero,.theme-day .option-panel {
+    background: radial-gradient(circle at 86% 12%,rgba(14,165,233,.1),transparent 230rpx),linear-gradient(145deg,hsla(0,0%,100%,.97),rgba(236,254,255,.94));
+    border-color: rgba(14,116,144,.16)
+}
+
+.theme-day .setting-row {
+    border-bottom-color: rgba(15,23,42,.08)
+}
+
+.theme-day .setting-row__title {
+    color: #0f172a
+}
+
+.theme-day .setting-row__desc {
+    color: #64748b
+}

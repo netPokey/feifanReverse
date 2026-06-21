@@ -1,0 +1,104 @@
+<view class="page theme-{{appTheme}} font-{{appFontSizeClass}} page-shell ble-page" style="{{appFontSizeStyle}}">
+    <view class="ble-rf-banner section">
+        <view class="ble-rf-banner__status">
+            <view class="ble-rf-banner__pulse"></view>
+            <view>
+                <view class="ble-rf-banner__title">无线基带射频捕获器</view>
+                <view class="ble-rf-banner__meta">CH{{rfChannel}} @ {{rfFrequency}}MHz</view>
+            </view>
+        </view>
+        <view class="ble-rf-banner__tag">{{searching?'自动广播嗅探中':'待命广播嗅探'}}</view>
+    </view>
+    <view bindtap="toggleSearch" class="ble-radar-card section">
+        <view class="ble-radar-grid"></view>
+        <view class="ble-radar-axis ble-radar-axis--x"></view>
+        <view class="ble-radar-axis ble-radar-axis--y"></view>
+        <view class="ble-radar-sweep"></view>
+        <view class="ble-radar-ring ble-radar-ring--outer"></view>
+        <view class="ble-radar-ring ble-radar-ring--middle"></view>
+        <view class="ble-radar-ring ble-radar-ring--inner"></view>
+        <view class="ble-radar-pulse ble-radar-pulse--one"></view>
+        <view class="ble-radar-pulse ble-radar-pulse--two"></view>
+        <view class="ble-radar-pulse ble-radar-pulse--three"></view>
+        <view class="ble-particle ble-particle--one"></view>
+        <view class="ble-particle ble-particle--two"></view>
+        <view class="ble-particle ble-particle--three"></view>
+        <view class="ble-particle ble-particle--four"></view>
+        <view class="ble-particle ble-particle--five"></view>
+        <view class="ble-radar-core {{searching?'is-searching':''}}">
+            <image class="ble-radar-core__icon" mode="aspectFit" src="/assets/icons/generated/action-ble@72.png"></image>
+            <view class="ble-radar-core__dot"></view>
+        </view>
+        <view class="ble-radar-metrics">
+            <text>天线接收包率:</text>
+            <text class="is-green">{{packetRate}} p/s</text>
+            <text class="ble-radar-metrics__split"></text>
+            <text>信道强度占空比:</text>
+            <text class="is-amber">{{dutyCycle}}%</text>
+            <text class="ble-radar-metrics__split"></text>
+            <text>驻波比:</text>
+            <text class="is-cyan">{{swr}}</text>
+        </view>
+    </view>
+    <view class="ble-control-row section" wx:if="{{showVerifier}}">
+        <view bindtap="connectMock" class="ble-primary-btn ble-primary-btn--ghost" wx:if="{{showVerifier&&!mockConnected}}">
+            <image class="ble-primary-btn__icon" mode="aspectFit" src="/assets/icons/generated/button-mock@48.png"></image>
+            <text>验证连接</text>
+        </view>
+        <view bindtap="disconnectMock" class="ble-primary-btn ble-primary-btn--danger" wx:if="{{showVerifier&&mockConnected}}">
+            <image class="ble-primary-btn__icon" mode="aspectFit" src="/assets/icons/generated/button-disconnect@48.png"></image>
+            <text>断开验证</text>
+        </view>
+    </view>
+    <view class="ble-section-title">
+        <view>自动搜索捕获的蓝牙物理节点 ({{foundCount}})</view>
+        <view class="ble-section-title__limit">感应限幅值 -95DBM</view>
+    </view>
+    <view class="ble-cache-line" wx:if="{{cachedDeviceId}}">已缓存设备：{{cachedDeviceId}}</view>
+    <view class="ble-empty-card" wx:if="{{devices.length===0}}">
+        <view class="ble-empty-card__icon">
+            <image class="ble-empty-card__image" mode="aspectFit" src="/assets/icons/generated/device-unknown@48.png"></image>
+        </view>
+        <view class="ble-empty-card__text">正在监听 FFF0 目标广播，请保持模块供电并靠近车辆。</view>
+    </view>
+    <view class="ble-device-list" wx:if="{{devices.length>0}}">
+        <view class="ble-device-card {{item.connected?'is-connected':''}}" wx:for="{{devices}}" wx:key="deviceId">
+            <view class="ble-device-card__main">
+                <view class="ble-device-icon {{item.connected?'is-connected':''}}">
+                    <image class="ble-device-icon__image" mode="aspectFit" src="/assets/icons/generated/device-harddrive@72.png"></image>
+                </view>
+                <view class="ble-device-info">
+                    <view class="ble-device-title">
+                        <view class="ble-device-name">{{item.displayName}}</view>
+                        <view class="ble-device-secure" wx:if="{{item.secure}}">安全加密</view>
+                    </view>
+                    <view class="ble-device-address">{{item.deviceId}}</view>
+                    <view class="ble-device-service">{{item.serviceText}}</view>
+                </view>
+            </view>
+            <view class="ble-device-side">
+                <view class="ble-rssi-bars">
+                    <view class="ble-rssi-bar {{item.rssiLevel>=1?'is-on':''}}"></view>
+                    <view class="ble-rssi-bar ble-rssi-bar--mid {{item.rssiLevel>=2?'is-on':''}}"></view>
+                    <view class="ble-rssi-bar ble-rssi-bar--high {{item.rssiLevel>=3?'is-on':''}}"></view>
+                </view>
+                <view class="ble-rssi-value">{{item.rssi}} dBm</view>
+                <view bindtap="connectDevice" class="ble-device-action {{item.connected?'is-connected':''}}" data-id="{{item.deviceId}}">
+                    <text>{{item.connectText}}</text>
+                </view>
+            </view>
+            <view class="ble-link-metrics" wx:if="{{item.connected}}">
+                <view class="ble-link-metric">
+                    <view class="ble-link-metric__label">链路最大载荷 (MTU)</view>
+                    <view class="ble-link-metric__value">512 字节码</view>
+                </view>
+                <view class="ble-link-metric">
+                    <view class="ble-link-metric__label">双向安全鉴权标准</view>
+                    <view class="ble-link-metric__value is-cyan">FFF0/FFF1 + 168</view>
+                </view>
+            </view>
+        </view>
+    </view>
+</view>
+<app-toast toast="{{__appToast}}"></app-toast>
+<app-modal modal="{{__appModal}}"></app-modal>

@@ -1,0 +1,103 @@
+<scroll-view class="gauge-menu theme-{{appTheme}} font-{{appFontSizeClass}}" scrollY="true" style="{{appFontSizeStyle}}">
+    <view class="gauge-menu__titlebar" style="{{titlebarStyle}}">
+        <view bindtap="back" class="gauge-menu__back">
+            <image class="gauge-menu__back-icon" mode="aspectFit" src="{{backIconPath}}"></image>
+        </view>
+    </view>
+    <view class="gauge-menu__summary">
+        <view>
+            <view class="gauge-menu__summary-title">唯一 HUD 仪表</view>
+            <view class="gauge-menu__summary-desc">当前仅保留原型四角卡片与中央速度环，设置只影响同一布局的外观、横竖排布和快显项。</view>
+        </view>
+        <view bindtap="reset" class="gauge-menu__reset">
+            <image class="gauge-menu__reset-icon" mode="aspectFit" src="/assets/icons/generated/button-reset@48.png"></image>
+            <text>恢复默认</text>
+        </view>
+    </view>
+    <view class="gauge-menu__list">
+        <view class="gauge-menu__item" wx:for="{{list}}" wx:key="id">
+            <view class="gauge-menu__item-main">
+                <view class="gauge-menu__item-name">{{item.name}}</view>
+                <view class="gauge-menu__item-value">{{item.displayText}}</view>
+            </view>
+            <picker bindchange="changeOption" data-id="{{item.id}}" headerText="{{item.name}}" range="{{item.options}}" value="{{item.index}}">
+                <view class="gauge-menu__select">
+                    <image class="gauge-menu__select-icon" mode="aspectFit" src="/assets/icons/generated/button-select@48.png"></image>
+                    <text>选择</text>
+                </view>
+            </picker>
+        </view>
+        <view class="gauge-menu__item gauge-menu__item--greeting">
+            <view class="gauge-menu__item-main">
+                <view class="gauge-menu__item-name">仪表问候语</view>
+                <view class="gauge-menu__item-value">{{greetingText}}</view>
+            </view>
+            <view class="gauge-menu__greeting-actions">
+                <view bindtap="editGreeting" class="gauge-menu__select">
+                    <image class="gauge-menu__select-icon" mode="aspectFit" src="/assets/icons/generated/button-select@48.png"></image>
+                    <text>{{gaugeGreeting?'编辑':'设置'}}</text>
+                </view>
+                <view bindtap="clearGreeting" class="gauge-menu__clear" wx:if="{{greetingCustomized}}">恢复默认</view>
+            </view>
+        </view>
+        <view class="gauge-menu__item gauge-menu__item--speed-bg">
+            <view class="gauge-menu__item-main">
+                <view class="gauge-menu__item-name">速度环背景</view>
+                <view class="gauge-menu__item-value">{{speedBgText}}</view>
+            </view>
+            <view bindtap="chooseSpeedBackground" class="gauge-menu__select">
+                <image class="gauge-menu__select-icon" mode="aspectFit" src="/assets/icons/generated/button-select@48.png"></image>
+                <text>{{speedBgPath?'更换':'选择'}}</text>
+            </view>
+        </view>
+        <view class="gauge-menu__preview-card" wx:if="{{speedBgPath}}">
+            <view class="gauge-menu__preview-head">
+                <view>
+                    <view class="gauge-menu__item-name">圆形预览</view>
+                    <view class="gauge-menu__item-value">缩放 {{speedBgScalePercent}}% · 可重新编辑裁切</view>
+                </view>
+                <view class="gauge-menu__preview-actions">
+                    <view bindtap="editSpeedBackground" class="gauge-menu__mini-action">编辑</view>
+                    <view bindtap="clearSpeedBackground" class="gauge-menu__clear">移除</view>
+                </view>
+            </view>
+            <view class="gauge-menu__preview-wrap">
+                <view class="gauge-menu__preview">
+                    <image class="gauge-menu__preview-image" mode="aspectFill" src="{{speedBgPath}}" style="{{speedBgStyle}}"></image>
+                    <view class="gauge-menu__preview-cover"></view>
+                </view>
+            </view>
+        </view>
+    </view>
+</scroll-view>
+<view catchtouchmove="noop" class="speed-bg-bridge" wx:if="{{speedBgChoosing}}">
+    <view class="speed-bg-bridge__panel">
+        <view class="speed-bg-bridge__halo"></view>
+        <view class="speed-bg-bridge__title">准备选择速度环背景</view>
+        <view class="speed-bg-bridge__desc">请在相册选择照片，随后可拖动并双指缩放圆形预览</view>
+    </view>
+</view>
+<view catchtouchmove="noop" class="speed-bg-editor" wx:if="{{speedBgEditorVisible}}">
+    <view class="speed-bg-editor__panel">
+        <view class="speed-bg-editor__head">
+            <view>
+                <view class="speed-bg-editor__title">调整速度环背景</view>
+                <view class="speed-bg-editor__desc">拖动照片定位，双指放大缩小后确认</view>
+            </view>
+            <view class="speed-bg-editor__scale">{{editingSpeedBgScalePercent}}%</view>
+        </view>
+        <movable-area class="speed-bg-editor__area">
+            <view class="speed-bg-editor__ring"></view>
+            <movable-view bindchange="changeSpeedBgEditor" bindscale="changeSpeedBgEditor" class="speed-bg-editor__movable" direction="all" scale="true" scaleMax="3" scaleMin="1" scaleValue="{{editingSpeedBgScale}}" x="{{editingSpeedBgViewX}}" y="{{editingSpeedBgViewY}}">
+                <image class="speed-bg-editor__image" mode="aspectFill" src="{{editingSpeedBgPath}}"></image>
+            </movable-view>
+            <view class="speed-bg-editor__mask"></view>
+        </movable-area>
+        <view class="speed-bg-editor__actions">
+            <view bindtap="cancelSpeedBgEditor" class="speed-bg-editor__button is-ghost">取消</view>
+            <view bindtap="confirmSpeedBackground" class="speed-bg-editor__button is-primary">确认</view>
+        </view>
+    </view>
+</view>
+<app-toast toast="{{__appToast}}"></app-toast>
+<app-modal modal="{{__appModal}}"></app-modal>

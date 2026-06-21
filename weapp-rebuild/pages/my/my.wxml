@@ -1,0 +1,52 @@
+<view class="page theme-{{appTheme}} font-{{appFontSizeClass}} page-shell" style="{{appFontSizeStyle}}">
+    <view class="panel section group-panel" wx:for="{{actionGroups}}" wx:key="name">
+        <view class="group-panel__title">{{item.name}}</view>
+        <action-grid bind:disabled="handleDisabled" bind:select="handleAction" items="{{item.items}}" theme="{{appTheme}}"></action-grid>
+    </view>
+    <view catchtap="noop" catchtouchmove="noop" class="access-mode-modal" wx:if="{{accessPasswordModalVisible}}">
+        <view class="access-mode-modal__mask"></view>
+        <view class="access-mode-modal__panel">
+            <view class="access-mode-modal__halo"></view>
+            <view class="access-mode-modal__icon">
+                <view class="access-mode-modal__fingerprint"></view>
+            </view>
+            <view class="access-mode-modal__title">访问模式验证</view>
+            <view class="access-mode-modal__subtitle">输入高级访问密码后解锁完整能力范围</view>
+            <view class="access-mode-modal__dots">
+                <view class="access-mode-modal__dot {{item.active?'is-active':''}}" wx:for="{{accessPasswordProgress}}" wx:key="index"></view>
+            </view>
+            <view catchtap="focusAccessPassword" class="access-mode-modal__field">
+                <input password bindconfirm="submitAccessPassword" bindinput="inputAccessPassword" class="access-mode-modal__input" confirmType="done" focus="{{accessInputFocus}}" maxlength="{{accessPasswordMax}}" placeholder="{{accessPasswordHint}}" placeholderClass="access-mode-modal__placeholder" value="{{accessPassword}}"></input>
+            </view>
+            <view class="access-mode-modal__error">{{accessPasswordError}}</view>
+            <view class="access-mode-modal__actions">
+                <view catchtap="closeAccessPasswordModal" class="access-mode-modal__button access-mode-modal__button--cancel">取消</view>
+                <view catchtap="submitAccessPassword" class="access-mode-modal__button access-mode-modal__button--confirm {{accessPasswordReady?'is-ready':'is-disabled'}}">确认</view>
+            </view>
+        </view>
+    </view>
+    <view catchtap="noop" catchtouchmove="noop" class="access-mode-modal" wx:if="{{labPasswordModalVisible}}">
+        <view class="access-mode-modal__mask"></view>
+        <view class="access-mode-modal__panel">
+            <view class="access-mode-modal__halo"></view>
+            <view class="access-mode-modal__icon">
+                <view class="access-mode-modal__fingerprint"></view>
+            </view>
+            <view class="access-mode-modal__title">实验室验证</view>
+            <view class="access-mode-modal__subtitle">输入实验室密码后查看隐藏实验设置</view>
+            <view class="access-mode-modal__dots">
+                <view class="access-mode-modal__dot {{item.active?'is-active':''}}" wx:for="{{labPasswordProgress}}" wx:key="index"></view>
+            </view>
+            <view catchtap="focusLabPassword" class="access-mode-modal__field">
+                <input password bindconfirm="submitLabPassword" bindinput="inputLabPassword" class="access-mode-modal__input" confirmType="done" focus="{{labInputFocus}}" maxlength="4" placeholder="4 位实验室密码" placeholderClass="access-mode-modal__placeholder" type="number" value="{{labPassword}}"></input>
+            </view>
+            <view class="access-mode-modal__error">{{labPasswordError}}</view>
+            <view class="access-mode-modal__actions">
+                <view catchtap="closeLabPasswordModal" class="access-mode-modal__button access-mode-modal__button--cancel">取消</view>
+                <view catchtap="submitLabPassword" class="access-mode-modal__button access-mode-modal__button--confirm {{labPasswordReady?'is-ready':'is-disabled'}}">确认</view>
+            </view>
+        </view>
+    </view>
+</view>
+<app-toast toast="{{__appToast}}"></app-toast>
+<app-modal modal="{{__appModal}}"></app-modal>

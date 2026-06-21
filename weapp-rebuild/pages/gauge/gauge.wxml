@@ -1,0 +1,422 @@
+<view class="gauge dashboard-hud theme-{{appTheme}} font-{{appFontSizeClass}} hud-theme-{{hudTheme}} hud-style-{{hudStyle}} hud-color-{{hudColorTheme}} layout-{{layoutMode}} transition-{{entryTransitionState}} {{isSpeeding?'is-speeding':''}}" style="{{appFontSizeStyle}}{{hudScaleStyle}}">
+    <view class="hud-grid"></view>
+    <view class="hud-radial"></view>
+    <view class="hud-blind hud-blind--left {{blindLeftActive?'is-active':''}} level-{{blindSpotLeftLevel}}">
+        <view class="hud-blind__rail"></view>
+    </view>
+    <view class="hud-blind hud-blind--right {{blindRightActive?'is-active':''}} level-{{blindSpotRightLevel}}">
+        <view class="hud-blind__rail"></view>
+    </view>
+    <view class="hud-topbar" style="{{topbarStyle}}">
+        <view bindtap="back" class="hud-nav-btn">返回</view>
+        <view class="hud-status {{connected?'is-online':'is-offline'}}">
+            <view class="hud-dot"></view>
+            <text>{{statusText}}</text>
+        </view>
+    </view>
+    <view class="hud-greeting" wx:if="{{gaugeGreeting}}">
+        <view class="hud-greeting__pulse"></view>
+        <text>{{gaugeGreeting}}</text>
+    </view>
+    <view class="hud-notice" wx:if="{{!connected}}">未连接蓝牙，当前展示上次或默认车况</view>
+    <view class="neon-dashboard" wx:if="{{hudTheme=='neon'}}">
+        <view class="neon-side neon-side--left">
+            <view class="neon-stat neon-stat--battery">
+                <view class="neon-stat__icon neon-stat__icon--battery">
+                    <image class="neon-stat__image" mode="aspectFit" src="{{dashboardIcons.neonBattery}}"></image>
+                </view>
+                <view class="neon-stat__copy">
+                    <view class="neon-stat__value">
+                        <text class="neon-stat__number">{{neonMetrics.battery.value}}</text>
+                        <text class="neon-stat__unit" wx:if="{{neonMetrics.battery.unit}}">{{neonMetrics.battery.unit}}</text>
+                    </view>
+                    <view class="neon-stat__label">电量</view>
+                </view>
+            </view>
+            <view class="neon-stat neon-stat--range">
+                <view class="neon-stat__icon neon-stat__icon--range">
+                    <image class="neon-stat__image" mode="aspectFit" src="{{dashboardIcons.neonRange}}"></image>
+                </view>
+                <view class="neon-stat__copy">
+                    <view class="neon-stat__value">
+                        <text class="neon-stat__number">{{neonMetrics.range.value}}</text>
+                        <text class="neon-stat__unit" wx:if="{{neonMetrics.range.unit}}">{{neonMetrics.range.unit}}</text>
+                    </view>
+                    <view class="neon-stat__label">续航</view>
+                </view>
+            </view>
+            <view class="neon-stat neon-stat--power">
+                <view class="neon-stat__icon neon-stat__icon--power">
+                    <image class="neon-stat__image" mode="aspectFit" src="{{dashboardIcons.neonPower}}"></image>
+                </view>
+                <view class="neon-stat__copy">
+                    <view class="neon-stat__value">
+                        <text class="neon-stat__number">{{neonMetrics.power.value}}</text>
+                        <text class="neon-stat__unit" wx:if="{{neonMetrics.power.unit}}">{{neonMetrics.power.unit}}</text>
+                    </view>
+                    <view class="neon-stat__label">功率</view>
+                </view>
+            </view>
+        </view>
+        <view class="neon-center">
+            <view class="hud-turn-wrap">
+                <view class="hud-turn-signal hud-turn-signal--left {{turnLeftActive?'is-active':''}}">
+                    <view class="hud-turn-signal__arrow"></view>
+                </view>
+                <view class="hud-center-stack">
+                    <view bindtap="handleSpeedRingTap" class="hud-speed-ring {{autoPilot?'is-ap':''}} {{sport?'is-sport':'is-eco'}} {{isSpeeding?'is-speeding':''}}">
+                        <view class="hud-speed-ring__speeding-glow"></view>
+                        <view class="hud-speed-ring__outline"></view>
+                        <view class="neon-ring-bevel"></view>
+                        <view class="neon-ring-inner-glow"></view>
+                        <view class="hud-speed-ring__arc" style="--hud-throttle-arc:{{throttleArcDeg}}deg;--hud-throttle-opacity:{{throttleArcOpacity}};--hud-throttle-color:{{throttleBarColor}};">
+                            <view class="hud-speed-ring__arc-mask"></view>
+                        </view>
+                        <view class="hud-speed-ring__custom-bg" wx:if="{{speedBgPath}}">
+                            <image class="hud-speed-ring__custom-image" mode="aspectFill" src="{{speedBgPath}}" style="{{speedBgStyle}}"></image>
+                            <view class="hud-speed-ring__custom-cover" style="{{speedBgCoverStyle}}" wx:if="{{speedBgMoving}}"></view>
+                        </view>
+                        <view class="hud-speed {{speedType?'':'is-time'}} {{speedUpTest?'is-testing':''}} {{speedLengthClass}}">{{speed}}</view>
+                        <view class="hud-speed-unit is-time" wx:if="{{!speedType}}">时间</view>
+                        <view class="hud-throttle-track">
+                            <view class="hud-throttle-bar" style="width:{{throttleBarWidth}}%;background-color:{{throttleBarColor}};"></view>
+                        </view>
+                        <view class="hud-gear-strip">
+                            <text class="{{gear===1?'is-active':''}}">P</text>
+                            <text class="{{gear===2?'is-active':''}}">R</text>
+                            <text class="{{gear===3?'is-active':''}}">N</text>
+                            <text class="{{gear===4?'is-active':''}}">D</text>
+                        </view>
+                    </view>
+                </view>
+                <view class="hud-turn-signal hud-turn-signal--right {{turnRightActive?'is-active':''}}">
+                    <view class="hud-turn-signal__arrow"></view>
+                </view>
+            </view>
+        </view>
+        <view class="neon-portrait-metrics">
+            <view class="neon-portrait-stat neon-portrait-stat--battery">
+                <view class="neon-stat__icon neon-stat__icon--battery">
+                    <image class="neon-stat__image" mode="aspectFit" src="{{dashboardIcons.neonBattery}}"></image>
+                </view>
+                <view class="neon-portrait-stat__copy">
+                    <view class="neon-portrait-stat__value">
+                        <text>{{neonMetrics.battery.value}}</text>
+                        <text class="neon-stat__unit" wx:if="{{neonMetrics.battery.unit}}">{{neonMetrics.battery.unit}}</text>
+                    </view>
+                    <view class="neon-portrait-stat__label">电量</view>
+                </view>
+            </view>
+            <view class="neon-portrait-stat neon-portrait-stat--range">
+                <view class="neon-stat__icon neon-stat__icon--range">
+                    <image class="neon-stat__image" mode="aspectFit" src="{{dashboardIcons.neonRange}}"></image>
+                </view>
+                <view class="neon-portrait-stat__copy">
+                    <view class="neon-portrait-stat__value">
+                        <text>{{neonMetrics.range.value}}</text>
+                        <text class="neon-stat__unit" wx:if="{{neonMetrics.range.unit}}">{{neonMetrics.range.unit}}</text>
+                    </view>
+                    <view class="neon-portrait-stat__label">续航</view>
+                </view>
+            </view>
+            <view class="neon-portrait-stat neon-portrait-stat--power">
+                <view class="neon-stat__icon neon-stat__icon--power">
+                    <image class="neon-stat__image" mode="aspectFit" src="{{dashboardIcons.neonPower}}"></image>
+                </view>
+                <view class="neon-portrait-stat__copy">
+                    <view class="neon-portrait-stat__value">
+                        <text>{{neonMetrics.power.value}}</text>
+                        <text class="neon-stat__unit" wx:if="{{neonMetrics.power.unit}}">{{neonMetrics.power.unit}}</text>
+                    </view>
+                    <view class="neon-portrait-stat__label">功率</view>
+                </view>
+            </view>
+            <view class="neon-portrait-stat neon-portrait-stat--altitude">
+                <view class="neon-stat__icon neon-stat__icon--altitude">
+                    <image class="neon-stat__image" mode="aspectFit" src="{{dashboardIcons.neonAltitude}}"></image>
+                </view>
+                <view class="neon-portrait-stat__copy">
+                    <view class="neon-portrait-stat__value">
+                        <text>{{neonMetrics.altitude.value}}</text>
+                        <text class="neon-stat__unit" wx:if="{{neonMetrics.altitude.unit}}">{{neonMetrics.altitude.unit}}</text>
+                    </view>
+                    <view class="neon-portrait-stat__label">海拔</view>
+                </view>
+            </view>
+            <view class="neon-portrait-stat neon-portrait-stat--time">
+                <view class="neon-stat__icon neon-stat__icon--time">
+                    <image class="neon-stat__image" mode="aspectFit" src="{{dashboardIcons.neonTime}}"></image>
+                </view>
+                <view class="neon-portrait-stat__copy">
+                    <view class="neon-portrait-stat__value">
+                        <text>{{neonMetrics.time.value}}</text>
+                    </view>
+                    <view class="neon-portrait-stat__label">时间</view>
+                </view>
+            </view>
+            <view class="neon-portrait-stat neon-portrait-stat--tpms">
+                <view class="neon-stat__icon neon-stat__icon--tpms">
+                    <image class="neon-stat__image" mode="aspectFit" src="{{dashboardIcons.neonTpms}}"></image>
+                </view>
+                <view class="neon-portrait-stat__copy">
+                    <view class="neon-tpms">
+                        <text>{{neonMetrics.tpms.frontLeft}}</text>
+                        <text>{{neonMetrics.tpms.frontRight}}</text>
+                        <text>{{neonMetrics.tpms.rearLeft}}</text>
+                        <text>{{neonMetrics.tpms.rearRight}}</text>
+                    </view>
+                    <view class="neon-portrait-stat__label">胎压</view>
+                </view>
+            </view>
+        </view>
+        <view class="neon-side neon-side--right">
+            <view class="neon-stat neon-stat--altitude">
+                <view class="neon-stat__copy">
+                    <view class="neon-stat__value">
+                        <text class="neon-stat__number">{{neonMetrics.altitude.value}}</text>
+                        <text class="neon-stat__unit" wx:if="{{neonMetrics.altitude.unit}}">{{neonMetrics.altitude.unit}}</text>
+                    </view>
+                    <view class="neon-stat__label">海拔</view>
+                </view>
+                <view class="neon-stat__icon neon-stat__icon--altitude">
+                    <image class="neon-stat__image" mode="aspectFit" src="{{dashboardIcons.neonAltitude}}"></image>
+                </view>
+            </view>
+            <view class="neon-stat neon-stat--time">
+                <view class="neon-stat__copy">
+                    <view class="neon-stat__value">
+                        <text class="neon-stat__number">{{neonMetrics.time.value}}</text>
+                    </view>
+                    <view class="neon-stat__label">时间</view>
+                </view>
+                <view class="neon-stat__icon neon-stat__icon--time">
+                    <image class="neon-stat__image" mode="aspectFit" src="{{dashboardIcons.neonTime}}"></image>
+                </view>
+            </view>
+            <view class="neon-stat neon-stat--tpms">
+                <view class="neon-stat__copy">
+                    <view class="neon-tpms">
+                        <text>{{neonMetrics.tpms.frontLeft}}</text>
+                        <text>{{neonMetrics.tpms.frontRight}}</text>
+                        <text>{{neonMetrics.tpms.rearLeft}}</text>
+                        <text>{{neonMetrics.tpms.rearRight}}</text>
+                    </view>
+                    <view class="neon-tpms__caption">胎压</view>
+                </view>
+                <view class="neon-stat__icon neon-stat__icon--tpms">
+                    <image class="neon-stat__image" mode="aspectFit" src="{{dashboardIcons.neonTpms}}"></image>
+                </view>
+            </view>
+        </view>
+    </view>
+    <view class="hud-main" wx:else>
+        <view class="hud-side hud-side--left">
+            <view bindtap="toggleLeftBottom" class="hud-card hud-card--mileage">
+                <view class="hud-card__bar"></view>
+                <view class="hud-card__title">
+                    <view class="hud-card__dot"></view>
+                    <text>里程</text>
+                </view>
+                <view class="hud-card__grid">
+                    <view>
+                        <view class="hud-card__label">{{leftQuickMetric.label}}</view>
+                        <view class="hud-card__value">
+                            <text class="hud-card__number">{{leftQuickMetric.value}}</text>
+                            <text class="hud-unit" wx:if="{{leftQuickMetric.unit}}">{{leftQuickMetric.unit}}</text>
+                        </view>
+                    </view>
+                    <view>
+                        <view class="hud-card__label is-muted">{{leftQuickSecondaryMetric.label}}</view>
+                        <view class="hud-card__value is-muted">
+                            <text class="hud-card__number">{{leftQuickSecondaryMetric.value}}</text>
+                            <text class="hud-unit" wx:if="{{leftQuickSecondaryMetric.unit}}">{{leftQuickSecondaryMetric.unit}}</text>
+                        </view>
+                    </view>
+                </view>
+            </view>
+            <view class="hud-card hud-card--drive">
+                <view class="hud-card__bar"></view>
+                <view class="hud-card__title">
+                    <view class="hud-card__dot"></view>
+                    <text>驾驶</text>
+                </view>
+                <view class="hud-card__grid">
+                    <view>
+                        <view class="hud-card__label">辅助</view>
+                        <view class="hud-badge">{{autoPilotLabel}}</view>
+                    </view>
+                    <view>
+                        <view class="hud-card__label is-muted">限速</view>
+                        <view class="hud-card__value is-muted">
+                            <text class="hud-card__number">{{cardMetrics.speedLimit.value}}</text>
+                            <text class="hud-unit" wx:if="{{cardMetrics.speedLimit.unit}}">{{cardMetrics.speedLimit.unit}}</text>
+                        </view>
+                    </view>
+                </view>
+            </view>
+        </view>
+        <view class="hud-center">
+            <view class="hud-turn-wrap">
+                <view class="hud-turn-signal hud-turn-signal--left {{turnLeftActive?'is-active':''}}">
+                    <view class="hud-turn-signal__arrow"></view>
+                </view>
+                <view class="hud-center-stack">
+                    <view bindtap="handleSpeedRingTap" class="hud-speed-ring {{autoPilot?'is-ap':''}} {{sport?'is-sport':'is-eco'}} {{isSpeeding?'is-speeding':''}}">
+                        <view class="hud-speed-ring__speeding-glow"></view>
+                        <view class="hud-speed-ring__outline"></view>
+                        <view class="hud-speed-ring__arc" style="--hud-throttle-arc:{{throttleArcDeg}}deg;--hud-throttle-opacity:{{throttleArcOpacity}};--hud-throttle-color:{{throttleBarColor}};">
+                            <view class="hud-speed-ring__arc-mask"></view>
+                        </view>
+                        <view class="hud-speed-ring__custom-bg" wx:if="{{speedBgPath}}">
+                            <image class="hud-speed-ring__custom-image" mode="aspectFill" src="{{speedBgPath}}" style="{{speedBgStyle}}"></image>
+                            <view class="hud-speed-ring__custom-cover" style="{{speedBgCoverStyle}}" wx:if="{{speedBgMoving}}"></view>
+                        </view>
+                        <view class="hud-speed {{speedType?'':'is-time'}} {{speedUpTest?'is-testing':''}} {{speedLengthClass}}">{{speed}}</view>
+                        <view class="hud-speed-unit {{speedType?'':'is-time'}}">{{speedType?unit:'TIME'}}</view>
+                        <view class="hud-throttle-track">
+                            <view class="hud-throttle-bar" style="width:{{throttleBarWidth}}%;background-color:{{throttleBarColor}};"></view>
+                        </view>
+                        <view class="hud-gear-strip">
+                            <text class="{{gear===1?'is-active':''}}">P</text>
+                            <text class="{{gear===2?'is-active':''}}">R</text>
+                            <text class="{{gear===3?'is-active':''}}">N</text>
+                            <text class="{{gear===4?'is-active':''}}">D</text>
+                        </view>
+                    </view>
+                </view>
+                <view class="hud-turn-signal hud-turn-signal--right {{turnRightActive?'is-active':''}}">
+                    <view class="hud-turn-signal__arrow"></view>
+                </view>
+            </view>
+        </view>
+        <view class="hud-portrait-diagnostics">
+            <view class="hud-portrait-diagnostics__col">
+                <view class="hud-portrait-diagnostics__title">行车诊断</view>
+                <view class="hud-portrait-metric">
+                    <view class="hud-portrait-metric__label">当前总里程</view>
+                    <view class="hud-portrait-metric__value">
+                        <text class="hud-portrait-metric__number">{{cardMetrics.odometer.value}}</text>
+                        <text class="hud-unit" wx:if="{{cardMetrics.odometer.unit}}">{{cardMetrics.odometer.unit}}</text>
+                    </view>
+                </view>
+                <view class="hud-portrait-metric">
+                    <view class="hud-portrait-metric__label">海拔高度</view>
+                    <view class="hud-portrait-metric__value is-muted">
+                        <text class="hud-portrait-metric__number">{{cardMetrics.altitude.value}}</text>
+                        <text class="hud-unit" wx:if="{{cardMetrics.altitude.unit}}">{{cardMetrics.altitude.unit}}</text>
+                    </view>
+                </view>
+                <view class="hud-portrait-metric hud-portrait-metric--split">
+                    <view>
+                        <view class="hud-portrait-metric__label">剩余续航</view>
+                        <view class="hud-portrait-metric__value">
+                            <text class="hud-portrait-metric__number">{{cardMetrics.range.value}}</text>
+                            <text class="hud-unit" wx:if="{{cardMetrics.range.unit}}">{{cardMetrics.range.unit}}</text>
+                        </view>
+                    </view>
+                    <view class="hud-portrait-metric__tag is-digital">
+                        <text class="hud-portrait-metric__number">{{cardMetrics.battery.value}}</text>
+                        <text class="hud-unit" wx:if="{{cardMetrics.battery.unit}}">{{cardMetrics.battery.unit}}</text>
+                    </view>
+                </view>
+            </view>
+            <view class="hud-portrait-diagnostics__col">
+                <view class="hud-portrait-diagnostics__title">环境与辅助</view>
+                <view class="hud-portrait-metric">
+                    <view class="hud-portrait-metric__label">车外环境</view>
+                    <view class="hud-portrait-metric__value">
+                        <text class="hud-portrait-metric__number">{{cardMetrics.outsideTemp.value}}</text>
+                        <text class="hud-unit" wx:if="{{cardMetrics.outsideTemp.unit}}">{{cardMetrics.outsideTemp.unit}}</text>
+                    </view>
+                </view>
+                <view class="hud-portrait-metric">
+                    <view class="hud-portrait-metric__label">车内空调</view>
+                    <view class="hud-portrait-metric__value is-muted">
+                        <text class="hud-portrait-metric__number">{{cardMetrics.cabinTemp.value}}</text>
+                        <text class="hud-unit" wx:if="{{cardMetrics.cabinTemp.unit}}">{{cardMetrics.cabinTemp.unit}}</text>
+                    </view>
+                </view>
+                <view class="hud-portrait-metric hud-portrait-metric--split">
+                    <view>
+                        <view class="hud-portrait-metric__label">道路限速</view>
+                        <view class="hud-portrait-metric__value">
+                            <text class="hud-portrait-metric__number">{{cardMetrics.speedLimit.value}}</text>
+                            <text class="hud-unit" wx:if="{{cardMetrics.speedLimit.unit}}">{{cardMetrics.speedLimit.unit}}</text>
+                        </view>
+                    </view>
+                    <view class="hud-portrait-metric__tag">{{autoPilotLabel}}</view>
+                </view>
+            </view>
+        </view>
+        <view class="hud-side hud-side--right">
+            <view bindtap="toggleRightBottom" class="hud-card hud-card--range">
+                <view class="hud-card__bar"></view>
+                <view class="hud-card__title">
+                    <view class="hud-card__dot"></view>
+                    <text>剩余</text>
+                </view>
+                <view class="hud-card__grid">
+                    <view>
+                        <view class="hud-card__label">{{rightQuickMetric.label}}</view>
+                        <view class="hud-card__value">
+                            <text class="hud-card__number">{{rightQuickMetric.value}}</text>
+                            <text class="hud-unit" wx:if="{{rightQuickMetric.unit}}">{{rightQuickMetric.unit}}</text>
+                        </view>
+                    </view>
+                    <view>
+                        <view class="hud-card__label is-muted">{{rightQuickSecondaryMetric.label}}</view>
+                        <view class="hud-card__value is-accent">
+                            <text class="hud-card__number">{{rightQuickSecondaryMetric.value}}</text>
+                            <text class="hud-unit" wx:if="{{rightQuickSecondaryMetric.unit}}">{{rightQuickSecondaryMetric.unit}}</text>
+                        </view>
+                    </view>
+                </view>
+            </view>
+            <view class="hud-card hud-card--temp">
+                <view class="hud-card__bar"></view>
+                <view class="hud-card__title">
+                    <view class="hud-card__dot"></view>
+                    <text>温度</text>
+                </view>
+                <view class="hud-card__grid">
+                    <view>
+                        <view class="hud-card__label">车外</view>
+                        <view class="hud-card__value">
+                            <text class="hud-card__number">{{cardMetrics.outsideTemp.value}}</text>
+                            <text class="hud-unit" wx:if="{{cardMetrics.outsideTemp.unit}}">{{cardMetrics.outsideTemp.unit}}</text>
+                        </view>
+                    </view>
+                    <view>
+                        <view class="hud-card__label is-muted">车内</view>
+                        <view class="hud-card__value is-muted">
+                            <text class="hud-card__number">{{cardMetrics.cabinTemp.value}}</text>
+                            <text class="hud-unit" wx:if="{{cardMetrics.cabinTemp.unit}}">{{cardMetrics.cabinTemp.unit}}</text>
+                        </view>
+                    </view>
+                </view>
+            </view>
+        </view>
+    </view>
+    <view class="hud-bottom-actions">
+        <view class="hud-action-row">
+            <view catchtap="toggleSpeedUpTest" class="hud-action hud-action--speed-test">
+                <image class="hud-action__icon" mode="aspectFit" src="{{dashboardIcons.speedTest}}"></image>
+                <text>{{speedUpText}}</text>
+            </view>
+            <view catchtap="toggleAspect" class="hud-action hud-action--color" wx:if="{{hudTheme!='neon'}}">
+                <image class="hud-action__icon" mode="aspectFit" src="{{dashboardIcons.appearance}}"></image>
+                <text>切换颜色</text>
+            </view>
+            <view catchtap="toggleBattHeat" class="hud-action {{battHeat?'is-active':''}}">
+                <image class="hud-action__icon" mode="aspectFit" src="{{battHeat?dashboardIcons.heatActive:dashboardIcons.heat}}"></image>
+                <text>电池加热</text>
+            </view>
+            <view catchtap="toggleLayoutMode" class="hud-action hud-action--primary">
+                <image class="hud-action__icon" mode="aspectFit" src="{{dashboardIcons.layout}}"></image>
+                <text>{{layoutActionText}}</text>
+            </view>
+        </view>
+    </view>
+</view>
+<app-toast toast="{{__appToast}}"></app-toast>
+<app-modal modal="{{__appModal}}"></app-modal>

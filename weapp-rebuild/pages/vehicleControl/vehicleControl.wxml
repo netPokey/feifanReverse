@@ -1,0 +1,103 @@
+<view class="page theme-{{appTheme}} font-{{appFontSizeClass}} page-shell vehicle-page" style="{{appFontSizeStyle}}">
+    <view class="page-titlebar page-titlebar--with-back" style="{{titlebarStyle}}">
+        <view bindtap="goBack" class="page-titlebar__back">
+            <image class="page-titlebar__back-icon" mode="aspectFit" src="{{backIconPath}}"></image>
+        </view>
+    </view>
+    <view class="section control-section">
+        <view class="section-title">车身控制</view>
+        <view class="panel body-console {{connected?'':'is-disabled'}}">
+            <view class="body-console__header">
+                <view>
+                    <view class="body-console__title">车身平面交互控制</view>
+                    <view class="body-console__desc">点击对应热区即可控制部件启闭</view>
+                </view>
+                <view class="body-console__badge">{{connected?'可执行':'禁用'}}</view>
+            </view>
+            <view class="body-console__canvas">
+                <view class="body-blueprint">
+                    <view class="body-blueprint__frame"></view>
+                    <view class="body-wheel body-wheel--front-left"></view>
+                    <view class="body-wheel body-wheel--front-right"></view>
+                    <view class="body-wheel body-wheel--rear-left"></view>
+                    <view class="body-wheel body-wheel--rear-right"></view>
+                    <view bindtap="sendBodyPart" class="body-mirror body-mirror--left {{bodyState.mirror?'':'is-folded'}} {{bodyActivePart==='mirror'?'is-pulsing':''}}" data-code="11" data-key="mirror" data-label="后视镜"></view>
+                    <view bindtap="sendBodyPart" class="body-mirror body-mirror--right {{bodyState.mirror?'':'is-folded'}} {{bodyActivePart==='mirror'?'is-pulsing':''}}" data-code="11" data-key="mirror" data-label="后视镜"></view>
+                    <view class="body-chassis"></view>
+                    <view class="body-glass body-glass--roof"></view>
+                    <view class="body-glass body-glass--rear"></view>
+                    <view class="body-seat-shape body-seat-shape--driver"></view>
+                    <view class="body-seat-shape body-seat-shape--passenger"></view>
+                    <view bindtap="sendBodyPart" class="body-part body-part--frunk {{bodyState.frunk?'is-open':''}} {{bodyActivePart==='frunk'?'is-pulsing':''}}" data-code="8" data-key="frunk" data-label="前备箱">
+                        <text>{{bodyState.frunk?'前盖开启':'前备箱'}}</text>
+                    </view>
+                    <view bindtap="sendBodyPart" class="body-part body-part--trunk {{bodyState.trunk?'is-open':''}} {{bodyActivePart==='trunk'?'is-pulsing':''}}" data-code="9" data-key="trunk" data-label="后备箱">
+                        <text>{{bodyState.trunk?'后门开启':'后备箱'}}</text>
+                    </view>
+                    <view bindtap="sendBodyPart" class="body-door body-door--left-front {{bodyState.leftFront?'is-open':''}} {{bodyActivePart==='leftFront'?'is-pulsing':''}}" data-code="0" data-key="leftFront" data-label="左前门"></view>
+                    <view bindtap="sendBodyPart" class="body-door body-door--right-front {{bodyState.rightFront?'is-open':''}} {{bodyActivePart==='rightFront'?'is-pulsing':''}}" data-code="1" data-key="rightFront" data-label="右前门"></view>
+                    <view bindtap="sendBodyPart" class="body-door body-door--left-rear {{bodyState.leftRear?'is-open':''}} {{bodyActivePart==='leftRear'?'is-pulsing':''}}" data-code="2" data-key="leftRear" data-label="左后门"></view>
+                    <view bindtap="sendBodyPart" class="body-door body-door--right-rear {{bodyState.rightRear?'is-open':''}} {{bodyActivePart==='rightRear'?'is-pulsing':''}}" data-code="3" data-key="rightRear" data-label="右后门"></view>
+                    <view class="body-beacon" wx:if="{{bodyAnyOpen}}"></view>
+                    <view class="body-console__hint">点击车辆部位直接发送控制指令</view>
+                </view>
+            </view>
+        </view>
+    </view>
+    <view class="section control-section">
+        <view class="section-title">座椅与记忆</view>
+        <view class="seat-grid">
+            <view class="panel seat-card {{connected?'':'is-disabled'}}">
+                <view class="seat-card__head">
+                    <view>
+                        <view class="seat-card__title">主驾座椅</view>
+                        <view class="seat-card__desc">点按记忆恢复，长按保存</view>
+                    </view>
+                    <view class="massage-control">
+                        <view class="massage-control__label">主驾按摩</view>
+                        <view bindtap="toggleSeatMassage" class="neo-switch neo-switch--sm {{seatState.driverMassage?'is-on':''}} {{!connected?'is-disabled':''}}" data-base="18" data-field="driverMassage" data-label="主驾座椅按摩">
+                            <view class="neo-switch__thumb"></view>
+                        </view>
+                    </view>
+                </view>
+                <view class="seat-pad">
+                    <view bindtouchcancel="sendSeatHoldEnd" bindtouchend="sendSeatHoldEnd" bindtouchstart="sendSeatHoldStart" class="control-chip" data-code="{{item.code}}" data-label="主驾{{item.label}}" wx:for="{{driverSeatButtons}}" wx:key="code">{{item.label}}</view>
+                </view>
+                <view class="memory-row">
+                    <view bindlongpress="sendSeatMemory" bindtap="sendSeatMemory" class="memory-chip" data-code="{{item.code}}" data-label="主驾{{item.label}}" wx:for="{{driverMemory}}" wx:key="code">{{item.label}}</view>
+                </view>
+            </view>
+            <view class="panel seat-card {{connected?'':'is-disabled'}}">
+                <view class="seat-card__head">
+                    <view>
+                        <view class="seat-card__title">副驾座椅</view>
+                        <view class="seat-card__desc">含副驾按摩与记忆控制</view>
+                    </view>
+                    <view class="massage-control">
+                        <view class="massage-control__label">副驾按摩</view>
+                        <view bindtap="toggleSeatMassage" class="neo-switch neo-switch--sm {{seatState.passengerMassage?'is-on':''}} {{!connected?'is-disabled':''}}" data-base="20" data-field="passengerMassage" data-label="副驾座椅按摩">
+                            <view class="neo-switch__thumb"></view>
+                        </view>
+                    </view>
+                </view>
+                <view class="seat-pad">
+                    <view bindtouchcancel="sendSeatHoldEnd" bindtouchend="sendSeatHoldEnd" bindtouchstart="sendSeatHoldStart" class="control-chip" data-code="{{item.code}}" data-label="副驾{{item.label}}" wx:for="{{passengerSeatButtons}}" wx:key="code">{{item.label}}</view>
+                </view>
+                <view class="memory-row">
+                    <view bindlongpress="sendSeatMemory" bindtap="sendSeatMemory" class="memory-chip" data-code="{{item.code}}" data-label="副驾{{item.label}}" wx:for="{{passengerMemory}}" wx:key="code">{{item.label}}</view>
+                </view>
+            </view>
+        </view>
+    </view>
+    <view class="panel section wheel-panel {{connected?'':'is-disabled'}}">
+        <view>
+            <view class="section-title wheel-panel__title">模拟滚轮</view>
+            <view class="muted">按住发送，松开发送停止码</view>
+        </view>
+        <view class="wheel-pad">
+            <view bindtouchcancel="sendWheelEnd" bindtouchend="sendWheelEnd" bindtouchstart="sendWheelStart" class="wheel-key wheel-key--{{item.cls}} {{btnval==item.code?'is-active':''}}" data-code="{{item.code}}" wx:for="{{wheelControls}}" wx:key="code">{{item.label}}</view>
+        </view>
+    </view>
+</view>
+<app-toast toast="{{__appToast}}"></app-toast>
+<app-modal modal="{{__appModal}}"></app-modal>

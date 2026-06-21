@@ -1,0 +1,28 @@
+<view class="page theme-{{appTheme}} font-{{appFontSizeClass}} page-shell" style="{{appFontSizeStyle}}">
+    <view class="page-titlebar page-titlebar--with-back" style="{{titlebarStyle}}">
+        <view bindtap="goBack" class="page-titlebar__back">
+            <image class="page-titlebar__back-icon" mode="aspectFit" src="{{backIconPath}}"></image>
+        </view>
+    </view>
+    <view class="panel section device-summary">
+        <view class="device-summary__icon">
+            <image class="device-summary__image" mode="aspectFit" src="/assets/icons/generated/device-harddrive@72.png"></image>
+        </view>
+        <view class="device-summary__body">
+            <view class="strong">{{device.name||'TSL电子模块'}}</view>
+            <view class="muted">{{connected?'已连接，可读取设备与版本信息':'未连接设备，仅展示已缓存信息'}}</view>
+        </view>
+        <view class="tag {{connected?'is-ready':''}}">{{connected?'在线':'未连接'}}</view>
+    </view>
+    <view class="section info-section" wx:for="{{infoSections}}" wx:key="name">
+        <view class="section-title">{{item.name}}</view>
+        <view class="panel info-panel">
+            <view class="info-row" wx:for="{{item.rows}}" wx:for-item="row" wx:key="label">
+                <view class="info-label">{{row.label}}</view>
+                <view class="info-value">{{row.value}}</view>
+            </view>
+        </view>
+    </view>
+</view>
+<app-toast toast="{{__appToast}}"></app-toast>
+<app-modal modal="{{__appModal}}"></app-modal>

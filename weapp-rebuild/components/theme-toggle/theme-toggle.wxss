@@ -1,0 +1,99 @@
+.theme-toggle {
+    -webkit-align-items: center;
+    align-items: center;
+    background: hsla(0,0%,100%,.025);
+    border: 1rpx solid hsla(0,0%,100%,.08);
+    border-radius: 22rpx;
+    box-shadow: inset 0 1rpx 0 hsla(0,0%,100%,.055),0 16rpx 34rpx rgba(0,0,0,.28);
+    box-sizing: border-box;
+    display: -webkit-flex;
+    display: flex;
+    height: 64rpx;
+    -webkit-justify-content: center;
+    justify-content: center;
+    overflow: hidden;
+    position: absolute;
+    right: 0;
+    top: 50%;
+    -webkit-transform: translateY(-50%);
+    transform: translateY(-50%);
+    width: 64rpx
+}
+
+.theme-toggle::before {
+    background: rgba(0,240,255,.08);
+    border-radius: 18rpx;
+    content: "";
+    inset: 10rpx;
+    opacity: .72;
+    position: absolute
+}
+
+.theme-toggle__icon {
+    -webkit-animation: theme-toggle-breath 1.8s ease-in-out infinite;
+    animation: theme-toggle-breath 1.8s ease-in-out infinite;
+    display: block;
+    height: 32rpx;
+    position: relative;
+    width: 32rpx;
+    z-index: 1
+}
+
+.theme-toggle__dot {
+    background: #00f0ff;
+    border-radius: 50%;
+    box-shadow: 0 0 14rpx rgba(0,240,255,.7);
+    height: 9rpx;
+    position: absolute;
+    right: 10rpx;
+    top: 10rpx;
+    width: 9rpx
+}
+
+.theme-toggle--day {
+    background: rgba(255,251,235,.86);
+    border-color: rgba(245,158,11,.3);
+    box-shadow: inset 0 1rpx 0 hsla(0,0%,100%,.8),0 16rpx 34rpx rgba(245,158,11,.12)
+}
+
+.theme-toggle--day::before {
+    background: rgba(245,158,11,.12)
+}
+
+.theme-toggle--day .theme-toggle__dot {
+    background: #f59e0b;
+    box-shadow: 0 0 14rpx rgba(245,158,11,.52)
+}
+
+.theme-toggle:active {
+    -webkit-transform: translateY(-50%) scale(.94);
+    transform: translateY(-50%) scale(.94)
+}
+
+@-webkit-keyframes theme-toggle-breath {
+    0%,100% {
+        opacity: 1;
+        -webkit-transform: scale(1);
+        transform: scale(1)
+    }
+
+    50% {
+        opacity: .56;
+        -webkit-transform: scale(.94);
+        transform: scale(.94)
+    }
+}
+
+@keyframes theme-toggle-breath {
+    0%,100% {
+        opacity: 1;
+        -webkit-transform: scale(1);
+        transform: scale(1)
+    }
+
+    50% {
+        opacity: .56;
+        -webkit-transform: scale(.94);
+        transform: scale(.94)
+    }
+}

@@ -1,0 +1,201 @@
+.trip-record-card,.trips-hero {
+    background: radial-gradient(circle at 18% 16%,rgba(0,240,255,.2),rgba(0,240,255,0) 260rpx),radial-gradient(circle at 92% 86%,rgba(13,242,163,.14),rgba(13,242,163,0) 300rpx),linear-gradient(135deg,rgba(26,38,64,.96),rgba(10,15,28,.99));
+    border-color: rgba(0,240,255,.2);
+    box-shadow: 0 20rpx 58rpx rgba(0,0,0,.42),0 0 34rpx rgba(0,240,255,.06),inset 0 1rpx 0 hsla(0,0%,100%,.08)
+}
+
+.trips-hero {
+    -webkit-align-items: center;
+    align-items: center;
+    display: -webkit-flex;
+    display: flex;
+    gap: 22rpx;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    min-height: 128rpx
+}
+
+.trips-hero > wx-view:first-child {
+    -webkit-flex: 1;
+    flex: 1;
+    min-width: 0
+}
+
+.trip-record-card {
+    overflow: hidden;
+    padding: 30rpx;
+    position: relative
+}
+
+.trip-record-card.is-active {
+    border-color: rgba(13,242,163,.2)
+}
+
+.trip-record__ambient {
+    background: linear-gradient(90deg,rgba(0,240,255,0),rgba(0,240,255,.12),rgba(13,242,163,.09),rgba(0,240,255,0));
+    height: 230rpx;
+    left: -80rpx;
+    opacity: .72;
+    pointer-events: none;
+    position: absolute;
+    right: -80rpx;
+    top: -120rpx
+}
+
+.trip-record__route {
+    border-color: rgba(0,240,255,.14) rgba(0,240,255,.04) rgba(0,240,255,.04) rgba(0,240,255,.14);
+    border-radius: 50%;
+    border-style: solid;
+    border-width: 1rpx;
+    bottom: -56rpx;
+    height: 170rpx;
+    opacity: .82;
+    pointer-events: none;
+    position: absolute;
+    right: -46rpx;
+    width: 320rpx
+}
+
+.trip-record-card::after {
+    background: linear-gradient(90deg,rgba(0,240,255,0),rgba(0,240,255,.42),rgba(13,242,163,.24),rgba(0,240,255,0));
+    bottom: 0;
+    content: "";
+    height: 1rpx;
+    left: 28rpx;
+    opacity: .66;
+    pointer-events: none;
+    position: absolute;
+    right: 28rpx
+}
+
+.trip-record__head {
+    -webkit-align-items: center;
+    align-items: center;
+    display: -webkit-flex;
+    display: flex;
+    gap: 20rpx;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1
+}
+
+.trip-record__head > wx-view:first-child {
+    -webkit-flex: 1;
+    flex: 1;
+    min-width: 0
+}
+
+.trip-record__title {
+    color: #f8fafc;
+    font-size: calc(31rpx * var(--app-font-scale));
+    font-weight: 950;
+    letter-spacing: 0.5rpx;
+    line-height: 1.2
+}
+
+.trip-record__time {
+    color: #8fa0b4;
+    font-size: calc(23rpx * var(--app-font-scale));
+    font-weight: 800;
+    line-height: 1.3;
+    margin-top: 8rpx
+}
+
+.tag.is-active {
+    background: rgba(13,242,163,.1);
+    border-color: rgba(13,242,163,.22);
+    color: #0df2a3
+}
+
+.trip-record__metrics {
+    display: grid;
+    gap: 16rpx;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    margin-top: 24rpx;
+    position: relative;
+    z-index: 1
+}
+
+.trip-record__metric {
+    background: radial-gradient(circle at 22% 18%,rgba(0,210,255,.13),transparent 126rpx),linear-gradient(145deg,rgba(27,39,64,.86),rgba(14,20,34,.92));
+    border: 1rpx solid rgba(148,226,255,.18);
+    border-radius: 24rpx;
+    box-shadow: inset 0 1rpx 0 hsla(0,0%,100%,.06);
+    box-sizing: border-box;
+    min-height: 98rpx;
+    padding: 18rpx
+}
+
+.trip-record__metric--primary {
+    background: radial-gradient(circle at 18% 18%,rgba(13,242,163,.18),transparent 160rpx),linear-gradient(145deg,rgba(26,51,66,.94),rgba(11,24,35,.96));
+    border-color: rgba(13,242,163,.22);
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    grid-column: span 2;
+    -webkit-justify-content: center;
+    justify-content: center;
+    min-height: 118rpx
+}
+
+.trip-record__value {
+    color: #eaffff;
+    font-family: Orbitron,SF Mono,DIN Alternate,DIN Condensed,Menlo,monospace;
+    font-size: calc(30rpx * var(--app-font-scale));
+    font-weight: 950;
+    line-height: 1.08;
+    text-shadow: 0 0 16rpx rgba(0,240,255,.2);
+    word-break: break-all
+}
+
+.trip-record__metric--primary .trip-record__value {
+    font-size: calc(46rpx * var(--app-font-scale));
+    text-shadow: 0 0 20rpx rgba(13,242,163,.24)
+}
+
+.trip-record__label {
+    color: #8fa0b4;
+    font-size: calc(22rpx * var(--app-font-scale));
+    font-weight: 700;
+    line-height: 1.2;
+    margin-top: 8rpx
+}
+
+.trip-empty {
+    margin-top: 24rpx
+}
+
+.theme-day .trip-record-card,.theme-day .trips-hero {
+    background: radial-gradient(circle at 18% 16%,rgba(14,165,233,.12),rgba(14,165,233,0) 260rpx),radial-gradient(circle at 92% 86%,rgba(20,184,166,.1),rgba(20,184,166,0) 300rpx),linear-gradient(135deg,hsla(0,0%,100%,.98),rgba(236,254,255,.95));
+    border-color: rgba(14,116,144,.16);
+    box-shadow: 0 18rpx 42rpx rgba(15,23,42,.08),inset 0 1rpx 0 hsla(0,0%,100%,.85)
+}
+
+.theme-day .trip-record__title {
+    color: #0f172a
+}
+
+.theme-day .trip-record__time {
+    color: #64748b
+}
+
+.theme-day .trip-record__metric {
+    background: radial-gradient(circle at 22% 18%,rgba(14,165,233,.08),transparent 126rpx),hsla(0,0%,100%,.62);
+    border-color: rgba(15,23,42,.08)
+}
+
+.theme-day .trip-record__metric--primary {
+    background: radial-gradient(circle at 18% 18%,rgba(20,184,166,.12),transparent 160rpx),rgba(236,253,245,.72);
+    border-color: rgba(20,184,166,.16)
+}
+
+.theme-day .trip-record__value {
+    color: #0f172a;
+    text-shadow: none
+}
+
+.theme-day .trip-record__label {
+    color: #64748b
+}

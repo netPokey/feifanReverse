@@ -1,0 +1,560 @@
+.super-shortcut-page {
+    background: radial-gradient(circle at 22% 4%,rgba(0,240,255,.1),transparent 310rpx),linear-gradient(180deg,rgba(13,21,37,.98),#080d18 620rpx),#080d18
+}
+
+.super-hero {
+    -webkit-align-items: center;
+    align-items: center;
+    display: -webkit-flex;
+    display: flex;
+    gap: 22rpx;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    min-height: 128rpx
+}
+
+.super-hero > wx-view:first-child {
+    -webkit-flex: 1;
+    flex: 1;
+    min-width: 0
+}
+
+.tag.is-ready {
+    background: rgba(13,242,163,.08);
+    border-color: rgba(13,242,163,.18);
+    color: #0df2a3
+}
+
+.rule-tabs {
+    gap: 14rpx;
+    overflow-x: auto;
+    padding-bottom: 4rpx;
+    white-space: nowrap
+}
+
+.rule-tab,.rule-tabs {
+    display: -webkit-flex;
+    display: flex
+}
+
+.rule-tab {
+    background: rgba(20,28,44,.92);
+    border: 1rpx solid rgba(148,226,255,.14);
+    border-radius: 24rpx;
+    box-sizing: border-box;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0;
+    height: 86rpx;
+    -webkit-justify-content: center;
+    justify-content: center;
+    min-width: 192rpx;
+    padding: 14rpx 18rpx
+}
+
+.rule-tab.is-active {
+    background: rgba(0,240,255,.08);
+    border-color: rgba(0,240,255,.24)
+}
+
+.rule-tab--add {
+    -webkit-align-items: center;
+    align-items: center;
+    min-width: 86rpx;
+    width: 86rpx
+}
+
+.rule-tab__name {
+    color: #f8fafc;
+    font-size: calc(24rpx * var(--app-font-scale));
+    font-weight: 900;
+    line-height: 1.15;
+    max-width: 160rpx;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap
+}
+
+.rule-tab__meta {
+    color: #8fa0b4;
+    font-size: calc(20rpx * var(--app-font-scale));
+    font-weight: 800;
+    line-height: 1;
+    margin-top: 8rpx
+}
+
+.rule-tab__icon {
+    display: block;
+    height: 30rpx;
+    width: 30rpx
+}
+
+.rule-card__head {
+    -webkit-align-items: center;
+    align-items: center;
+    display: -webkit-flex;
+    display: flex;
+    gap: 22rpx;
+    -webkit-justify-content: space-between;
+    justify-content: space-between
+}
+
+.rule-title-wrap {
+    -webkit-flex: 1;
+    flex: 1;
+    min-width: 0
+}
+
+.rule-title {
+    color: #f8fafc;
+    font-size: calc(34rpx * var(--app-font-scale));
+    font-weight: 900;
+    line-height: 1.18
+}
+
+.rule-actions {
+    margin-top: 22rpx
+}
+
+.edit-section {
+    margin-bottom: 24rpx
+}
+
+.section-title {
+    color: #dce9f4;
+    font-size: calc(25rpx * var(--app-font-scale));
+    font-weight: 900;
+    line-height: 1.2;
+    margin-bottom: 14rpx
+}
+
+.setting-cell {
+    -webkit-align-items: center;
+    align-items: center;
+    border-top: 1rpx solid hsla(0,0%,100%,.08);
+    display: -webkit-flex;
+    display: flex;
+    gap: 22rpx;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    min-height: 98rpx;
+    padding: 18rpx 0
+}
+
+.setting-cell:first-of-type {
+    border-top: 0
+}
+
+.setting-cell > wx-view:first-child {
+    -webkit-flex: 1;
+    flex: 1;
+    min-width: 0
+}
+
+.steps-head {
+    -webkit-align-items: center;
+    align-items: center;
+    display: -webkit-flex;
+    display: flex;
+    gap: 20rpx;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    margin-bottom: 20rpx
+}
+
+.steps-head > wx-view:first-child {
+    -webkit-flex: 1;
+    flex: 1;
+    min-width: 0
+}
+
+.step-empty {
+    min-height: 132rpx
+}
+
+.step-card {
+    background: linear-gradient(145deg,rgba(20,28,44,.92),rgba(9,11,18,.96));
+    border: 1rpx solid rgba(0,240,255,.08);
+    border-radius: 24rpx;
+    display: grid;
+    gap: 16rpx;
+    grid-template-columns: 54rpx minmax(0,1fr) 56rpx;
+    margin-top: 16rpx;
+    min-height: 118rpx;
+    padding: 18rpx
+}
+
+.step-card,.step-index {
+    -webkit-align-items: center;
+    align-items: center;
+    box-sizing: border-box
+}
+
+.step-index {
+    background: rgba(0,240,255,.08);
+    border: 1rpx solid rgba(0,240,255,.18);
+    border-radius: 18rpx;
+    color: #00f0ff;
+    display: -webkit-flex;
+    display: flex;
+    font-size: calc(22rpx * var(--app-font-scale));
+    font-weight: 900;
+    height: 54rpx;
+    -webkit-justify-content: center;
+    justify-content: center;
+    width: 54rpx
+}
+
+.step-page {
+    -webkit-align-items: center;
+    align-items: center;
+    display: grid;
+    gap: 14rpx;
+    grid-template-columns: minmax(0,1fr) 128rpx
+}
+
+.step-action,.step-page {
+    min-width: 0
+}
+
+.step-delay {
+    background: rgba(15,23,42,.62);
+    border: 1rpx solid hsla(0,0%,100%,.08);
+    border-radius: 18rpx;
+    color: #00f0ff;
+    font-size: calc(22rpx * var(--app-font-scale));
+    font-weight: 800;
+    height: 50rpx
+}
+
+.step-delay,.step-remove {
+    -webkit-align-items: center;
+    align-items: center;
+    box-sizing: border-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-justify-content: center;
+    justify-content: center
+}
+
+.step-remove {
+    background: rgba(245,158,11,.13);
+    border: 1rpx solid rgba(245,158,11,.22);
+    border-radius: 18rpx;
+    height: 54rpx;
+    width: 54rpx
+}
+
+.step-remove__image {
+    display: block;
+    height: 28rpx;
+    width: 28rpx
+}
+
+.protocol-note {
+    background: rgba(245,158,11,.06);
+    border-color: rgba(245,158,11,.18)
+}
+
+.protocol-row {
+    -webkit-align-items: center;
+    align-items: center;
+    display: -webkit-flex;
+    display: flex;
+    gap: 18rpx;
+    -webkit-justify-content: space-between;
+    justify-content: space-between
+}
+
+.protocol-row > wx-view:first-child {
+    -webkit-flex: 1;
+    flex: 1;
+    min-width: 0
+}
+
+.protocol-divider {
+    background: hsla(0,0%,100%,.08);
+    height: 1rpx;
+    margin: 22rpx 0
+}
+
+.mini-btn {
+    border-radius: 20rpx;
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0;
+    font-size: calc(22rpx * var(--app-font-scale));
+    height: 58rpx;
+    min-width: 126rpx
+}
+
+.config-selector-page {
+    background: #05070b;
+    bottom: 0;
+    color: #f8fafc;
+    left: 0;
+    overflow: hidden;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: 80
+}
+
+.config-selector-bg {
+    background: radial-gradient(circle at 50% 0,rgba(0,240,255,.16),transparent 360rpx),linear-gradient(135deg,#07111e,#04070d 70%,#05070b);
+    height: 420rpx;
+    left: 0;
+    position: absolute;
+    right: 0;
+    top: 0
+}
+
+.config-selector-header {
+    gap: 18rpx;
+    left: 24rpx;
+    min-height: 108rpx;
+    position: absolute;
+    right: 24rpx;
+    top: calc(76rpx + env(safe-area-inset-top))
+}
+
+.config-selector-back,.config-selector-header {
+    -webkit-align-items: center;
+    align-items: center;
+    box-sizing: border-box;
+    display: -webkit-flex;
+    display: flex
+}
+
+.config-selector-back {
+    background: #0d1724;
+    border: 1rpx solid rgba(0,240,255,.16);
+    border-radius: 20rpx;
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0;
+    height: 58rpx;
+    -webkit-justify-content: center;
+    justify-content: center;
+    width: 58rpx
+}
+
+.config-selector-back__icon {
+    display: block;
+    height: 28rpx;
+    width: 28rpx
+}
+
+.config-selector-heading {
+    min-width: 0
+}
+
+.config-selector-eyebrow {
+    color: #00f0ff;
+    font-size: calc(20rpx * var(--app-font-scale));
+    font-weight: 900;
+    letter-spacing: 6rpx;
+    line-height: 1
+}
+
+.config-selector-title {
+    color: #f8fafc;
+    font-size: calc(36rpx * var(--app-font-scale));
+    font-weight: 900;
+    line-height: 1.1;
+    margin-top: 8rpx
+}
+
+.config-selector-sub {
+    color: #94a3b8;
+    font-size: calc(23rpx * var(--app-font-scale));
+    line-height: 1.35;
+    margin-top: 8rpx
+}
+
+.config-selector-current {
+    -webkit-align-items: center;
+    align-items: center;
+    background: #0d1724;
+    border: 1rpx solid rgba(0,240,255,.16);
+    border-radius: 24rpx;
+    box-sizing: border-box;
+    display: -webkit-flex;
+    display: flex;
+    gap: 18rpx;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    left: 24rpx;
+    min-height: 104rpx;
+    padding: 20rpx 22rpx;
+    position: absolute;
+    right: 24rpx;
+    top: calc(300rpx + env(safe-area-inset-top))
+}
+
+.config-selector-current__label {
+    color: #8fa0b4;
+    font-size: calc(21rpx * var(--app-font-scale));
+    font-weight: 800;
+    line-height: 1.2
+}
+
+.config-selector-current__value {
+    color: #f8fafc;
+    font-size: calc(26rpx * var(--app-font-scale));
+    font-weight: 900;
+    line-height: 1.25;
+    margin-top: 8rpx;
+    word-break: break-all
+}
+
+.config-selector-current__tag {
+    -webkit-align-items: center;
+    align-items: center;
+    background: rgba(0,240,255,.08);
+    border: 1rpx solid rgba(0,240,255,.22);
+    border-radius: 19rpx;
+    color: #00f0ff;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0;
+    font-size: calc(21rpx * var(--app-font-scale));
+    font-weight: 800;
+    height: 38rpx;
+    -webkit-justify-content: center;
+    justify-content: center;
+    min-width: 70rpx
+}
+
+.config-selector-page {
+    bottom: 112rpx;
+    box-sizing: border-box;
+    left: 24rpx;
+    position: absolute;
+    right: auto;
+    top: calc(448rpx + env(safe-area-inset-top));
+    width: 702rpx
+}
+
+.config-selector-list {
+    padding-bottom: 24rpx
+}
+
+.config-option-row {
+    -webkit-align-items: center;
+    align-items: center;
+    background: #111827;
+    border: 1rpx solid hsla(0,0%,100%,.08);
+    border-radius: 22rpx;
+    box-sizing: border-box;
+    display: -webkit-flex;
+    display: flex;
+    gap: 18rpx;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    margin-bottom: 14rpx;
+    min-height: 92rpx;
+    overflow: hidden;
+    padding: 20rpx 34rpx 20rpx 22rpx;
+    width: 100%
+}
+
+.config-option-row.is-selected {
+    background: #0d2832;
+    border-color: rgba(0,240,255,.38)
+}
+
+.config-option-main {
+    -webkit-flex: 1;
+    flex: 1;
+    min-width: 0
+}
+
+.config-option-name {
+    color: #f8fafc;
+    font-size: calc(26rpx * var(--app-font-scale));
+    font-weight: 800;
+    line-height: 1.24;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap
+}
+
+.config-option-sub {
+    color: #8fa0b4;
+    font-size: calc(21rpx * var(--app-font-scale));
+    line-height: 1.2;
+    margin-top: 8rpx
+}
+
+.config-option-arrow {
+    border-right: 3rpx solid hsla(0,0%,100%,.22);
+    border-top: 3rpx solid hsla(0,0%,100%,.22);
+    box-sizing: border-box;
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0;
+    height: 16rpx;
+    margin-right: 4rpx;
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+    width: 16rpx
+}
+
+.config-option-check {
+    color: #00f0ff;
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0;
+    font-size: calc(28rpx * var(--app-font-scale));
+    font-weight: 900;
+    text-align: center;
+    width: 36rpx
+}
+
+.config-selector-footer {
+    -webkit-align-items: center;
+    align-items: center;
+    bottom: calc(24rpx + env(safe-area-inset-bottom));
+    display: -webkit-flex;
+    display: flex;
+    gap: 14rpx;
+    height: 76rpx;
+    left: 24rpx;
+    position: absolute;
+    right: 24rpx
+}
+
+.config-selector-spacer {
+    -webkit-flex: 1;
+    flex: 1
+}
+
+.config-selector-action {
+    -webkit-align-items: center;
+    align-items: center;
+    border-radius: 22rpx;
+    box-sizing: border-box;
+    display: -webkit-flex;
+    display: flex;
+    font-size: calc(25rpx * var(--app-font-scale));
+    font-weight: 900;
+    height: 70rpx;
+    -webkit-justify-content: center;
+    justify-content: center;
+    min-width: 132rpx;
+    padding: 0 22rpx
+}
+
+.config-selector-action--ghost {
+    background: rgba(24,32,52,.94);
+    border: 1rpx solid hsla(0,0%,100%,.08);
+    color: #dce9f4
+}
+
+.config-selector-action--save {
+    background: linear-gradient(135deg,#00f0ff,#0df2a3);
+    color: #031014
+}
+
+.config-selector-action.is-disabled {
+    opacity: .42
+}

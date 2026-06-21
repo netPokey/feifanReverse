@@ -1,0 +1,66 @@
+<view class="page theme-{{appTheme}} font-{{appFontSizeClass}} page-shell automation-page" style="{{appFontSizeStyle}}">
+    <view class="page-titlebar page-titlebar--with-back" style="{{titlebarStyle}}">
+        <view bindtap="back" class="page-titlebar__back">
+            <image class="page-titlebar__back-icon" mode="aspectFit" src="{{backIconPath}}"></image>
+        </view>
+    </view>
+    <view class="panel section automation-hero">
+        <view>
+            <view class="strong">本地自动化</view>
+            <view class="muted">在小程序前台、蓝牙已鉴权时，按条件顺序执行动作。</view>
+        </view>
+        <view class="tag {{connected?'is-ready':''}}">{{connected?'已连接':'未连接'}}</view>
+    </view>
+    <view class="panel section running-card" wx:if="{{running}}">
+        <view>
+            <view class="strong">自动化正在执行</view>
+            <view class="muted">断开蓝牙会立即停止后续动作。</view>
+        </view>
+        <view bindtap="cancelRunning" class="btn secondary">取消</view>
+    </view>
+    <view class="panel section flow-card" wx:for="{{flows}}" wx:key="id">
+        <view class="flow-card__head">
+            <view>
+                <view class="flow-card__title">{{item.name}}</view>
+                <view class="muted">{{item.triggerName}} · {{item.cooldownText}} · {{item.confirmText}}</view>
+            </view>
+            <view bindtap="toggleFlow" class="neo-switch neo-switch--sm {{item.enabled?'is-on':''}}" data-id="{{item.id}}">
+                <view class="neo-switch__thumb"></view>
+            </view>
+        </view>
+        <view class="flow-card__metrics">
+            <view>
+                <view class="flow-card__metric-value">{{item.stepCount}}</view>
+                <view class="flow-card__metric-label">动作</view>
+            </view>
+            <view>
+                <view class="flow-card__metric-value">{{item.lastRunText}}</view>
+                <view class="flow-card__metric-label">上次执行</view>
+            </view>
+        </view>
+        <view class="button-row">
+            <view bindtap="openEdit" class="btn secondary" data-id="{{item.id}}">
+                <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-menu@48.png"></image>
+                <text>配置</text>
+            </view>
+            <view bindtap="runNow" class="btn {{connected?'':'is-disabled'}}" data-id="{{item.id}}">
+                <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-send@48.png"></image>
+                <text>立即执行</text>
+            </view>
+        </view>
+    </view>
+    <view class="panel section log-panel">
+        <view class="strong">最近记录</view>
+        <view class="muted log-empty" wx:if="{{logs.length===0}}">暂无执行记录</view>
+        <view class="log-row" wx:for="{{logs}}" wx:key="time">
+            <view class="log-row__time">{{item.timeText}}</view>
+            <view class="log-row__body">
+                <view class="log-row__name">{{item.flowName||item.flowId||'自动化'}}</view>
+                <view class="muted">{{item.message}}</view>
+            </view>
+            <view class="log-row__status">{{item.status}}</view>
+        </view>
+    </view>
+</view>
+<app-toast toast="{{__appToast}}"></app-toast>
+<app-modal modal="{{__appModal}}"></app-modal>

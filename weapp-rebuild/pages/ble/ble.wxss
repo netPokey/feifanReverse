@@ -1,0 +1,855 @@
+.ble-page {
+    padding-bottom: 210rpx
+}
+
+.ble-rf-banner {
+    background: linear-gradient(90deg,rgba(18,30,48,.96),rgba(13,20,34,.98));
+    border: 1rpx solid rgba(148,163,184,.16);
+    border-radius: 30rpx;
+    box-shadow: 0 22rpx 60rpx rgba(0,0,0,.46),inset 0 1rpx 0 hsla(0,0%,100%,.065);
+    box-sizing: border-box;
+    gap: 22rpx;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    min-height: 132rpx;
+    padding: 30rpx
+}
+
+.ble-rf-banner,.ble-rf-banner__status {
+    -webkit-align-items: center;
+    align-items: center;
+    display: -webkit-flex;
+    display: flex
+}
+
+.ble-rf-banner__status {
+    gap: 18rpx;
+    min-width: 0
+}
+
+.ble-rf-banner__pulse {
+    -webkit-animation: bleStatusPulse 1.6s ease-in-out infinite;
+    animation: bleStatusPulse 1.6s ease-in-out infinite;
+    background: #8be8df;
+    border-radius: 50%;
+    box-shadow: 0 0 0 8rpx rgba(20,184,166,.08);
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0;
+    height: 18rpx;
+    width: 18rpx
+}
+
+.ble-rf-banner__title {
+    color: #f8fafc;
+    font-size: calc(28rpx * var(--app-font-scale));
+    font-weight: 900;
+    line-height: 1.15
+}
+
+.ble-rf-banner__meta {
+    color: #a3b2c6;
+    font-size: calc(20rpx * var(--app-font-scale));
+    font-weight: 900;
+    line-height: 1;
+    margin-top: 8rpx
+}
+
+.ble-rf-banner__tag {
+    background: rgba(30,41,59,.68);
+    border: 1rpx solid rgba(125,211,252,.18);
+    border-radius: 999rpx;
+    box-sizing: border-box;
+    color: #b9d7e8;
+    font-size: calc(18rpx * var(--app-font-scale));
+    font-weight: 900;
+    line-height: 1;
+    min-height: 46rpx;
+    padding: 0 20rpx;
+    white-space: nowrap
+}
+
+.ble-radar-card,.ble-rf-banner__tag {
+    -webkit-align-items: center;
+    align-items: center;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-justify-content: center;
+    justify-content: center
+}
+
+.ble-radar-card {
+    background: radial-gradient(circle at 50% 50%,rgba(125,211,252,.08) 0,rgba(15,23,42,.08) 38%,transparent 70%),linear-gradient(145deg,rgba(11,24,40,.98),#060a12);
+    border: 1rpx solid rgba(148,163,184,.14);
+    border-radius: 34rpx;
+    box-shadow: inset 0 -38rpx 84rpx rgba(0,0,0,.46),0 28rpx 70rpx rgba(0,0,0,.44);
+    height: 480rpx;
+    overflow: hidden;
+    position: relative
+}
+
+.ble-radar-card:active {
+    -webkit-transform: scale(.982);
+    transform: scale(.982)
+}
+
+.ble-radar-card::after {
+    -webkit-animation: bleAbyssGlow 4.2s ease-in-out infinite;
+    animation: bleAbyssGlow 4.2s ease-in-out infinite;
+    background: radial-gradient(circle,rgba(125,211,252,.065) 0,rgba(94,234,212,.022) 42%,rgba(125,211,252,0) 72%);
+    border-radius: 50%;
+    content: "";
+    height: 420rpx;
+    left: 50%;
+    margin: -210rpx 0 0 -210rpx;
+    pointer-events: none;
+    position: absolute;
+    top: 50%;
+    width: 420rpx;
+    z-index: 0
+}
+
+.ble-particle,.ble-radar-axis,.ble-radar-grid,.ble-radar-pulse,.ble-radar-ring,.ble-radar-sweep {
+    pointer-events: none;
+    position: absolute;
+    z-index: 1
+}
+
+.ble-radar-grid {
+    background-image: linear-gradient(rgba(125,211,252,.026) 1rpx,transparent 0),linear-gradient(90deg,rgba(125,211,252,.026) 1rpx,transparent 0);
+    background-size: 32rpx 32rpx;
+    bottom: 0;
+    left: 0;
+    opacity: .42;
+    right: 0;
+    top: 0
+}
+
+.ble-radar-axis--x {
+    background: linear-gradient(90deg,rgba(125,211,252,0),rgba(125,211,252,.04),rgba(125,211,252,0));
+    height: 1rpx;
+    left: 0;
+    right: 0;
+    top: 50%
+}
+
+.ble-radar-axis--y {
+    background: linear-gradient(180deg,rgba(125,211,252,0),rgba(125,211,252,.04),rgba(125,211,252,0));
+    bottom: 0;
+    left: 50%;
+    top: 0;
+    width: 1rpx
+}
+
+.ble-radar-sweep {
+    -webkit-animation: bleRadarSweep 5s linear infinite;
+    animation: bleRadarSweep 5s linear infinite;
+    background: conic-gradient(from 0deg,rgba(125,211,252,.24),rgba(94,234,212,.08) 24deg,rgba(125,211,252,.04) 68deg,rgba(125,211,252,.01) 140deg,rgba(125,211,252,0) 1turn);
+    height: 340rpx;
+    width: 340rpx
+}
+
+.ble-radar-ring,.ble-radar-sweep {
+    border-radius: 50%;
+    box-shadow: none
+}
+
+.ble-radar-ring {
+    border: 1rpx solid rgba(125,211,252,.1)
+}
+
+.ble-radar-ring--outer {
+    height: 360rpx;
+    width: 360rpx
+}
+
+.ble-radar-ring--middle {
+    border-style: dashed;
+    height: 250rpx;
+    width: 250rpx
+}
+
+.ble-radar-ring--inner {
+    border-color: rgba(125,211,252,.075);
+    height: 150rpx;
+    width: 150rpx
+}
+
+.ble-radar-pulse {
+    -webkit-animation: bleSignalIn 3s ease-in infinite;
+    animation: bleSignalIn 3s ease-in infinite;
+    background: rgba(94,234,212,.006);
+    border: 1rpx dashed rgba(94,234,212,.18);
+    border-radius: 50%;
+    height: 190rpx;
+    width: 190rpx
+}
+
+.ble-radar-pulse--two {
+    -webkit-animation-delay: 1s;
+    animation-delay: 1s
+}
+
+.ble-radar-pulse--three {
+    -webkit-animation-delay: 2s;
+    animation-delay: 2s
+}
+
+.ble-radar-core {
+    -webkit-align-items: center;
+    align-items: center;
+    background: radial-gradient(circle at 50% 38%,rgba(125,211,252,.12) 0,#0b1220 38%,#03060b 76%);
+    border: 4rpx solid rgba(125,211,252,.22);
+    border-radius: 50%;
+    box-shadow: 0 22rpx 48rpx rgba(0,0,0,.34),inset 0 1rpx 0 hsla(0,0%,100%,.08);
+    display: -webkit-flex;
+    display: flex;
+    height: 112rpx;
+    -webkit-justify-content: center;
+    justify-content: center;
+    position: relative;
+    width: 112rpx;
+    z-index: 5
+}
+
+.ble-radar-core.is-searching {
+    -webkit-animation: bleCorePulse 1.4s ease-in-out infinite;
+    animation: bleCorePulse 1.4s ease-in-out infinite
+}
+
+.ble-radar-core__icon {
+    display: block;
+    height: 48rpx;
+    width: 48rpx
+}
+
+.ble-radar-core__dot {
+    background: #8be8df;
+    border: 2rpx solid #04060b;
+    border-radius: 50%;
+    box-shadow: none;
+    height: 18rpx;
+    position: absolute;
+    right: 8rpx;
+    top: 8rpx;
+    width: 18rpx
+}
+
+.ble-particle {
+    -webkit-animation: blePacketIn 2.2s ease-in-out infinite;
+    animation: blePacketIn 2.2s ease-in-out infinite;
+    border-radius: 50%;
+    height: 16rpx;
+    width: 16rpx
+}
+
+.ble-particle,.ble-particle--one {
+    background: #8be8df;
+    box-shadow: none
+}
+
+.ble-particle--one {
+    -webkit-transform: translate(170rpx,0);
+    transform: translate(170rpx,0)
+}
+
+.ble-particle--two {
+    -webkit-animation-delay: .45s;
+    animation-delay: .45s;
+    background: #f6c35f;
+    box-shadow: none;
+    -webkit-transform: translate(52rpx,162rpx);
+    transform: translate(52rpx,162rpx)
+}
+
+.ble-particle--three {
+    -webkit-animation-delay: .9s;
+    animation-delay: .9s;
+    background: #fb7185;
+    box-shadow: none;
+    -webkit-transform: translate(-138rpx,100rpx);
+    transform: translate(-138rpx,100rpx)
+}
+
+.ble-particle--four {
+    -webkit-animation-delay: 1.35s;
+    animation-delay: 1.35s;
+    background: #7dd3fc;
+    box-shadow: none;
+    -webkit-transform: translate(-138rpx,-100rpx);
+    transform: translate(-138rpx,-100rpx)
+}
+
+.ble-particle--five {
+    -webkit-animation-delay: 1.8s;
+    animation-delay: 1.8s;
+    background: #8be8df;
+    box-shadow: none;
+    -webkit-transform: translate(52rpx,-162rpx);
+    transform: translate(52rpx,-162rpx)
+}
+
+.ble-radar-metrics {
+    -webkit-align-items: center;
+    align-items: center;
+    bottom: 24rpx;
+    color: #637083;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    flex-wrap: wrap;
+    font-size: calc(18rpx * var(--app-font-scale));
+    font-weight: 900;
+    gap: 10rpx;
+    -webkit-justify-content: center;
+    justify-content: center;
+    left: 24rpx;
+    line-height: 1.2;
+    position: absolute;
+    right: 24rpx;
+    z-index: 6
+}
+
+.ble-radar-metrics .is-green {
+    color: #8be8df
+}
+
+.ble-radar-metrics .is-amber {
+    color: #f59e0b
+}
+
+.ble-radar-metrics .is-cyan {
+    color: #9bd8f0
+}
+
+.ble-radar-metrics__split {
+    background: rgba(148,163,184,.28);
+    height: 18rpx;
+    width: 1rpx
+}
+
+.ble-control-row {
+    gap: 18rpx
+}
+
+.ble-control-row,.ble-primary-btn {
+    -webkit-align-items: center;
+    align-items: center;
+    display: -webkit-flex;
+    display: flex
+}
+
+.ble-primary-btn {
+    background: linear-gradient(135deg,rgba(20,184,166,.2),rgba(15,23,42,.92));
+    border: 1rpx solid rgba(94,234,212,.22);
+    border-radius: 24rpx;
+    box-shadow: 0 18rpx 42rpx rgba(0,0,0,.26),inset 0 1rpx 0 hsla(0,0%,100%,.08);
+    box-sizing: border-box;
+    color: #b7f3df;
+    -webkit-flex: 1;
+    flex: 1;
+    font-size: calc(25rpx * var(--app-font-scale));
+    font-weight: 900;
+    gap: 10rpx;
+    -webkit-justify-content: center;
+    justify-content: center;
+    min-height: 72rpx;
+    padding: 0 22rpx;
+    transition: opacity .18s ease,border-color .22s ease,box-shadow .22s ease,-webkit-transform .18s cubic-bezier(.2,.9,.22,1.18);
+    transition: transform .18s cubic-bezier(.2,.9,.22,1.18),opacity .18s ease,border-color .22s ease,box-shadow .22s ease;
+    transition: transform .18s cubic-bezier(.2,.9,.22,1.18),opacity .18s ease,border-color .22s ease,box-shadow .22s ease,-webkit-transform .18s cubic-bezier(.2,.9,.22,1.18)
+}
+
+.ble-primary-btn--ghost,.ble-primary-btn.is-searching {
+    background: linear-gradient(135deg,rgba(14,116,144,.18),rgba(15,23,42,.92));
+    border-color: rgba(125,211,252,.2);
+    color: #b9e6f7
+}
+
+.ble-primary-btn--danger {
+    background: hsla(0,91%,71%,.08);
+    border-color: hsla(0,91%,71%,.26);
+    color: #f87171
+}
+
+.ble-device-action:active,.ble-primary-btn:active {
+    -webkit-transform: scale(.96);
+    transform: scale(.96)
+}
+
+.ble-primary-btn__icon {
+    display: block;
+    height: 32rpx;
+    width: 32rpx
+}
+
+.ble-section-title {
+    -webkit-align-items: center;
+    align-items: center;
+    border-left: 4rpx solid rgba(125,211,252,.32);
+    color: #a8b8cc;
+    display: -webkit-flex;
+    display: flex;
+    font-size: calc(22rpx * var(--app-font-scale));
+    font-weight: 900;
+    gap: 18rpx;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    letter-spacing: 1rpx;
+    line-height: 1.2;
+    margin: 36rpx 0 16rpx;
+    padding: 0 4rpx 0 16rpx
+}
+
+.ble-section-title__limit {
+    border-left: 0;
+    color: #8fa0b4;
+    font-size: calc(18rpx * var(--app-font-scale));
+    font-weight: 800;
+    padding: 0;
+    white-space: nowrap
+}
+
+.ble-cache-line {
+    color: #8fa0b4;
+    font-size: calc(21rpx * var(--app-font-scale));
+    font-weight: 800;
+    line-height: 1.2;
+    margin: -4rpx 8rpx 18rpx;
+    word-break: break-all
+}
+
+.ble-empty-card {
+    background: linear-gradient(145deg,rgba(20,28,44,.92),rgba(6,9,16,.96));
+    border: 1rpx solid rgba(148,163,184,.13);
+    border-radius: 30rpx;
+    box-sizing: border-box;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    gap: 22rpx;
+    min-height: 260rpx;
+    padding: 38rpx 34rpx;
+    text-align: center
+}
+
+.ble-empty-card,.ble-empty-card__icon {
+    -webkit-align-items: center;
+    align-items: center;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-justify-content: center;
+    justify-content: center
+}
+
+.ble-empty-card__icon {
+    background: rgba(20,28,44,.92);
+    border-radius: 50%;
+    height: 82rpx;
+    width: 82rpx
+}
+
+.ble-empty-card__image {
+    display: block;
+    height: 40rpx;
+    opacity: .72;
+    width: 40rpx
+}
+
+.ble-empty-card__text {
+    color: #8fa0b4;
+    font-size: calc(24rpx * var(--app-font-scale));
+    font-weight: 800;
+    line-height: 1.55;
+    max-width: 560rpx
+}
+
+.ble-device-list {
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    gap: 18rpx
+}
+
+.ble-device-card {
+    -webkit-align-items: center;
+    align-items: center;
+    background: linear-gradient(145deg,rgba(20,28,44,.92),rgba(8,12,20,.72));
+    border: 1rpx solid rgba(148,163,184,.13);
+    border-radius: 28rpx;
+    box-shadow: 0 20rpx 48rpx rgba(0,0,0,.24),inset 0 1rpx 0 rgba(22,30,48,.94);
+    box-sizing: border-box;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    flex-wrap: wrap;
+    gap: 20rpx;
+    -webkit-justify-content: space-between;
+    justify-content: space-between;
+    min-height: 142rpx;
+    padding: 24rpx
+}
+
+.ble-device-card.is-connected {
+    background: linear-gradient(145deg,rgba(18,34,52,.78),rgba(8,12,20,.76));
+    border-color: rgba(125,211,252,.2);
+    box-shadow: 0 20rpx 54rpx rgba(0,0,0,.25),inset 0 1rpx 0 rgba(24,32,52,.94)
+}
+
+.ble-device-card__main {
+    -webkit-flex: 1;
+    flex: 1;
+    gap: 20rpx;
+    min-width: 0
+}
+
+.ble-device-card__main,.ble-device-icon {
+    -webkit-align-items: center;
+    align-items: center;
+    display: -webkit-flex;
+    display: flex
+}
+
+.ble-device-icon {
+    background: rgba(20,28,44,.92);
+    border: 1rpx solid hsla(0,0%,100%,.055);
+    border-radius: 24rpx;
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0;
+    height: 78rpx;
+    -webkit-justify-content: center;
+    justify-content: center;
+    width: 78rpx
+}
+
+.ble-device-icon.is-connected {
+    background: rgba(30,55,72,.34);
+    border-color: rgba(125,211,252,.18);
+    box-shadow: inset 0 1rpx 0 hsla(0,0%,100%,.06)
+}
+
+.ble-device-icon__image {
+    display: block;
+    height: 42rpx;
+    width: 42rpx
+}
+
+.ble-device-info {
+    -webkit-flex: 1;
+    flex: 1;
+    min-width: 0
+}
+
+.ble-device-title {
+    -webkit-align-items: center;
+    align-items: center;
+    display: -webkit-flex;
+    display: flex;
+    -webkit-flex-wrap: wrap;
+    flex-wrap: wrap;
+    gap: 12rpx
+}
+
+.ble-device-name {
+    color: #e5edf6;
+    font-size: calc(26rpx * var(--app-font-scale));
+    font-weight: 900;
+    line-height: 1.2
+}
+
+.ble-device-secure {
+    -webkit-align-items: center;
+    align-items: center;
+    background: rgba(20,184,166,.08);
+    border: 1rpx solid rgba(94,234,212,.16);
+    border-radius: 8rpx;
+    color: #9cebd0;
+    display: -webkit-flex;
+    display: flex;
+    font-size: calc(16rpx * var(--app-font-scale));
+    font-weight: 900;
+    -webkit-justify-content: center;
+    justify-content: center;
+    line-height: 1;
+    min-height: 28rpx;
+    padding: 0 12rpx
+}
+
+.ble-device-address,.ble-device-service {
+    color: #667085;
+    font-size: calc(19rpx * var(--app-font-scale));
+    font-weight: 800;
+    line-height: 1.25;
+    margin-top: 8rpx;
+    word-break: break-all
+}
+
+.ble-device-side {
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    -webkit-flex-shrink: 0;
+    flex-shrink: 0;
+    gap: 8rpx
+}
+
+.ble-device-side,.ble-rssi-bars {
+    -webkit-align-items: flex-end;
+    align-items: flex-end;
+    display: -webkit-flex;
+    display: flex
+}
+
+.ble-rssi-bars {
+    gap: 5rpx;
+    height: 26rpx
+}
+
+.ble-rssi-bar {
+    background: #2b3444;
+    border-radius: 4rpx;
+    height: 11rpx;
+    width: 7rpx
+}
+
+.ble-rssi-bar--mid {
+    height: 18rpx
+}
+
+.ble-rssi-bar--high {
+    height: 25rpx
+}
+
+.ble-rssi-bar.is-on {
+    background: #8be8df;
+    box-shadow: none
+}
+
+.ble-rssi-value {
+    color: #8794a6;
+    font-size: calc(18rpx * var(--app-font-scale));
+    font-weight: 900;
+    line-height: 1
+}
+
+.ble-device-action {
+    -webkit-align-items: center;
+    align-items: center;
+    background: rgba(30,41,59,.6);
+    border: 1rpx solid rgba(125,211,252,.16);
+    border-radius: 18rpx;
+    color: #b9d7e8;
+    display: -webkit-flex;
+    display: flex;
+    font-size: calc(20rpx * var(--app-font-scale));
+    font-weight: 900;
+    -webkit-justify-content: center;
+    justify-content: center;
+    line-height: 1;
+    min-height: 54rpx;
+    padding: 0 18rpx;
+    white-space: nowrap
+}
+
+.ble-device-action.is-connected {
+    background: hsla(0,91%,71%,.08);
+    border-color: hsla(0,91%,71%,.28);
+    color: #f87171
+}
+
+.ble-link-metrics {
+    border-top: 1rpx solid rgba(148,163,184,.1);
+    display: grid;
+    gap: 16rpx;
+    grid-template-columns: repeat(2,minmax(0,1fr));
+    padding-top: 18rpx;
+    width: 100%
+}
+
+.ble-link-metric {
+    background: rgba(20,28,44,.92);
+    border: 1rpx solid rgba(148,163,184,.13);
+    border-radius: 16rpx;
+    box-sizing: border-box;
+    min-height: 78rpx;
+    padding: 16rpx
+}
+
+.ble-link-metric__label {
+    color: #596579;
+    font-size: calc(16rpx * var(--app-font-scale));
+    font-weight: 900;
+    line-height: 1.2
+}
+
+.ble-link-metric__value {
+    color: #cbd5e1;
+    font-size: calc(20rpx * var(--app-font-scale));
+    font-weight: 900;
+    line-height: 1;
+    margin-top: 8rpx
+}
+
+.ble-link-metric__value.is-cyan {
+    color: #9bd8f0
+}
+
+@-webkit-keyframes bleStatusPulse {
+    0%,100% {
+        opacity: .78
+    }
+
+    50% {
+        opacity: 1
+    }
+}
+
+@keyframes bleStatusPulse {
+    0%,100% {
+        opacity: .78
+    }
+
+    50% {
+        opacity: 1
+    }
+}
+
+@-webkit-keyframes bleRadarSweep {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg)
+    }
+
+    100% {
+        -webkit-transform: rotate(1turn);
+        transform: rotate(1turn)
+    }
+}
+
+@keyframes bleRadarSweep {
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg)
+    }
+
+    100% {
+        -webkit-transform: rotate(1turn);
+        transform: rotate(1turn)
+    }
+}
+
+@-webkit-keyframes bleSignalIn {
+    0% {
+        opacity: 0;
+        -webkit-transform: scale(.42);
+        transform: scale(.42)
+    }
+
+    35% {
+        opacity: .72
+    }
+
+    100% {
+        opacity: 0;
+        -webkit-transform: scale(1.95);
+        transform: scale(1.95)
+    }
+}
+
+@keyframes bleSignalIn {
+    0% {
+        opacity: 0;
+        -webkit-transform: scale(.42);
+        transform: scale(.42)
+    }
+
+    35% {
+        opacity: .72
+    }
+
+    100% {
+        opacity: 0;
+        -webkit-transform: scale(1.95);
+        transform: scale(1.95)
+    }
+}
+
+@-webkit-keyframes blePacketIn {
+    0% {
+        opacity: 0
+    }
+
+    35% {
+        box-shadow: none;
+        opacity: 1
+    }
+
+    100% {
+        opacity: 0;
+        -webkit-transform: translate(0,0) scale(.2);
+        transform: translate(0,0) scale(.2)
+    }
+}
+
+@keyframes blePacketIn {
+    0% {
+        opacity: 0
+    }
+
+    35% {
+        box-shadow: none;
+        opacity: 1
+    }
+
+    100% {
+        opacity: 0;
+        -webkit-transform: translate(0,0) scale(.2);
+        transform: translate(0,0) scale(.2)
+    }
+}
+
+@-webkit-keyframes bleCorePulse {
+    0%,100% {
+        box-shadow: 0 20rpx 44rpx rgba(0,0,0,.32),inset 0 1rpx 0 hsla(0,0%,100%,.08)
+    }
+
+    50% {
+        box-shadow: 0 24rpx 54rpx rgba(0,0,0,.38),inset 0 1rpx 0 hsla(0,0%,100%,.1)
+    }
+}
+
+@keyframes bleCorePulse {
+    0%,100% {
+        box-shadow: 0 20rpx 44rpx rgba(0,0,0,.32),inset 0 1rpx 0 hsla(0,0%,100%,.08)
+    }
+
+    50% {
+        box-shadow: 0 24rpx 54rpx rgba(0,0,0,.38),inset 0 1rpx 0 hsla(0,0%,100%,.1)
+    }
+}
+
+@-webkit-keyframes bleAbyssGlow {
+    0%,100% {
+        opacity: .46;
+        -webkit-transform: scale(.92);
+        transform: scale(.92)
+    }
+
+    50% {
+        opacity: .82;
+        -webkit-transform: scale(1.05);
+        transform: scale(1.05)
+    }
+}
+
+@keyframes bleAbyssGlow {
+    0%,100% {
+        opacity: .46;
+        -webkit-transform: scale(.92);
+        transform: scale(.92)
+    }
+
+    50% {
+        opacity: .82;
+        -webkit-transform: scale(1.05);
+        transform: scale(1.05)
+    }
+}

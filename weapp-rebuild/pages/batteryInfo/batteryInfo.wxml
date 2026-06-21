@@ -1,0 +1,91 @@
+<view class="page theme-{{appTheme}} font-{{appFontSizeClass}} battery-page page-shell" style="{{appFontSizeStyle}}">
+    <view class="page-titlebar page-titlebar--with-back" style="{{titlebarStyle}}">
+        <view bindtap="back" class="page-titlebar__back">
+            <image class="page-titlebar__back-icon" mode="aspectFit" src="{{backIconPath}}"></image>
+        </view>
+    </view>
+    <view class="battery-overview section">
+        <view class="panel battery-stat battery-stat--primary">
+            <view class="battery-stat__head">
+                <text>当前状态</text>
+                <view class="battery-hero__status {{connected?'is-online':'is-offline'}}">
+                    <view class="battery-hero__dot"></view>
+                    <text>{{statusText}}</text>
+                </view>
+            </view>
+            <view class="battery-stat__value">{{odometer}}</view>
+            <view class="battery-stat__label">车辆里程</view>
+        </view>
+        <view class="panel battery-stat">
+            <view class="battery-stat__head">
+                <text>电芯均衡</text>
+                <text class="battery-stat__badge">BMS</text>
+            </view>
+            <view class="battery-stat__value">{{avgVol}} V</view>
+            <view class="battery-stat__label">压差 {{imbVol}} mV</view>
+        </view>
+    </view>
+    <view class="panel section battery-summary">
+        <view class="battery-summary__item">
+            <text class="muted">里程</text>
+            <text class="strong">{{odometer}}</text>
+        </view>
+        <view class="battery-summary__item">
+            <text class="muted">电芯均值</text>
+            <text class="strong">{{avgVol}} V</text>
+        </view>
+        <view class="battery-summary__item">
+            <text class="muted">压差</text>
+            <text class="strong">{{imbVol}} mV</text>
+        </view>
+    </view>
+    <view class="battery-tabs section">
+        <view bindtap="selectTab" class="battery-tab {{select===index?'is-active':''}}" data-index="{{index}}" wx:for="{{tabs}}" wx:key="*this">
+            <image class="battery-tab__icon" mode="aspectFit" src="{{select===index?'/assets/icons/generated/action-battery@48.png':'/assets/icons/generated/button-select@48.png'}}"></image>
+            <text>{{item}}</text>
+        </view>
+    </view>
+    <view class="panel section battery-disabled" wx:if="{{!connected}}">
+        <view class="battery-disabled__title">等待蓝牙数据</view>
+        <view class="muted">功能入口已保留，连接蓝牙后会自动轮询当前页签。</view>
+    </view>
+    <view class="panel section battery-read-state battery-read-state--{{readState}}">
+        <view>
+            <view class="strong">读取状态</view>
+            <view class="muted">{{readMessage}}</view>
+        </view>
+        <view class="battery-read-state__meta">
+            <view>发送 {{lastCommandText}}</view>
+            <view>回包 {{lastPacketText}}</view>
+        </view>
+    </view>
+    <view class="panel section battery-cell-stats" wx:if="{{select===1}}">
+        <view class="battery-cell-stat">
+            <text class="muted">最高</text>
+            <text class="strong">{{maxVol}} V</text>
+        </view>
+        <view class="battery-cell-stat">
+            <text class="muted">最低</text>
+            <text class="strong">{{minVol}} V</text>
+        </view>
+        <view class="battery-cell-stat">
+            <text class="muted">最近帧</text>
+            <text class="strong">{{index}}</text>
+        </view>
+    </view>
+    <view class="grid battery-grid battery-grid--{{select}}">
+        <view class="card battery-card {{item.max?'is-max':''}} {{item.min?'is-min':''}} {{!connected?'is-disabled':''}}" wx:for="{{list[select]}}" wx:key="name">
+            <view class="card-title">{{item.name}}</view>
+            <view class="card-value">{{item.val}}</view>
+        </view>
+    </view>
+    <view class="panel empty" wx:if="{{list[select].length===0}}">暂无数据，连接后会自动读取。</view>
+    <view class="button-row section battery-actions">
+        <view bindtap="refreshCurrent" class="btn {{connected?'':'is-disabled'}}">
+            <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-search@48.png"></image>
+            <text>立即读取</text>
+        </view>
+    </view>
+</view>
+<app-toast toast="{{__appToast}}"></app-toast>
+<app-modal modal="{{__appModal}}"></app-modal>

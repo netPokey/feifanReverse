@@ -1,0 +1,16 @@
+<view class="action-grid action-grid--{{theme}}">
+    <view bindtap="handleTap" class="action-grid__item {{item.disabled?'is-disabled':''}}" data-disabled="{{item.disabled}}" data-id="{{item.id}}" wx:for="{{items}}" wx:key="id">
+        <view class="action-grid__icon action-grid__icon--{{item.id}}">
+            <image class="action-grid__icon-image" mode="aspectFit" src="{{item.iconPath}}" wx:if="{{item.iconPath}}"></image>
+            <image class="action-grid__icon-image" mode="aspectFit" src="/assets/icons/generated/button-menu@72.png" wx:else></image>
+        </view>
+        <view class="action-grid__content">
+            <view class="action-grid__head">
+                <view class="action-grid__name">{{item.name}}</view>
+                <view class="action-grid__badge" wx:if="{{item.badge}}">{{item.badge}}</view>
+            </view>
+            <view class="action-grid__desc">{{item.desc}}</view>
+        </view>
+        <image class="action-grid__chevron" mode="aspectFit" src="/assets/icons/generated/chevron-right@48.png"></image>
+    </view>
+</view>

@@ -1,0 +1,80 @@
+<view class="page theme-{{appTheme}} font-{{appFontSizeClass}} page-shell custom-switch-page" style="{{appFontSizeStyle}}">
+    <view class="page-titlebar page-titlebar--with-back" style="{{titlebarStyle}}">
+        <view bindtap="back" class="page-titlebar__back">
+            <image class="page-titlebar__back-icon" mode="aspectFit" src="{{backIconPath}}"></image>
+        </view>
+    </view>
+    <view class="panel section custom-switch-hero">
+        <view>
+            <view class="strong">场景开关</view>
+            <view class="muted">{{loadMessage}}</view>
+        </view>
+        <view class="tag {{connected?'is-ready':''}}">{{connected?'已连接':'未连接'}}</view>
+    </view>
+    <view class="custom-switch-actions section">
+        <view bindtap="loadModuleConfig" class="btn secondary">
+            <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-read@48.png"></image>
+            <text>读取模块</text>
+        </view>
+        <view bindtap="addRule" class="btn">
+            <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-add@48.png"></image>
+            <text>新建开关</text>
+        </view>
+    </view>
+    <view class="empty panel" wx:if="{{rules.length===0}}">还没有场景开关，点击新建后绑定模块快捷指令。</view>
+    <view class="scene-card-list section" wx:if="{{rules.length}}">
+        <view bindtap="selectRule" class="panel scene-card {{index===currentIndex?'is-active':''}}" data-idx="{{index}}" wx:for="{{rules}}" wx:key="id">
+            <view class="scene-card__head">
+                <view class="scene-card__title-wrap">
+                    <view class="scene-card__title">{{item.name}}</view>
+                    <view class="scene-card__meta">{{item.stateText}} · {{item.shortcutCount}} 条快捷指令</view>
+                </view>
+                <view catchtap="toggleCurrent" class="neo-switch {{item.enabled?'is-on':''}}" data-idx="{{index}}">
+                    <view class="neo-switch__thumb"></view>
+                </view>
+            </view>
+            <view class="scene-card__shortcuts" wx:if="{{item.shortcuts.length}}">
+                <view class="scene-shortcut" wx:for="{{item.shortcuts}}" wx:for-index="shortcutIndex" wx:for-item="shortcut" wx:key="index">
+                    <view class="scene-shortcut__index">{{shortcutIndex+1}}</view>
+                    <view class="scene-shortcut__body">
+                        <view class="scene-shortcut__title">{{shortcut.btnname}}</view>
+                        <view class="scene-shortcut__desc">{{shortcut.funname}}</view>
+                    </view>
+                </view>
+            </view>
+            <view class="scene-card__empty" wx:else>暂未选择快捷指令，点击选择指令后启用。</view>
+            <view class="scene-card__actions">
+                <view catchtap="openShortcutSelector" class="mini-text-action mini-text-action--primary" data-idx="{{index}}">选择指令</view>
+                <view catchtap="renameCurrent" class="mini-text-action" data-idx="{{index}}">重命名</view>
+                <view catchtap="removeCurrent" class="mini-text-action mini-text-action--danger" data-idx="{{index}}">删除</view>
+            </view>
+        </view>
+    </view>
+    <view catchtouchmove="catchTouchMove" class="shortcut-selector" wx:if="{{selector.show}}">
+        <view bindtap="closeShortcutSelector" class="shortcut-selector__mask"></view>
+        <view class="shortcut-selector__panel">
+            <view class="shortcut-selector__head">
+                <view>
+                    <view class="shortcut-selector__title">选择快捷指令</view>
+                    <view class="shortcut-selector__desc">已选 {{selector.selectedCount}} 条，同一条指令不能被多个开关同时绑定</view>
+                </view>
+                <view bindtap="closeShortcutSelector" class="shortcut-selector__close">×</view>
+            </view>
+            <scroll-view scrollY class="shortcut-selector__body">
+                <view bindtap="toggleSelectorShortcut" class="selector-entry {{item.selected?'is-selected':''}} {{item.disabled?'is-disabled':''}}" data-idx="{{index}}" wx:for="{{selector.entries}}" wx:key="selectorIndex">
+                    <view class="selector-entry__check">{{item.selected?'✓':''}}</view>
+                    <view class="selector-entry__body">
+                        <view class="selector-entry__title">{{item.btnname}}</view>
+                        <view class="selector-entry__desc">{{item.ownerText}}</view>
+                    </view>
+                </view>
+            </scroll-view>
+            <view class="shortcut-selector__footer">
+                <view bindtap="closeShortcutSelector" class="selector-action selector-action--ghost">取消</view>
+                <view bindtap="saveShortcutSelector" class="selector-action selector-action--save">保存选择</view>
+            </view>
+        </view>
+    </view>
+</view>
+<app-toast toast="{{__appToast}}"></app-toast>
+<app-modal modal="{{__appModal}}"></app-modal>

@@ -1,0 +1,11 @@
+<view class="tab-shell tab-shell--{{themeMode}} {{accessLocked?'is-access-locked':''}}" style="{{appFontSizeStyle}}">
+    <view class="tab-bar">
+        <view bindtap="switchTab" class="tab-item {{selected===index?'is-active':''}} {{accessLocked?'is-locked':''}}" data-index="{{index}}" data-path="{{item.pagePath}}" wx:for="{{list}}" wx:key="pagePath">
+            <view class="tab-glow"></view>
+            <view class="tab-icon">
+                <image class="tab-icon__image" mode="aspectFit" src="{{selected===index?item.activeIconPath:item.iconPath}}"></image>
+            </view>
+            <view class="tab-label">{{item.text}}</view>
+        </view>
+    </view>
+</view>

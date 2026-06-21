@@ -1,0 +1,15 @@
+<view catchtouchmove="noop" class="app-modal-host app-modal-host--{{modal.themeMode}}" style="{{modal.fontSizeStyle}}" wx:if="{{modal.visible}}">
+    <view bindtap="cancel" class="app-modal-mask"></view>
+    <view class="app-modal">
+        <view class="app-modal__halo"></view>
+        <view class="app-modal__icon">
+            <image class="app-modal__icon-image" mode="aspectFit" src="/assets/icons/generated/toast-info@48.png"></image>
+        </view>
+        <view class="app-modal__title">{{modal.title}}</view>
+        <view class="app-modal__content">{{modal.content}}</view>
+        <view class="app-modal__actions {{modal.showCancel?'':'is-single'}}">
+            <view bindtap="cancel" class="app-modal__button app-modal__button--cancel" wx:if="{{modal.showCancel}}">{{modal.cancelText}}</view>
+            <view bindtap="confirm" class="app-modal__button app-modal__button--confirm">{{modal.confirmText}}</view>
+        </view>
+    </view>
+</view>

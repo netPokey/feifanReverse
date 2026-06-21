@@ -1,0 +1,87 @@
+<view class="page theme-{{appTheme}} font-{{appFontSizeClass}} ble-host-page page-shell" style="{{appFontSizeStyle}}">
+    <view class="page-titlebar page-titlebar--with-back" style="{{titlebarStyle}}">
+        <view bindtap="back" class="page-titlebar__back">
+            <image class="page-titlebar__back-icon" mode="aspectFit" src="{{backIconPath}}"></image>
+        </view>
+    </view>
+    <view class="ble-host-hero section">
+        <view class="hero-copy">
+            <view class="hero__eyebrow">BLE HOST</view>
+            <view class="hero__title">模块主机配对</view>
+            <view class="hero__sub">{{lastMessage}}</view>
+        </view>
+        <view class="host-orb {{connected?'is-online':''}}">
+            <image class="host-orb__icon" mode="aspectFit" src="/assets/icons/generated/button-pair@48.png"></image>
+            <text>{{connected?'在线':'离线'}}</text>
+        </view>
+    </view>
+    <view class="panel section status-panel">
+        <view class="row">
+            <view>
+                <view class="strong">{{statusText}}</view>
+                <view class="muted">搜索 {{findCount}} 个 / 已配对 {{bondCount}} 个</view>
+            </view>
+            <view class="tag {{loading?'tag-live':''}}">{{loading?'搜索中':'待命'}}</view>
+        </view>
+        <view class="button-row host-actions">
+            <view bindtap="toggle" class="btn {{!connected?'is-disabled':loading?'secondary':''}}">
+                <image class="btn-icon" mode="aspectFit" src="{{loading?'/assets/icons/generated/button-stop@48.png':'/assets/icons/generated/button-search@48.png'}}"></image>
+                <text>{{loading?'停止搜索':'搜索按钮'}}</text>
+            </view>
+            <view bindtap="queryBondList" class="btn secondary {{!connected?'is-disabled':''}}">
+                <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-refresh@48.png"></image>
+                <text>刷新配对</text>
+            </view>
+        </view>
+    </view>
+    <view class="section-title">
+        <text>已配对设备</text>
+        <text>{{bondCount}}</text>
+    </view>
+    <view class="empty panel host-empty" wx:if="{{bondList.length===0}}">
+        <text>{{connected?'暂无已配对外部蓝牙按钮':'连接模块后自动同步已配对列表'}}</text>
+    </view>
+    <view class="panel host-card bond-card" wx:for="{{bondList}}" wx:key="mac">
+        <view class="host-card__main">
+            <view class="host-card__title">{{item.name}}</view>
+            <view class="host-card__meta">{{item.mac}}</view>
+            <view class="host-chip-row">
+                <view class="host-chip">电量 {{item.battText}}</view>
+                <view class="host-chip">信号 {{item.rssiText}}</view>
+                <view class="host-chip">{{item.addrTypeText}}</view>
+            </view>
+        </view>
+        <view class="host-card__side">
+            <view class="tag">已配对</view>
+            <view bindtap="removeBond" class="icon-action danger {{!connected?'is-disabled':''}}" data-mac="{{item.mac}}">
+                <image class="icon-action__icon" mode="aspectFit" src="/assets/icons/generated/button-clear@48.png"></image>
+            </view>
+        </view>
+    </view>
+    <view class="section-title">
+        <text>搜索结果</text>
+        <text>{{findCount}}</text>
+    </view>
+    <view class="empty panel host-empty" wx:if="{{findList.length===0}}">
+        <text>{{connected?'暂未发现可配对设备，点击搜索或等待模块回包':'未连接时保留入口，操作按钮为禁用态'}}</text>
+    </view>
+    <view class="panel host-card" wx:for="{{findList}}" wx:key="mac">
+        <view class="host-card__main">
+            <view class="host-card__title">{{item.name}}</view>
+            <view class="host-card__meta">{{item.mac}}</view>
+            <view class="host-chip-row">
+                <view class="host-chip">信号 {{item.rssiText}}</view>
+                <view class="host-chip">{{item.signalLevel}}</view>
+                <view class="host-chip">{{item.addrTypeText}}</view>
+            </view>
+        </view>
+        <view class="host-card__side">
+            <view bindtap="connect" class="btn mini {{!connected?'is-disabled':''}}" data-mac="{{item.mac}}">
+                <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-connect@48.png"></image>
+                <text>连接</text>
+            </view>
+        </view>
+    </view>
+</view>
+<app-toast toast="{{__appToast}}"></app-toast>
+<app-modal modal="{{__appModal}}"></app-modal>

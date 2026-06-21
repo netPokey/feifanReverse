@@ -1,0 +1,8 @@
+<view catchtouchmove="noop" class="app-toast-host app-toast-host--{{toast.position||'default'}}" wx:if="{{toast.visible}}">
+    <view class="app-toast app-toast--{{toast.type}} app-toast--theme-{{toast.theme||'midnight'}} {{toast.leaving?'is-leaving':''}}">
+        <view class="app-toast__mark">
+            <image class="app-toast__mark-image" mode="aspectFit" src="{{toast.iconPath}}"></image>
+        </view>
+        <view class="app-toast__message">{{toast.title}}</view>
+    </view>
+</view>

@@ -1,0 +1,25 @@
+{
+  "description": "TSL 电子模块控制小程序（由 wxapkg 反编译还原）",
+  "appid": "touristappid",
+  "projectname": "weapp-rebuild",
+  "compileType": "miniprogram",
+  "libVersion": "3.15.2",
+  "miniprogramRoot": "./",
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "enhance": true,
+    "postcss": true,
+    "minified": false,
+    "minifyJS": false,
+    "minifyWXML": false,
+    "minifyWXSS": false,
+    "compileHotReLoad": true,
+    "useApiHook": true,
+    "bigPackageSizeSupport": true,
+    "ignoreDevUnusedFiles": false,
+    "checkInvalidKey": true,
+    "ignoreUploadUnusedFiles": true
+  },
+  "condition": {}
+}

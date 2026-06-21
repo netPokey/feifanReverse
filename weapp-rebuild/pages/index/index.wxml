@@ -1,0 +1,195 @@
+<view class="page theme-{{appTheme}} font-{{appFontSizeClass}} page-shell index-page {{accessLocked?'is-access-locked':''}}" style="{{appFontSizeStyle}}">
+    <view bindtap="handleStatusBarTap" class="status-bar status-bar--{{connectionStatus.tone}}">
+        <view class="status-bar__indicator">
+            <view class="status-bar__dot"></view>
+            <view class="status-bar__pulse"></view>
+        </view>
+        <view class="status-bar__text">
+            <view class="status-bar__label">{{connectionStatus.label}}</view>
+            <view class="status-bar__desc">{{connectionStatus.desc}}</view>
+        </view>
+        <view class="status-bar__chevron"></view>
+    </view>
+    <view class="health-card section {{healthPanel.fromCache?'is-cache-view':''}}">
+        <view class="health-card__content">
+            <view class="health-summary">
+                <view class="health-metric health-metric--battery">
+                    <view class="health-metric__head">
+                        <view class="health-metric__label-group">
+                            <view class="health-metric__icon health-metric__icon--battery">
+                                <view class="css-battery-icon">
+                                    <view class="css-battery-icon__body" style="border-color:{{healthPanel.batteryIconColor}};">
+                                        <view class="css-battery-icon__fill" style="width:{{healthPanel.batteryValue}}%;background:{{healthPanel.batteryIconColor}};"></view>
+                                    </view>
+                                    <view class="css-battery-icon__cap" style="background:{{healthPanel.batteryIconColor}};"></view>
+                                </view>
+                            </view>
+                            <view class="health-metric__title">剩余电量</view>
+                        </view>
+                        <view bindtap="handleBatteryHeat" class="health-heat-btn {{healthPanel.batteryHeatActive?'is-active':''}} {{healthPanel.batteryHeatBusy?'is-busy':''}} {{healthPanel.batteryHeatDisabled?'is-disabled':''}}">
+                            <image class="health-heat-btn__icon" mode="aspectFit" src="{{healthPanel.batteryHeatIconPath}}"></image>
+                            <text>{{healthPanel.batteryHeatActive?'加热中':'电池加热'}}</text>
+                        </view>
+                    </view>
+                    <view class="health-metric__value">
+                        <text class="health-metric__number">{{healthPanel.batteryPercentValue}}</text>
+                        <text class="health-metric__unit" wx:if="{{healthPanel.batteryPercentUnit}}">{{healthPanel.batteryPercentUnit}}</text>
+                    </view>
+                    <view class="health-progress">
+                        <view class="health-progress__bar" style="width:{{healthPanel.batteryValue}}%;"></view>
+                    </view>
+                </view>
+                <view class="health-metric health-metric--range">
+                    <view class="health-metric__head">
+                        <view class="health-metric__label-group">
+                            <view class="health-metric__icon health-metric__icon--range">
+                                <view class="css-gauge-icon">
+                                    <view class="css-gauge-icon__arc" style="border-color:{{healthPanel.rangeIconColor}};"></view>
+                                    <view class="css-gauge-icon__needle" style="background:{{healthPanel.rangeIconColor}};"></view>
+                                </view>
+                            </view>
+                            <view class="health-metric__title">剩余里程</view>
+                        </view>
+                    </view>
+                    <view class="health-metric__value">
+                        <text class="health-metric__number">{{healthPanel.rangeValue}}</text>
+                        <text class="health-metric__unit" wx:if="{{healthPanel.rangeUnit}}">{{healthPanel.rangeUnit}}</text>
+                    </view>
+                    <view class="health-metric__sub">
+                        <text class="health-metric__sub-label">总里程</text>
+                        <text class="health-metric__sub-number">{{healthPanel.odometerValue}}</text>
+                        <text class="health-metric__sub-unit" wx:if="{{healthPanel.odometerUnit}}">{{healthPanel.odometerUnit}}</text>
+                    </view>
+                </view>
+            </view>
+            <view class="health-card__bottom">
+                <view bindtap="openTrips" class="trip-panel {{tripHasRecords?'has-records':'is-empty'}}" style="{{tripPanelStyle}}">
+                    <view class="trip-panel__ambient"></view>
+                    <view class="trip-panel__route"></view>
+                    <swiper bindchange="changeTripCard" circular="{{tripCards.length>1}}" class="trip-swiper" current="{{tripCurrent}}" style="{{tripPanelStyle}}" wx:if="{{tripCards.length}}">
+                        <swiper-item wx:for="{{tripCards}}" wx:key="id">
+                            <view class="trip-card {{item.active?'is-active':''}}" style="{{tripPanelStyle}}">
+                                <view class="trip-card__head">
+                                    <view class="trip-card__head-text">
+                                        <view class="trip-card__title" wx:if="{{item.active}}">{{item.title}}</view>
+                                        <view class="trip-card__time">{{item.timeText}}</view>
+                                    </view>
+                                    <view class="trip-card__badge is-active" wx:if="{{item.active}}">
+                                        <view class="trip-card__badge-dot"></view>
+                                        <text>进行中</text>
+                                    </view>
+                                </view>
+                                <view class="trip-card__body">
+                                    <view class="trip-card__primary">
+                                        <text class="trip-card__label">本次距离</text>
+                                        <text class="trip-card__distance">{{item.distanceText}}</text>
+                                    </view>
+                                    <view class="trip-card__metrics">
+                                        <view>
+                                            <text class="trip-card__metric-value">{{item.durationText}}</text>
+                                        </view>
+                                    </view>
+                                </view>
+                            </view>
+                        </swiper-item>
+                    </swiper>
+                    <view class="trip-card trip-card--empty" style="{{tripPanelStyle}}" wx:else>
+                        <view class="trip-card__empty-icon">
+                            <view class="trip-card__empty-pin trip-card__empty-pin--start"></view>
+                            <view class="trip-card__empty-line"></view>
+                            <view class="trip-card__empty-pin trip-card__empty-pin--end"></view>
+                        </view>
+                        <view class="trip-card__empty-body">
+                            <view class="trip-card__title">最近行程</view>
+                            <view class="trip-card__time">连接后开始记录本地行驶片段</view>
+                        </view>
+                        <view class="trip-card__badge">
+                            <view class="trip-card__badge-dot"></view>
+                            <text>本地</text>
+                        </view>
+                    </view>
+                </view>
+                <view class="quick-panel is-advanced">
+                    <view class="quick-panel__grid">
+                        <view bindtap="handleQuickPanelAction" class="quick-action quick-action--{{item.id}} quick-action--{{item.tone}} {{item.active?'is-active':''}} {{item.busy?'is-busy':''}} {{item.disabled?'is-disabled':''}} {{item.compact?'is-compact':''}}" data-action-id="{{item.id}}" data-id="{{item.id}}" data-index="{{index}}" data-label="{{item.label}}" wx:for="{{quickPanelActions}}" wx:key="id">
+                            <image class="quick-action__icon" mode="aspectFit" src="{{item.iconPath}}"></image>
+                            <view class="quick-action__label" wx:if="{{!item.compact}}">{{item.label}}</view>
+                        </view>
+                    </view>
+                </view>
+            </view>
+        </view>
+    </view>
+    <view class="home-bottom-area">
+        <view class="home-feature section">
+            <view class="home-section-label">常用功能</view>
+            <view class="home-feature-grid">
+                <block wx:for="{{quickActions}}" wx:key="id">
+                    <view bindtap="handleFeatureTap" class="home-feature-card home-feature-card--gauge {{item.disabled?'is-disabled':''}} {{connected?'is-connected':''}}" data-disabled="{{item.disabled}}" data-id="{{item.id}}" wx:if="{{item.id==='gauge'}}">
+                        <view class="home-gauge-card__main">
+                            <view class="home-icon home-icon--gauge">
+                                <image class="home-icon__image" mode="aspectFit" src="{{item.iconPath}}"></image>
+                            </view>
+                            <view class="home-feature-card__copy home-gauge-card__copy">
+                                <view class="home-feature-card__title">{{item.name}}</view>
+                                <view class="home-feature-card__desc">{{item.desc}}</view>
+                            </view>
+                        </view>
+                        <view class="home-gauge-card__controls">
+                            <view catchtap="autoGauge" class="home-gauge-auto">
+                                <view class="home-gauge-auto__text">
+                                    <view class="home-gauge-auto__title">自动启动</view>
+                                </view>
+                                <view class="home-auto-switch {{isAutoGauge?'is-on':''}}">
+                                    <view class="home-auto-switch__thumb"></view>
+                                </view>
+                            </view>
+                        </view>
+                    </view>
+                    <view bindtap="handleFeatureTap" class="home-feature-card home-feature-card--{{item.id}} {{item.disabled?'is-disabled':''}} {{connected?'is-connected':''}}" data-disabled="{{item.disabled}}" data-id="{{item.id}}" wx:else>
+                        <view class="home-feature-card__head">
+                            <view class="home-icon home-icon--{{item.id}}">
+                                <image class="home-icon__image" mode="aspectFit" src="{{item.iconPath}}"></image>
+                            </view>
+                            <view class="home-feature-badge home-feature-badge--{{item.id}}">{{item.homeBadge}}</view>
+                        </view>
+                        <view class="home-feature-card__copy">
+                            <view class="home-feature-card__title">{{item.name}}</view>
+                            <view class="home-feature-card__desc">{{item.desc}}</view>
+                        </view>
+                    </view>
+                </block>
+            </view>
+        </view>
+        <view class="home-shortcut-row">
+            <view class="home-shortcut-grid">
+                <view bindtap="handleShortcutTap" class="home-shortcut-card home-shortcut-card--ap {{homeShortcutApDisabled?'is-disabled':''}}" data-id="settingsAp">
+                    <view class="home-shortcut-card__head">
+                        <view class="home-icon home-icon--settingsAp">
+                            <image class="home-icon__image" mode="aspectFit" src="{{homeShortcutApIcon}}"></image>
+                        </view>
+                        <view class="home-feature-badge home-feature-badge--settingsAp">{{homeShortcutApBadge}}</view>
+                    </view>
+                    <view class="home-feature-card__copy">
+                        <view class="home-feature-card__title">AP辅助参数</view>
+                        <view class="home-feature-card__desc">AP恢复、免打扰与滚轮</view>
+                    </view>
+                </view>
+                <view bindtap="handleShortcutTap" class="home-shortcut-card home-shortcut-card--quick {{homeShortcutQuickDisabled?'is-disabled':''}}" data-id="settingsQuick">
+                    <view class="home-shortcut-card__head">
+                        <view class="home-icon home-icon--settingsQuick">
+                            <image class="home-icon__image" mode="aspectFit" src="{{homeShortcutQuickIcon}}"></image>
+                        </view>
+                        <view class="home-feature-badge home-feature-badge--settingsQuick">{{homeShortcutQuickBadge}}</view>
+                    </view>
+                    <view class="home-feature-card__copy">
+                        <view class="home-feature-card__title">快捷功能</view>
+                        <view class="home-feature-card__desc">灯光、门盖与驾驶偏好</view>
+                    </view>
+                </view>
+            </view>
+        </view>
+    </view>
+</view>
+<app-toast toast="{{__appToast}}"></app-toast>
+<app-modal modal="{{__appModal}}"></app-modal>

@@ -1,0 +1,81 @@
+<view class="page theme-{{appTheme}} font-{{appFontSizeClass}} page-shell" style="{{appFontSizeStyle}}">
+    <view class="page-titlebar page-titlebar--with-back" style="{{titlebarStyle}}">
+        <view bindtap="back" class="page-titlebar__back">
+            <image class="page-titlebar__back-icon" mode="aspectFit" src="{{backIconPath}}"></image>
+        </view>
+    </view>
+    <view class="panel section glass-hero">
+        <view class="row">
+            <view>
+                <view class="strong">备份恢复</view>
+                <view class="muted">{{message}}</view>
+            </view>
+            <view class="tag">{{useLocalFallback?'本地兜底':'云端'}}</view>
+        </view>
+        <view class="backup-search">
+            <input bindinput="inputDeviceId" placeholder="输入设备 ID 查询他人分享备份" value="{{inputId}}"></input>
+            <view bindtap="queryBackup" class="btn secondary">
+                <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-search@48.png"></image>
+                <text>查询</text>
+            </view>
+            <view bindtap="loadSelfBackup" class="btn secondary">
+                <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-refresh@48.png"></image>
+                <text>本机</text>
+            </view>
+        </view>
+        <view class="backup-bulk-actions">
+            <view bindtap="backupAll" class="btn secondary backup-bulk-actions__btn">
+                <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-read@48.png"></image>
+                <text>全量备份</text>
+            </view>
+            <view bindtap="recoverAll" class="btn warn backup-bulk-actions__btn">
+                <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-write@48.png"></image>
+                <text>全量恢复</text>
+            </view>
+        </view>
+    </view>
+    <view class="empty panel" wx:if="{{items.length===0}}">{{loading?'正在读取备份...':'暂无备份'}}</view>
+    <view class="panel backup-card" wx:for="{{items}}" wx:key="key">
+        <view class="backup-card__head">
+            <view>
+                <view class="strong">{{item.typeName}}</view>
+                <view class="muted">{{item.msg||item.create_time||(item.hasData?'已有备份数据':'尚未备份')}}</view>
+            </view>
+            <view class="tag {{item.hasData?'':'is-empty'}}">{{item.hasData?'已备份':'空'}}</view>
+        </view>
+        <view class="backup-meta">
+            <view>数据 ID：{{item.id}}</view>
+            <view>长度：{{item.backupData?item.backupData.length/2:0}} 字节</view>
+        </view>
+    </view>
+    <view class="panel section">
+        <view class="strong">分享范围</view>
+        <view class="muted share-desc">勾选后按对应配置类型分享：set / btn / ble。</view>
+        <checkbox-group bindchange="shareChange" class="share-grid">
+            <label class="share-item">
+                <checkbox color="#00F0FF" value="0"></checkbox>
+                <text>设置参数</text>
+            </label>
+            <label class="share-item">
+                <checkbox color="#00F0FF" value="1"></checkbox>
+                <text>快捷指令</text>
+            </label>
+            <label class="share-item">
+                <checkbox color="#00F0FF" value="2"></checkbox>
+                <text>蓝牙按钮</text>
+            </label>
+        </checkbox-group>
+        <view class="button-row bottom-actions">
+            <view bindtap="shareBackup" class="btn secondary">
+                <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-send@48.png"></image>
+                <text>分享备份</text>
+            </view>
+            <view bindtap="removeAllBackup" class="btn secondary">
+                <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-clear@48.png"></image>
+                <text>删除全部</text>
+            </view>
+        </view>
+    </view>
+</view>
+<app-toast toast="{{__appToast}}"></app-toast>
+<app-modal modal="{{__appModal}}"></app-modal>

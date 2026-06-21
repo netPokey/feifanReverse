@@ -1,0 +1,170 @@
+<view class="page theme-{{appTheme}} font-{{appFontSizeClass}} page-shell super-shortcut-page" style="{{appFontSizeStyle}}">
+    <view class="page-titlebar page-titlebar--with-back" style="{{titlebarStyle}}">
+        <view bindtap="back" class="page-titlebar__back">
+            <image class="page-titlebar__back-icon" mode="aspectFit" src="{{backIconPath}}"></image>
+        </view>
+    </view>
+    <view class="panel section super-hero">
+        <view>
+            <view class="strong">指令触发动作队列</view>
+            <view class="muted">监听模块回馈的某个动作；命中后由小程序继续下发后续动作队列。</view>
+        </view>
+        <view class="tag {{connected?'is-ready':''}}">{{connected?'完整模式':'需连接'}}</view>
+    </view>
+    <view class="section rule-tabs">
+        <view bindtap="selectRule" class="rule-tab {{currentIndex===index?'is-active':''}}" data-idx="{{index}}" wx:for="{{rules}}" wx:key="id">
+            <view class="rule-tab__name">{{item.name}}</view>
+            <view class="rule-tab__meta">{{item.stepCount}} 动作</view>
+        </view>
+        <view bindtap="addRule" class="rule-tab rule-tab--add">
+            <image class="rule-tab__icon" mode="aspectFit" src="/assets/icons/generated/button-add@48.png"></image>
+        </view>
+    </view>
+    <block wx:if="{{current}}">
+        <view class="panel section rule-card">
+            <view class="rule-card__head">
+                <view bindtap="renameCurrent" class="rule-title-wrap">
+                    <view class="rule-title">{{current.name}}</view>
+                    <view class="muted">状态：{{current.stateText}} · {{current.enabled?'启用':'停用'}}</view>
+                </view>
+                <view bindtap="toggleEnabled" class="neo-switch neo-switch--sm {{current.enabled?'is-on':''}}">
+                    <view class="neo-switch__thumb"></view>
+                </view>
+            </view>
+            <view class="button-row rule-actions">
+                <view bindtap="armCurrent" class="btn primary">
+                    <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-select@48.png"></image>
+                    <text>启用监听</text>
+                </view>
+                <view bindtap="renameCurrent" class="btn secondary">
+                    <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-menu@48.png"></image>
+                    <text>命名</text>
+                </view>
+                <view bindtap="removeCurrent" class="btn secondary">
+                    <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-clear@48.png"></image>
+                    <text>删除</text>
+                </view>
+            </view>
+        </view>
+        <view class="panel section edit-section">
+            <view class="section-title">触发条件</view>
+            <view class="muted">可选择动作回馈，或复用仪表盘车况事件触发。</view>
+            <picker bindchange="changeTriggerType" range="{{triggerTypeOptions}}" value="{{current.triggerTypeIndex}}">
+                <view class="setting-cell">
+                    <view>
+                        <view class="strong">触发类型</view>
+                        <view class="muted">{{triggerTypeOptions[current.triggerTypeIndex]}}</view>
+                    </view>
+                    <image class="chevron-image" mode="aspectFit" src="/assets/icons/generated/chevron-right@48.png"></image>
+                </view>
+            </picker>
+            <view bindtap="openListenSelector" class="setting-cell" wx:if="{{current.trigger.kind==='actionNotice'}}">
+                <view>
+                    <view class="strong">{{current.listenActionName}}</view>
+                    <view class="muted">监听 187 回馈动作编号 {{current.listenAction.value}}</view>
+                </view>
+                <image class="chevron-image" mode="aspectFit" src="/assets/icons/generated/chevron-right@48.png"></image>
+            </view>
+            <picker bindchange="changeGaugeEvent" range="{{gaugeEventOptions}}" value="{{current.gaugeEventIndex}}" wx:if="{{current.trigger.kind==='gaugeEvent'}}">
+                <view class="setting-cell">
+                    <view>
+                        <view class="strong">{{current.triggerName}}</view>
+                        <view class="muted">复用仪表盘 176 车况状态变化</view>
+                    </view>
+                    <image class="chevron-image" mode="aspectFit" src="/assets/icons/generated/chevron-right@48.png"></image>
+                </view>
+            </picker>
+        </view>
+        <view class="panel section edit-section">
+            <view class="steps-head">
+                <view>
+                    <view class="section-title">动作队列</view>
+                    <view class="muted">监听命中后，从动作1开始按顺序执行。</view>
+                </view>
+                <view bindtap="addStep" class="btn secondary">
+                    <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-add@48.png"></image>
+                    <text>添加</text>
+                </view>
+            </view>
+            <view class="empty step-empty" wx:if="{{current.steps.length===0}}">还没有动作，请先添加动作队列。</view>
+            <view class="step-card" wx:for="{{current.steps}}" wx:key="id">
+                <view class="step-index">{{index+1}}</view>
+                <view class="step-body">
+                    <view bindtap="openActionSelector" class="step-action" data-idx="{{index}}">
+                        <view class="strong">{{item.command.label}}</view>
+                        <view class="muted">动作编号 {{item.command.value}}</view>
+                    </view>
+                    <picker bindchange="changeStepDelay" data-idx="{{index}}" range="{{delayOptions}}" value="{{item.delayIndex}}">
+                        <view class="step-delay">{{item.delayText}}</view>
+                    </picker>
+                </view>
+                <view bindtap="removeStep" class="step-remove" data-idx="{{index}}">
+                    <image class="step-remove__image" mode="aspectFit" src="/assets/icons/generated/button-clear@48.png"></image>
+                </view>
+            </view>
+        </view>
+        <view class="panel section protocol-note">
+            <view class="protocol-row">
+                <view>
+                    <view class="strong">监听状态</view>
+                    <view class="muted">{{moduleConfigMessage}}</view>
+                </view>
+                <view class="tag {{current.writeState==='armed'?'is-ready':''}}">{{current.writeState==='armed'?'监听中':'草案'}}</view>
+            </view>
+            <view class="protocol-divider"></view>
+            <view class="strong">执行监听</view>
+            <view class="muted">{{continuationMessage}}</view>
+        </view>
+    </block>
+    <view catchtouchmove="catchTouchMove" class="config-selector-page" wx:if="{{selector.show}}">
+        <view class="config-selector-bg"></view>
+        <view class="config-selector-header">
+            <view bindtap="backSelector" class="config-selector-back">
+                <image class="config-selector-back__icon" mode="aspectFit" src="{{backIconPath}}"></image>
+            </view>
+            <view class="config-selector-heading">
+                <view class="config-selector-eyebrow">超级快捷指令</view>
+                <view class="config-selector-title">{{selector.title}}</view>
+                <view class="config-selector-sub">{{selector.mode==='groups'?'先选择分类，再进入具体项目':'选择后保存到当前草案'}}</view>
+            </view>
+        </view>
+        <view class="config-selector-current">
+            <view>
+                <view class="config-selector-current__label">当前选择</view>
+                <view class="config-selector-current__value">{{selector.selectedName||'未选择'}}</view>
+            </view>
+            <view class="config-selector-current__tag">动作</view>
+        </view>
+        <scroll-view scrollY class="config-selector-body">
+            <view class="config-selector-list">
+                <block wx:if="{{selector.mode==='groups'}}">
+                    <view bindtap="openSelectorGroup" class="config-option-row {{item.hasSelected?'is-selected':''}}" data-idx="{{index}}" wx:for="{{selector.groups}}" wx:key="index">
+                        <view class="config-option-main">
+                            <view class="config-option-name">{{item.name}}</view>
+                            <view class="config-option-sub">{{item.count}} 项{{item.hasSelected?' · 当前已选':''}}</view>
+                        </view>
+                        <view class="config-option-arrow"></view>
+                    </view>
+                </block>
+                <block wx:if="{{selector.mode==='options'}}">
+                    <view bindtap="chooseSelectorOption" class="config-option-row {{item.selected?'is-selected':''}}" data-val="{{item.val}}" wx:for="{{selector.options}}" wx:key="val">
+                        <view class="config-option-main">
+                            <view class="config-option-name">{{item.name}}</view>
+                            <view class="config-option-sub">编号 {{item.val}}</view>
+                        </view>
+                        <view class="config-option-check">{{item.selected?'✓':''}}</view>
+                    </view>
+                </block>
+            </view>
+        </scroll-view>
+        <view class="config-selector-footer">
+            <view bindtap="backSelector" class="config-selector-action config-selector-action--ghost">
+                <text>{{selector.mode==='options'?'返回分类':'关闭'}}</text>
+            </view>
+            <view class="config-selector-spacer"></view>
+            <view bindtap="saveSelector" class="config-selector-action config-selector-action--save {{selector.saveEnabled?'':'is-disabled'}}">保存</view>
+        </view>
+    </view>
+</view>
+<app-toast toast="{{__appToast}}"></app-toast>
+<app-modal modal="{{__appModal}}"></app-modal>

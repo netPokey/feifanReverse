@@ -1,0 +1,118 @@
+<view class="page theme-{{appTheme}} font-{{appFontSizeClass}} page-shell" style="{{appFontSizeStyle}}">
+    <view class="page-titlebar page-titlebar--with-back" style="{{titlebarStyle}}">
+        <view bindtap="back" class="page-titlebar__back">
+            <image class="page-titlebar__back-icon" mode="aspectFit" src="{{backIconPath}}"></image>
+        </view>
+    </view>
+    <view class="panel section ambient-hero">
+        <view class="row">
+            <view>
+                <view class="strong">氛围灯光配置</view>
+                <view class="muted">{{loadMessage}}</view>
+            </view>
+            <view bindtap="load" class="btn secondary">
+                <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-read@48.png"></image>
+                <text>读取</text>
+            </view>
+        </view>
+        <view class="ambient-preview">
+            <view class="ambient-preview__glow" style="background-color:#{{items[0].color}}" wx:if="{{items.length}}"></view>
+            <view class="ambient-preview__glow ambient-preview__glow--empty" wx:else></view>
+            <view class="ambient-preview__core">
+                <view class="ambient-preview__lamp"></view>
+                <view>
+                    <view class="ambient-preview__title">{{tabs[select]}}</view>
+                    <view class="ambient-preview__sub">读取后按真实配置预览颜色与强度</view>
+                </view>
+            </view>
+        </view>
+        <view class="tab-row">
+            <view bindtap="switchTab" class="tab-item {{select===index?'is-active':''}}" data-select="{{index}}" wx:for="{{tabs}}" wx:key="index">{{item}}</view>
+        </view>
+    </view>
+    <view class="empty panel" wx:if="{{items.length===0}}">{{loading?'正在读取 RGB 配置...':loadMessage}}</view>
+    <view class="panel rgb-item" wx:for="{{items}}" wx:key="index">
+        <view class="rgb-item__head">
+            <view class="rgb-swatch-wrap">
+                <view class="rgb-swatch" style="background-color:#{{item.color}}"></view>
+            </view>
+            <view>
+                <view class="strong">{{index===0?item.btnname:'指令 '+index}}</view>
+                <view class="muted">地址 {{item.addr}} / 亮度 {{item.bright}} / {{item.run?'启用':'停用'}}</view>
+            </view>
+            <view class="tag">#{{index+1}}</view>
+        </view>
+        <view class="field-block" wx:if="{{index>0}}">
+            <view class="field-label">快捷指令</view>
+            <picker bindchange="changeCommand" data-idx="{{index}}" range="{{btnOptions}}" rangeKey="name" value="{{item.cmdIndex}}">
+                <view class="picker-cell">
+                    <view class="picker-value">{{item.btnname}}</view>
+                </view>
+            </picker>
+        </view>
+        <view class="field-grid rgb-field-grid">
+            <view class="field-block">
+                <view class="field-label">颜色 HEX</view>
+                <input bindinput="changeColor" data-idx="{{index}}" maxlength="6" value="{{item.color}}"></input>
+            </view>
+            <view class="field-block">
+                <view class="field-label">地址</view>
+                <slider activeColor="#00F0FF" bindchange="changeField" data-field="addr" data-idx="{{index}}" max="63" min="0" value="{{item.addr}}"></slider>
+            </view>
+        </view>
+        <view class="field-block">
+            <view class="field-label">亮度 {{item.bright}}</view>
+            <slider activeColor="#00F0FF" bindchange="changeField" data-field="bright" data-idx="{{index}}" max="31" min="0" value="{{item.bright}}"></slider>
+        </view>
+        <view class="field-grid rgb-field-grid">
+            <view class="field-block">
+                <view class="field-label">呼吸 {{item.breathe}}</view>
+                <slider activeColor="#0DF2A3" bindchange="changeField" data-field="breathe" data-idx="{{index}}" max="31" min="0" value="{{item.breathe}}"></slider>
+            </view>
+            <view class="field-block">
+                <view class="field-label">闪烁 {{item.blink}}</view>
+                <slider activeColor="#0DF2A3" bindchange="changeField" data-field="blink" data-idx="{{index}}" max="31" min="0" value="{{item.blink}}"></slider>
+            </view>
+        </view>
+        <view class="switch-row">
+            <view class="switch-cell">
+                <text>执行</text>
+                <view bindtap="toggleField" class="neo-switch neo-switch--sm {{item.run===1?'is-on':''}}" data-field="run" data-idx="{{index}}">
+                    <view class="neo-switch__thumb"></view>
+                </view>
+            </view>
+            <view class="switch-cell">
+                <text>效果</text>
+                <view bindtap="toggleField" class="neo-switch neo-switch--sm {{item.effect===1?'is-on':''}}" data-field="effect" data-idx="{{index}}">
+                    <view class="neo-switch__thumb"></view>
+                </view>
+            </view>
+        </view>
+        <view class="button-row item-actions">
+            <view bindtap="test" class="btn secondary" data-idx="{{index}}">
+                <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-send@48.png"></image>
+                <text>测试</text>
+            </view>
+            <view bindtap="remove" class="btn secondary" data-idx="{{index}}" wx:if="{{index>0}}">
+                <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-clear@48.png"></image>
+                <text>删除</text>
+            </view>
+        </view>
+    </view>
+    <view class="button-row bottom-actions">
+        <view bindtap="add" class="btn">
+            <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-add@48.png"></image>
+            <text>添加指令</text>
+        </view>
+        <view bindtap="save" class="btn warn">
+            <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-write@48.png"></image>
+            <text>写入模块</text>
+        </view>
+        <view bindtap="removeAll" class="btn secondary">
+            <image class="btn-icon" mode="aspectFit" src="/assets/icons/generated/button-clear@48.png"></image>
+            <text>删除本组</text>
+        </view>
+    </view>
+</view>
+<app-toast toast="{{__appToast}}"></app-toast>
+<app-modal modal="{{__appModal}}"></app-modal>

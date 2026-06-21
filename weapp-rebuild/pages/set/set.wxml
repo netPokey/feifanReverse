@@ -1,0 +1,67 @@
+<view class="page theme-{{appTheme}} font-{{appFontSizeClass}} page-shell" style="{{appFontSizeStyle}}">
+    <view class="settings-group section">
+        <view class="panel group-panel theme-panel">
+            <view class="group-panel__title">外观模式</view>
+            <view bindtap="toggleManualTheme" class="theme-action-grid__item">
+                <view class="theme-action-grid__icon">
+                    <image class="theme-action-grid__icon-image" mode="aspectFit" src="{{appThemeIconPath}}"></image>
+                </view>
+                <view class="theme-action-grid__content">
+                    <view class="theme-action-grid__head">
+                        <view class="theme-action-grid__name">手动切换</view>
+                        <view class="theme-action-grid__badge">{{themePreference.currentLabel}}</view>
+                    </view>
+                    <view class="theme-action-grid__desc">切到{{themePreference.nextManualLabel}}模式</view>
+                </view>
+                <image class="theme-action-grid__chevron" mode="aspectFit" src="/assets/icons/generated/chevron-right@48.png"></image>
+            </view>
+            <picker bindchange="changeAutoDarkStart" mode="time" value="{{themePreference.autoDarkStart}}">
+                <view class="theme-action-grid__item">
+                    <view class="theme-action-grid__icon theme-action-grid__icon--auto">
+                        <image class="theme-action-grid__icon-image" mode="aspectFit" src="/assets/icons/generated/header-theme-midnight@48.png"></image>
+                    </view>
+                    <view class="theme-action-grid__content">
+                        <view class="theme-action-grid__head">
+                            <view class="theme-action-grid__name">自动深色</view>
+                            <view class="theme-action-grid__badge">{{themePreference.autoDark?themePreference.autoDarkStart:'关闭'}}</view>
+                        </view>
+                        <view class="theme-action-grid__desc">点击选择起始时间，次日 {{themePreference.autoDarkEnd}} 恢复白天</view>
+                    </view>
+                    <view catchtap="stopAutoDark" class="neo-switch neo-switch--sm {{themePreference.autoDark?'is-on':''}}">
+                        <view class="neo-switch__thumb"></view>
+                    </view>
+                </view>
+            </picker>
+            <view class="font-size-card">
+                <view class="theme-action-grid__item font-size-card__head">
+                    <view class="theme-action-grid__icon theme-action-grid__icon--font">
+                        <image class="theme-action-grid__icon-image" mode="aspectFit" src="/assets/icons/generated/action-sliders@72.png"></image>
+                    </view>
+                    <view class="theme-action-grid__content">
+                        <view class="theme-action-grid__head">
+                            <view class="theme-action-grid__name">字体大小</view>
+                            <view class="theme-action-grid__badge">{{fontPreference.label}} · {{fontPreference.percentText}}</view>
+                        </view>
+                        <view class="theme-action-grid__desc">当前为默认字号，向右拖动放大所有页面文字</view>
+                    </view>
+                </view>
+                <view class="font-size-slider">
+                    <slider activeColor="#00d2ff" backgroundColor="rgba(148, 163, 184, .2)" bindchange="changeFontSize" bindchanging="changeFontSize" blockSize="24" max="100" min="50" step="1" value="{{fontPreference.value}}"></slider>
+                    <view class="font-size-slider__labels">
+                        <text>默认</text>
+                        <text>大</text>
+                        <text>更大</text>
+                    </view>
+                </view>
+            </view>
+        </view>
+    </view>
+    <view class="settings-group section" wx:for="{{entryGroups}}" wx:key="name">
+        <view class="panel group-panel">
+            <view class="group-panel__title">{{item.name}}</view>
+            <action-grid bind:disabled="handleDisabled" bind:select="openEntry" items="{{item.items}}" theme="{{appTheme}}"></action-grid>
+        </view>
+    </view>
+</view>
+<app-toast toast="{{__appToast}}"></app-toast>
+<app-modal modal="{{__appModal}}"></app-modal>

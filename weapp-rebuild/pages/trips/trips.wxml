@@ -1,0 +1,50 @@
+<view class="page theme-{{appTheme}} font-{{appFontSizeClass}} page-shell trips-page" style="{{appFontSizeStyle}}">
+    <view class="page-titlebar page-titlebar--with-back" style="{{titlebarStyle}}">
+        <view bindtap="back" class="page-titlebar__back">
+            <image class="page-titlebar__back-icon" mode="aspectFit" src="{{backIconPath}}"></image>
+        </view>
+    </view>
+    <view class="panel section trips-hero">
+        <view>
+            <view class="strong">行程记录</view>
+            <view class="muted">基于仪表车况帧推导，本地保存最近行驶片段。</view>
+        </view>
+        <view class="tag">本地</view>
+    </view>
+    <view class="panel empty trip-empty" wx:if="{{!hasRecords}}">暂无行程记录</view>
+    <view class="panel section trip-record-card {{item.active?'is-active':''}}" wx:for="{{records}}" wx:key="id">
+        <view class="trip-record__ambient"></view>
+        <view class="trip-record__route"></view>
+        <view class="trip-record__head">
+            <view>
+                <view class="trip-record__title">{{item.cardTitle}}</view>
+                <view class="trip-record__time">{{item.timeRangeText}}</view>
+            </view>
+            <view class="tag {{item.active?'is-active':''}}">{{item.statusText}}</view>
+        </view>
+        <view class="trip-record__metrics">
+            <view class="trip-record__metric trip-record__metric--primary">
+                <view class="trip-record__value">{{item.distanceText}}</view>
+                <view class="trip-record__label">距离</view>
+            </view>
+            <view class="trip-record__metric">
+                <view class="trip-record__value">{{item.durationText}}</view>
+                <view class="trip-record__label">时长</view>
+            </view>
+            <view class="trip-record__metric">
+                <view class="trip-record__value">{{item.maxSpeedText}}</view>
+                <view class="trip-record__label">最高速度</view>
+            </view>
+            <view class="trip-record__metric">
+                <view class="trip-record__value">{{item.batteryDeltaText}}</view>
+                <view class="trip-record__label">电量变化</view>
+            </view>
+            <view class="trip-record__metric">
+                <view class="trip-record__value">{{item.rangeDeltaText}}</view>
+                <view class="trip-record__label">续航变化</view>
+            </view>
+        </view>
+    </view>
+</view>
+<app-toast toast="{{__appToast}}"></app-toast>
+<app-modal modal="{{__appModal}}"></app-modal>

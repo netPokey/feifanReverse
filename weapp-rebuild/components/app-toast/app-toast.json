@@ -1,0 +1,9 @@
+{
+  "component": true,
+  "styleIsolation": "isolated",
+  "usingComponents": {
+    "app-modal": "/components/app-modal/app-modal",
+    "app-toast": "/components/app-toast/app-toast",
+    "theme-toggle": "/components/theme-toggle/theme-toggle"
+  }
+}

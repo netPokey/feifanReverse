@@ -1,0 +1,20 @@
+# macOS
+.DS_Store
+._*
+
+# 微信开发者工具本地私有配置
+weapp-rebuild/project.private.config.json
+
+# 依赖与构建输出
+node_modules/
+dist/
+build/
+.tmp/
+.cache/
+
+# 日志
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*

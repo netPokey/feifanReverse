@@ -1,0 +1,70 @@
+{
+  "entryPagePath": "pages/index/index",
+  "pages": [
+    "pages/index/index",
+    "pages/ble/ble",
+    "pages/set/set",
+    "pages/my/my",
+    "pages/deviceInfo/deviceInfo",
+    "pages/firmware/firmware",
+    "pages/vehicleControl/vehicleControl",
+    "pages/trips/trips",
+    "pages/superShortcut/superShortcut",
+    "pages/advancedSettings/advancedSettings",
+    "pages/automation/automation",
+    "pages/automationEdit/automationEdit",
+    "pages/customSwitch/customSwitch",
+    "pages/moduleAutoSwitch/moduleAutoSwitch",
+    "pages/bleHost/bleHost",
+    "pages/btn/btn",
+    "pages/blebtn/blebtn",
+    "pages/gauge/gauge",
+    "pages/gaugeMenu/gaugeMenu",
+    "pages/batteryInfo/batteryInfo",
+    "pages/backup/backup",
+    "pages/rgb/rgb",
+    "pages/debug/debug"
+  ],
+  "permission": {
+    "scope.bluetooth": {
+      "desc": "用于搜索和连接 TSL 电子模块蓝牙设备"
+    }
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#7A8794",
+    "selectedColor": "#00F0FF",
+    "backgroundColor": "#05070B",
+    "borderStyle": "black",
+    "list": [
+      {
+        "text": "首页",
+        "pagePath": "pages/index/index"
+      },
+      {
+        "text": "蓝牙",
+        "pagePath": "pages/ble/ble"
+      },
+      {
+        "text": "设置",
+        "pagePath": "pages/set/set"
+      },
+      {
+        "text": "我的",
+        "pagePath": "pages/my/my"
+      }
+    ]
+  },
+  "style": "v2",
+  "renderer": "webview",
+  "componentFramework": "exparser",
+  "window": {
+    "backgroundTextStyle": "dark",
+    "backgroundColor": "#05070B",
+    "navigationBarBackgroundColor": "#05070B",
+    "navigationBarTitleText": "TSL电子模块",
+    "navigationBarTextStyle": "white",
+    "navigationStyle": "custom"
+  },
+  "plugins": {}
+}

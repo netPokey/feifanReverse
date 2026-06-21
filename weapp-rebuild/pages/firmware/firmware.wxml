@@ -1,0 +1,84 @@
+<view class="page theme-{{appTheme}} font-{{appFontSizeClass}} page-shell" style="{{appFontSizeStyle}}">
+    <view class="page-titlebar page-titlebar--with-back" style="{{titlebarStyle}}">
+        <view bindtap="goBack" class="page-titlebar__back">
+            <image class="page-titlebar__back-icon" mode="aspectFit" src="{{backIconPath}}"></image>
+        </view>
+    </view>
+    <view class="panel section firmware-summary">
+        <view>
+            <view class="strong">固件下载校验</view>
+            <view class="muted">{{connected?'可读取版本与下载固件包':'未连接设备，仅展示入口与已缓存状态'}}</view>
+        </view>
+        <view class="tag {{connected?'is-ready':''}}">{{connected?'在线':'未连接'}}</view>
+    </view>
+    <view class="panel section device-info-panel">
+        <view class="info-row" wx:for="{{deviceRows}}" wx:key="label">
+            <view class="info-label">{{item.label}}</view>
+            <view class="info-value">{{item.value}}</view>
+        </view>
+    </view>
+    <view class="panel section diagnostic-warning" wx:if="{{diagnosticWarning}}">
+        <view class="diagnostic-warning__title">设备参数疑似模拟</view>
+        <view class="diagnostic-warning__text">{{diagnosticWarning}}</view>
+    </view>
+    <view class="panel section diagnostic-panel">
+        <view class="diagnostic-panel__head">
+            <view>
+                <view class="strong">服务端诊断信息</view>
+                <view class="muted">复制这些参数后可用脚本复现 getinfo / update 下载链路</view>
+            </view>
+            <view class="tag">只读</view>
+        </view>
+        <view class="diagnostic-row" wx:for="{{diagnosticRows}}" wx:key="label">
+            <view class="info-label">{{item.label}}</view>
+            <view class="diagnostic-value">{{item.value}}</view>
+        </view>
+        <view class="diagnostic-actions">
+            <view bindtap="probeMetaOnly" class="btn secondary diagnostic-button">{{metaProbeLoading?'探测中':'只测元信息'}}</view>
+            <view bindtap="copyDiagnostic" class="btn secondary diagnostic-button">复制请求参数</view>
+            <view bindtap="copyMetaProbe" class="btn secondary diagnostic-button">复制探测结果</view>
+        </view>
+        <view class="diagnostic-result" wx:if="{{metaProbeText}}">{{metaProbeText}}</view>
+    </view>
+    <view class="panel section capture-panel">
+        <view class="diagnostic-panel__head">
+            <view>
+                <view class="strong">官方成功请求核对</view>
+                <view class="muted">在官方 IPA 或正式小程序能通过时，抓取以下字段后发回</view>
+            </view>
+            <view class="tag">抓包</view>
+        </view>
+        <view class="capture-row" wx:for="{{officialCaptureRows}}" wx:key="value">
+            <view class="capture-dot"></view>
+            <view class="capture-text">{{item.value}}</view>
+        </view>
+    </view>
+    <view class="section firmware-section">
+        <view class="panel firmware-card" wx:for="{{firmwareCards}}" wx:key="type">
+            <view class="firmware-card__head">
+                <view>
+                    <view class="firmware-card__title">{{item.title}}</view>
+                    <view class="firmware-card__sub">{{item.available?'发现可升级版本':'当前无需升级'}}</view>
+                </view>
+                <view class="tag {{item.available?'tag--warn':''}}">{{item.available?'可升级':'最新'}}</view>
+            </view>
+            <view class="firmware-card__versions">
+                <view>
+                    <view class="info-label">当前</view>
+                    <view class="firmware-version">{{item.current}}</view>
+                </view>
+                <view>
+                    <view class="info-label">最新</view>
+                    <view class="firmware-version">{{item.latest}}</view>
+                </view>
+            </view>
+            <view class="firmware-card__note">{{item.canDownload?'可下载固件包并执行端侧校验':'连接设备并读取设备ID后可下载'}}</view>
+            <view class="firmware-card__actions">
+                <view bindtap="showUpdateHelp" class="btn secondary firmware-card__button" data-type="{{item.type}}">升级说明</view>
+                <view bindtap="openOta" class="btn secondary firmware-card__button {{!item.canDownload?'is-disabled':''}}" data-type="{{item.type}}">{{firmwareDownloadingType===item.type?'下载中':'下载评估'}}</view>
+            </view>
+        </view>
+    </view>
+</view>
+<app-toast toast="{{__appToast}}"></app-toast>
+<app-modal modal="{{__appModal}}"></app-modal>
