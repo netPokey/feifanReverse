@@ -132,7 +132,8 @@ frame[10]  = CRC_table[frame[9]>>4];  // D7 重算CRC(查表~0x0800eb00)
 `fwdis.py`(反汇编) · `fwall.py`/`fwbits.py`(分发器+逐ID读位) · `fwleaf.py`/`fwfind.py`(子树节点) ·
 `fwpack.py`(打包器) · `fwtx.py`/`fwresign.py`(发送点/重签名) · `symexec.py`(167跳转表) ·
 `fwsend.py`/`fwsend2.py`/`fwsend3.py`(32发送点改写位/地址归属/frame[0]来源) ·
-`fwcallers.py`(反向调用图) · `fwpipe.py`(主分发器ID→改写函数)
+`fwcallers.py`(反向调用图) · `fwpipe.py`(主分发器ID→改写函数) ·
+`fwidx.py`/`fwstate.py`(signal_state idx定位) · `fwb0.py`(0xB0打包器位布局)
 
 ## 6. 完成度与剩余
 - ✅ 已实证：架构、帧布局、**53+8 ID 全逐位覆盖**(16 精确公式)、电池包逐字节、命令字典、鉴权、
@@ -143,8 +144,8 @@ frame[10]  = CRC_table[frame[9]>>4];  // D7 重算CRC(查表~0x0800eb00)
 - ✅ **主分发器结构** `0x08009e2e–0x0800a720`(perid 解析分发 + re-sign 改写分发) 全解。
 - ✅ **电池包 idx5/6/7/8/9 来源已解决**：`0x352` BMS_energyStatus 多路复用(mux=D0&3)，
   解析时按 mux 拆存——**idx5(容量帧)=mux=0 子帧**(此前缺失项)；idx8 由 0x08006294/631a 转发。
-- ⬜ 剩余长尾：0xB0 仪表打包器逐位；~3 个 gp 触发点(0x08006dd2/f42/7466，纯间接 jalr)确切 ID 依运行时；
-  idx13 来源；少数 ID 信号命名。
+- ✅ **0xB0 仪表打包器位布局已解出**（8 个 getter→包字节位拼接，§5/`fwb0.py`）。
+- ⬜ 剩余长尾：~3 个 gp 触发点(0x08006dd2/f42/7466，纯间接 jalr)确切 ID 依运行时；idx13 来源；少数 ID 信号命名。
 
 > 一句话：**读链路可据此重写（全 53 ID 逐位 + 打包器 + notify，16 位级精确）；
 > 控链路三路径全解（主分发器结构 + 路径1 改 12 监控 ID + 路径2 改 8 控制帧 ID + 路径3 透传），
