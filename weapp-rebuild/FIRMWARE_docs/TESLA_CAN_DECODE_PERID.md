@@ -109,6 +109,26 @@ raw = D5 ; 变化检测后 尾跳 0x08009158 写 gp+0x1E8
 
 > 标 `(auipc RAM)` 的写入用 `auipc+sb` 寻址到 gp 区状态变量（capstone 立即数不可靠，地址待手解 raw32 精确化）。
 
+### 3.1 分发器子树叶子 ID（bne 型，补全 ✔FW）
+
+这些 ID 用 `bne a5,a4,<跳走>` 叶子节点（相等则 fall-through 到 thunk），故第一次线性扫描漏掉，现补全：
+
+| CAN ID | 名称 | 型 | 读位 ✔FW | 写状态 | 信号(◎/✔APP) |
+|--------|------|----|---------|--------|--------------|
+| 0x129 | SteeringAngle | custom 0x08007870 | D2&0x3f,D3&0x3f(拼) | gp+0x1d8(b),gp+0x1dc(h) | 方向盘转角 |
+| 0x20c | VCRIGHT_hvac | custom 0x0800287c | D0&7,D1&7,D4&7,D5&3 | — | HVAC 鼓风机/温度 |
+| 0x238 | ? | custom 0x0800234c | D1&0x1f | — | 动力总成? |
+| 0x25d | 充电状态? | custom 0x080047d2 | @2(DLC) | — | 充电相关 |
+| 0x2e5 | FrontTorque | custom idx0 0x0800756e | D0,D1(共用0x266) | — | 前电机功率(AWD) |
+| 0x312 | BMS_thermal | custom 0x080048ea | D4>>3,D5,D6,D7(温度位) | (写状态) | 热管理温度 |
+| 0x33a | UI_rangeSOC | custom 0x0800495e | D0&3,D1&3,D2>>4,D3,D5>>4 | — | 续航/能耗/SOC |
+| 0x3d2 | BMS_kwhCounter | **STATE idx10** | memcpy | →电池包[4..11] | 累计充/放电(§5) |
+| 0x4e3 | ? | STATE idx16 | memcpy | 状态表[16] | — |
+| 0x678 | ? | TXINJECT 0x08007414 | D1 | gp+0x1c9(b) | 回注 |
+
+> ✔ **idx10=0x3d2** 与电池打包器读 idx10=充放电量完全一致，交叉印证。
+> 待补 3 个（节点结构略异）：0x273 UI_vehicleControl / 0x3c2 / 0x3e9(事件)；及电池包 idx5(容量帧) 的 CAN ID。
+
 ---
 
 ## 4. 状态变量地图（gp+off → 信号，由解码器写入反推）✔FW
@@ -162,15 +182,16 @@ STATE 型解码器只把整帧 `memcpy` 进 12B 状态表，**位含义由 0xD0/
 
 ## 6. 进度与续作方法
 
-**本文已实证**：40 个 dispatched ID 的"读位+写状态变量"骨架；6 个核心 ID 逐位精确公式
-（0x118/0x257/0x3fe/0x321/0x102/0x103）；状态变量地图首批；电池包 4 段来源。
+**本文已实证（持续更新）**：**50/53 dispatched ID** 的"读位+写状态变量"（含 §3.1 子树叶子补全）；
+6 个核心 ID 逐位精确公式（0x118 挡位/0x257 车速/0x3fe 刹车温/0x321 环境温/0x102-0x103 车门）；
+状态变量地图；**电池包逐字节来源**（0x132/0x3d2 直传 ✔FW，§5）；idx→CAN ID 映射。
 
 **待续（逐 ID 齐全）**：
-1. **custom 型逐位精修**：`python3 scripts/fwdecode.py <decoder>` 读出 `lbu/sh off(gp)`+位运算，
-   写成 `Dn[a:b]=信号`。剩余约 20 个 custom ID。
-2. **STATE 型补位**：反汇编两个打包器（§5），把 0x132/0x292/0x332/0x352/0x3d2/0x312 等的原始位补全。
-3. **子树未达的 13 个 ID**：0x129/0x20c/0x238/0x25d/0x273/0x2e5/0x312/0x33a/0x3c2/0x3d2/0x3fd/0x4e3/0x678
-   —— 分发器 BST 深层，递归补全 thunk→decoder 后同样处理。
+1. **分发器剩余**：0x273 UI_vehicleControl / 0x3c2 / 0x3e9(事件) / 0x3fd AP-DAS（节点结构略异）
+   + 电池包 idx5(容量帧) 的 CAN ID —— 补全即 53 全齐。
+2. **custom 型逐位精修**：`python3 scripts/fwdecode.py <decoder>` 把 `lbu/sh off(gp)`+位运算写成
+   `Dn[a:b]=信号`。剩余约 25 个 custom ID（已有读位骨架，精修为精确公式）。
+3. **STATE 型补位**：0x292/0x332/0x352 经打包器位重组的原始位，结合 §5 + 小程序 `batteryParser` 补全。
 4. **gp 地址精确化**：对 `auipc+sb` 写入手解 raw32，补全状态变量地图绝对偏移。
 
 > 每一步都用本仓库 `scripts/` 复现，无外部依赖。完成后即得可直接据以重写解析层的完整位定义。
