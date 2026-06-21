@@ -57,7 +57,7 @@ a0≠0 → 读(state→buf)；a0=0 → 写(buf→state)；每条固定 12 字节
 | 0x082 | TRIP_PLANNING | 0x08004722 | TXINJECT | D-1 bit10 | 行程/预热（改写回注） |
 | 0x102 | VCLEFT_doorStatus | 0x08005398 | custom | D0;D1>>4&1;D0&0xf0;D1>>5&1 | 左侧门/锁位 |
 | 0x103 | VCRIGHT_doorStatus | 0x08004f7a | custom | D0&0xf;D7&0xf | 右侧门/锁位 |
-| 0x118 | DriveSystemStatus | 0x0800442a | custom | **D2>>5**(3bit);D4 | 挡位(P/R/N/D)=D2[5:7]；车速/状态 |
+| 0x118 | DI_systemStatus ✔✔ | 0x0800442a | custom | **D2>>5**(3bit);D4 | 挡位(P/R/N/D)=D2[5:7]；车速/状态 |
 | 0x129 | SteeringAngle | (BST 子树) | custom | — | 方向盘转角 |
 | 0x132 | BMS_hvBusStatus | STATE idx1 | STATE | (整帧存) | D0..1=总电压×0.01V；D2..3=总电流×-0.1A |
 | 0x1f9 | ?(充电/HVAC) | 0x0800507e | TXINJECT | D0<<5&0x1f | 改写回注 |
@@ -67,17 +67,17 @@ a0≠0 → 读(state→buf)；a0=0 → 写(buf→state)；每条固定 12 字节
 | 0x249 | ? | 0x08003e1e | TXINJECT | D1&0xf | 注入 |
 | 0x257 | DI_speed | 0x080076ec | custom | **D3,D4** 拼 9bit | 车速 |
 | 0x25a | ? | 0x080045a2 | custom | D0;D1;D2;D3 | 多字节 |
-| 0x266 | RearTorque/Power | 0x08009f6a | custom(idx1) | (经换算) | 后电机功率(11bit 有符号/2) |
+| 0x266 | DIR_power? ⚠ | 0x08009f6a | custom(idx1) | (经换算) | 驱动单元(后)11bit有符号/2(分歧:josh=DI_vehicleEstimates) |
 | 0x292 | BMS_socStatus | STATE idx3 | STATE | (整帧存) | SOC 7/10bit |
-| 0x293 | UI_powertrain | 0x080026be | TXINJECT | D6;D-1 | 注入 |
+| 0x293 | UI?(三源分歧⚠⚠) | 0x080026be | TXINJECT | D6;D-1 | 注入帧(命名存疑,见 OFFICIAL §0.1) |
 | 0x2b6 | ? | 0x08002662 | TXINJECT | D0&0xb7 | 门禁/注入 |
 | 0x2e1 | VCFRONT_status | 0x08004f26 | custom | D0&7>>3 | 前车体状态 |
-| 0x2f3 | UI_status | 0x08002946 | custom | D4>>6;D2>>4&3;D2&3<<4;D3&0x1c | UI 复合状态 |
-| 0x31f | ? | 0x080045e8 | custom | D0;D2;D4;D6 | 温度/环境 |
+| 0x2f3 | UI_hvacRequest ✔✔ | 0x08002946 | custom | D4>>6;D2>>4&3;D2&3<<4;D3&0x1c | 空调请求(双源确认) |
+| 0x31f | PARK_status? ◎ | 0x080045e8 | custom | D0;D2;D4;D6 | 泊车状态(单源2026.2,原"温度?"臆测废) |
 | 0x321 | VCFRONT_temperatures | 0x0800285e | custom | **D5** | 环境温度 ×0.5-40℃ |
 | 0x332 | BMS_bmbMinMax | STATE idx4 | STATE | (整帧存) | 单体 max/min 12bit×0.002V |
 | 0x333 | UI_chargeRequest | 0x08004816 | TXINJECT | D0&3;D3 | **充电请求（改写回注）** |
-| 0x339 | ? | 0x08006564 | custom | D1>>4 | — |
+| 0x339 | VCSEC_authentication ◎+功能 | 0x08006564 | custom | D1>>4 | 认证/前备箱·尾门(改写功能强吻合) |
 | 0x33a | UI_rangeSOC | (SCALE) | custom | (×0.625 类) | 续航/能耗/SOC |
 | 0x352 | BMS_energyStatus | STATE idx6 | STATE | (整帧存) | 出厂/当前容量、剩余 kWh |
 | 0x39d | ? | 0x08004a5a | custom | D1>>9&1;D3 | — |
@@ -121,7 +121,7 @@ a0≠0 → 读(state→buf)；a0=0 → 写(buf→state)；每条固定 12 字节
 > 因此“读 0x132 的 D0..D1 即总电压×0.01”这类**原始 CAN 解析法**与小程序 `batteryParser` 完全一致。
 
 ### 3.2 仪表包 0xB0（33B，打包器 0x08008f44 / 0x08007978）
-同理由 0x118(挡位/车速)、0x102/0x103(车门)、0x257(车速)、0x266/0x2e5(电机功率)、0x3fd(AP/限速/盲区)、
+同理由 0x118(挡位/车速)、0x102/0x103(车门)、0x257(车速)、0x266/0x2e5(驱动单元输出)、0x3fd(AP/限速/盲区)、
 0x3fe(刹车温度)、0x20c(HVAC)、0x312/0x33a(电池温/续航) 等状态条位压缩而成；逐字段位布局见
 `TESLA_CAN_TSL_REFERENCE.md` §1.3（✔APP）。**那张表的“源 CAN ID”列在此被固件证实**。
 
@@ -278,8 +278,8 @@ re-sign 处理函数各自改写的数据字节（✔FW 抽取）：
 | 0x229 SCCM_steerLever | 0x080043f6 | — | D2=0x5, D1, D0 |
 | 0x333 UI_chargeRequest | 0x08004852/485e | — | D0, D3=0x2 |
 | 0x3fe brake | 0x08004cc0/cc6 | — | (位标志) |
-| 0x293 UI_powertrain | 0x08002712 | gp+0x166 (0x293) | D6 |
-| 0x2f3 UI_status | 0x08002a82/ba8 | gp+0x1f8 | (位标志) |
+| 0x293 (命名存疑⚠⚠) | 0x08002712 | gp+0x166 (0x293) | D6 |
+| 0x2f3 UI_hvacRequest✔✔ | 0x08002a82/ba8 | gp+0x1f8 | (位标志) |
 | 0x2b6 | 0x0800267c | gp+0x165 (0x2b6) | D0 \|= 0x48 |
 | 0x249 | 0x08003e6a | gp+0x1f8 | D1=0x3 |
 | 0x082 TRIP_PLANNING | 0x08004778 | — | — |

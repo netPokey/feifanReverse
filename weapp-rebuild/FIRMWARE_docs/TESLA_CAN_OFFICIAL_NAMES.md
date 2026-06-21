@@ -7,7 +7,39 @@
 > 用途：交叉验证本仓库固件逆向得到的 53 监控 ID 命名（标 `◎ref`）。**语义以本 feifan 固件解析逻辑为准**，
 > 此表用于**修正/补全命名**。两者命名差异多因 feifan 固件版本较旧或读取**车辆 CAN 总线**而非 MCU 内部 ETH。
 
-## 1. 监控/扩展 ID 官方命名对照（41/47 命中）
+## 0. 校验方法与证据优先级（重要）
+
+> ⚠ **本文（2026.2 数据）与社区 DBC 均为参考，非 100% 正确**；feifan 固件版本较旧
+> （固件证 `0x352`=BMS_energyStatus，而 2026.2 已迁为 `0x2B2`，**证明 ID 体系存在版本漂移**）。
+> 命名校验**以固件反汇编为第一手**，按下列优先级：
+>
+> **固件 `firmware.bin` 反汇编（第一手）> 小程序 `services/`（feifan 同版本）> 多个社区 DBC 交叉 > 单一来源**
+>
+> 置信度图例：
+> - **✔✔ 双源+**：≥2 独立来源（2026.2 / commaai / joshwardell）命名一致 → 高置信
+> - **✔FW功能**：固件改写行为与命名功能吻合（0x339→前备箱、0x229→换挡）→ 高置信
+> - **◎单源**：仅 2026.2 一家，社区 DBC 缺 → 中置信，版本敏感，待佐证
+> - **⚠分歧**：多源命名不一致 → **低置信，不可武断命名**，以固件行为为准
+
+### 0.1 多源交叉实查结果（3 个 DBC + 固件）
+| ID | 2026.2(MCU3) | commaai party | joshwardell | 固件行为 | 判定 |
+|----|-------------|--------------|-------------|---------|------|
+| 0x118 | DI_systemStatus | DI_systemStatus | — | D2>>5=挡位 | **✔✔ 高置信** |
+| 0x249 | SCCM_leftStalk | SCCM_leftStalk | — | 改写→灯光/雨刮 | **✔✔ 高置信** |
+| 0x2f3 | UI_hvacRequest | — | UI_hvacRequest | custom 多位 | **✔✔ 高置信** |
+| 0x3fd | UI_autopilotControl | — | UI_autopilotControl | inline D0&7 | **✔✔ 高置信** |
+| 0x339 | VCSEC_authentication | — | — | 改写→前备箱/尾门 | ◎+**✔FW功能** |
+| 0x229 | SCCM_rightStalk | — | — | 改写→换挡/驻车 | ◎+**✔FW功能** |
+| **0x293** | UI_chassisControl | **DAS_settings** | — | 仅 TXINJECT 注入 | **⚠⚠ 三源三名,存疑** |
+| **0x266** | DIR_power | — | **DI_vehicleEstimates** | SCALE 数值 idx1 | **⚠ 分歧** |
+| **0x2e5** | DIF_power | — | — | SCALE 数值 idx0 | ◎(对称 0x266) |
+| 0x31f | PARK_status | — | — | 读 4 字节 | ◎ 单源(原"温度?"臆测已废) |
+
+> **结论**：上一版（命名修正）对 **0x293** 武断采用 UI_chassisControl 属过度采信——三源给出三个名
+> （UI_chassisControl / DAS_settings / UI_powertrain），**固件只能证实它是 TXINJECT 注入帧**，
+> 语义不可定。下表 §1 已按此置信度回标。
+
+## 1. 监控/扩展 ID 官方命名对照（41/47 命中，已按 §0 置信度回标）
 
 | CAN ID | 官方命名(✔固件2026.2) | 信号数 | 代表信号 | 原标注修正 |
 |--------|----------------------|--------|---------|-----------|
@@ -25,15 +57,15 @@
 | 0x257 | DI_speed | 11 | DI_accelPedalPressed | |
 | 0x25a | VCSEC_TPMSDisplay | 13 | VCSEC_TPMSDisplay...FL | 补全（胎压） |
 | 0x25d | APP_trafficControl | 14 | APP_tcConfirmationType | 补全 |
-| 0x266 | **DIR_power** | 6 | DIR_drivePowerMax | ⚠原 RearTorque（后电机功率） |
+| 0x266 | DIR_power **⚠** | 6 | DIR_drivePowerMax | 与 joshwardell `DI_vehicleEstimates` 分歧；固件=驱动单元(后)数值 |
 | 0x273 | UI_vehicleControl | 39 | UI_alarmEnabled | 补全 |
 | 0x292 | BMS_socStatus | 6 | BMS_enoughEnergyForConvenienceFeatures | |
-| 0x293 | **UI_chassisControl** | 28 | UI_accOvertakeEnable | ⚠原 UI_powertrain（底盘控制！） |
+| 0x293 | UI_chassisControl? **⚠⚠** | 28 | UI_accOvertakeEnable | **三源三名(2026.2 chassisControl/commaai DAS_settings/旧 powertrain)，存疑；固件仅证 TXINJECT 注入帧** |
 | 0x2e1 | VCFRONT_status | 84 | VCFRONT_statusIndex | |
-| 0x2e5 | **DIF_power** | 6 | DIF_drivePowerMax | ⚠原 FrontTorque（前电机功率） |
+| 0x2e5 | DIF_power ◎ | 6 | DIF_drivePowerMax | 单源(对称 0x266)；固件=驱动单元(前)数值 |
 | 0x2f3 | **UI_hvacRequest** | 26 | UI_enableCustomerTHSAlerts | ⚠原 UI_status（空调请求！） |
 | 0x312 | BMS_thermalStatus | 18 | BMS_thermalStatusMultiplexer | |
-| 0x31f | **PARK_status** | 8 | PARK_majorVersion | ⚠原 ?（泊车控制器） |
+| 0x31f | PARK_status ◎ | 8 | PARK_majorVersion | 单源 2026.2；原"温度?"为臆测，已废 |
 | 0x321 | VCFRONT_sensors | 11 | VCFRONT_battSensorIrrational | ⚠原 VCFRONT_temps |
 | 0x332 | BMS_bmbMinMax | 10 | BMS_bmbMinMaxMultiplexer | |
 | 0x333 | UI_chargeRequest | 16 | UI_acChargeCurrentLimit | |
@@ -66,11 +98,13 @@
 - **0x339 = VCSEC_authentication**，代表信号 `VCSEC_3rdPartyFrunkPLGRequest`（第三方**前备箱/电动尾门**请求）
   —— VCSEC=车辆安全控制器。这正是 feifan 改装件的核心功能（控制前备箱/尾门/门锁），解释了固件为何
   监控并改写 0x339（§4.9 路径1 改写点 0x0800686a）。
-- **0x293 = UI_chassisControl**（含 `accOvertakeEnable` 等）：底盘/驾驶辅助控制，非动力总成。
+- **0x293 ⚠⚠ 命名存疑**：三源三名（2026.2=UI_chassisControl / commaai party=DAS_settings / 旧标=UI_powertrain），
+  固件仅证实为 TXINJECT 注入帧（D6/gp+0x166），**勿据单源命名**——这是版本/总线漂移的典型例子。
 - **0x39d = IBST_status**（iBooster 电子刹车助力）：与刹车控制相关。
 - **0x229 SCCM_rightStalk / 0x249 SCCM_leftStalk**：方向盘左右拨杆——挡位、驻车、灯光、雨刮，
   是改装件模拟驾驶操作的关键注入目标（路径1 改写 0x229）。
-- **0x266 DIR_power / 0x2e5 DIF_power**：后/前驱逆变器功率（非扭矩），驱动系统功率上报。
+- **0x266 / 0x2e5 ⚠ 分歧**：2026.2=DIR_power/DIF_power（前后驱逆变器，成对），joshwardell 0x266=DI_vehicleEstimates；
+  固件为 SCALE 数值型（idx1/idx0），稳妥取"驱动单元(后/前)输出量"语义，具体功率/扭矩待固件 SCALE 单位确认。
 
 > 这些官方命名使本仓库的"读哪个 ID→什么语义"从位级精确升级到**信号级语义**，重写时可直接对照
 > 2026.2 信号表（40484 信号）补全字段名。

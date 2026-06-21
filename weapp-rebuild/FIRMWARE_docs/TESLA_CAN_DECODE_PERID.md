@@ -102,7 +102,7 @@ D0 = mux 索引；D1..D6 = 3 × u16 单体电压
 |--------|---------|--------|------|
 | 0x103 VCRIGHT_door | D0[0:3]=右门 / D0[4:7] / D7[0:3] | RAM 门状态 | 右侧门/锁 |
 | 0x2e1 VCFRONT_status | D0[0:2](3bit) / D0[3:6](4bit) | gp+0xd4 区 | 前车体状态 |
-| 0x2f3 UI_status | D4[6]=布尔 / D2[4:5](2bit) / D2[0:1](2bit) | 多 RAM 标志 | UI 复合状态 |
+| 0x2f3 UI_hvacRequest ✔✔ | D4[6]=布尔 / D2[4:5](2bit) / D2[0:1](2bit) | 多 RAM 标志 | 空调请求(双源确认) |
 | 0x405 | D0(条件写) | gp+0x188 | ? |
 
 ### 2.12 其余 custom ID 逐位（批次 2，✔FW 读位）
@@ -139,7 +139,7 @@ D0 = mux 索引；D1..D6 = 3 × u16 单体电压
 | 0x082 | TRIP_PLANNING | TXINJECT | @2[10] | — | 行程/预热(回注) |
 | 0x102 | VCLEFT_door | custom | D0&0xf, D1[4],D1[5] | (auipc RAM) | 左门状态 |
 | 0x103 | VCRIGHT_door | custom | D0&0xf, D0>>4, D7&0xf | (auipc RAM) | 右门状态 |
-| 0x118 | DriveSystemStatus | custom | **D2>>5(挡位)**, D4 | (auipc RAM) | 挡位/驾驶状态 |
+| 0x118 | DI_systemStatus ✔✔ | custom | **D2>>5(挡位)**, D4 | (auipc RAM) | 挡位/驾驶状态(双源确认) |
 | 0x129 | SteeringAngle | custom | (子树,待补) | — | 方向盘转角 |
 | 0x132 | BMS_hvBusStatus | STATE idx1 | memcpy | 状态表[1] | 总电压/电流(§5) |
 | 0x1f9 | ? | TXINJECT | D0<<5&0x1f | — | 回注 |
@@ -148,17 +148,17 @@ D0 = mux 索引；D1..D6 = 3 × u16 单体电压
 | 0x249 | ? | custom | D1&0xf | — | 4位状态 |
 | 0x257 | DI_speed | custom | **D3,D4[0]→车速9bit** | **gp+0xf4(h)**, gp+0x1d0,0x1d1 | 车速 |
 | 0x25a | ? | custom | D0,D1,D2,D3 | **gp+0x184..0x187(b)** | 4字节(温度?) |
-| 0x266 | RearTorque | custom idx1 | (经SCALE) | — | 后电机功率 |
+| 0x266 | DIR_power? ⚠ | custom idx1 | (经SCALE) | — | 驱动单元(后)数值(分歧:josh=DI_vehicleEstimates) |
 | 0x292 | BMS_socStatus | STATE idx3 | memcpy | 状态表[3] | SOC(§5) |
-| 0x293 | **UI_chassisControl** ✔ref | TXINJECT | D6, @2 | **gp+0x166(b)** | 底盘/驾驶辅助控制 |
+| 0x293 | UI?（三源分歧 ⚠⚠） | TXINJECT | D6, @2 | **gp+0x166(b)** | 注入帧；命名存疑(见 OFFICIAL §0.1) |
 | 0x2b6 | ? | TXINJECT | D0 | **gp+0x165(b)** | 门禁/状态 |
 | 0x2e1 | VCFRONT_status | custom | D0&7>>3 | (尾跳0x09158) gp+0x1e8 | 前车体 |
 | 0x2f3 | **UI_hvacRequest** ✔ref | custom | D4[6], D2[4:5], D2[0:1], D3[2:4] | (auipc RAM) | 空调请求 |
-| 0x31f | ? | custom | D0,D2,D4,D6 | **gp+0x184..0x187(b)** | 4字节(温度?) |
+| 0x31f | PARK_status? ◎ | custom | D0,D2,D4,D6 | **gp+0x184..0x187(b)** | 泊车状态(单源2026.2,原"温度?"臆测废) |
 | 0x321 | VCFRONT_temps | custom | **D5→环境温度** | (尾跳0x09158) gp+0x1e8 | 环境温度×0.5-40 |
 | 0x332 | BMS_bmbMinMax | STATE idx4 | memcpy | 状态表[4] | 单体max/min(§5) |
 | 0x333 | UI_chargeReq | TXINJECT | D0&3, D3 | — | 充电请求(回注) |
-| 0x339 | **VCSEC_authentication** ✔ref | custom | D1>>4 | — | 认证/第三方前备箱·尾门(改装核心) |
+| 0x339 | **VCSEC_authentication** ◎+✔FW功能 | custom | D1>>4 | — | 认证/第三方前备箱·尾门(单源2026.2,但固件改写功能强吻合改装核心) |
 | 0x352 | BMS_energy | STATE idx6 | memcpy | 状态表[6] | 容量/能量(§5) |
 | 0x39d | ? | custom | D1[9],D3 | **gp+0x189,gp+0x18c(b)** | — |
 | 0x3b6 | ? | custom | D0,D1,D2,D3(拼32bit) | (auipc RAM) | — |
@@ -186,7 +186,7 @@ D0 = mux 索引；D1..D6 = 3 × u16 单体电压
 | 0x20c | VCRIGHT_hvac | custom 0x0800287c | D0&7,D1&7,D4&7,D5&3 | — | HVAC 鼓风机/温度 |
 | 0x238 | ? | custom 0x0800234c | D1&0x1f | — | 动力总成? |
 | 0x25d | 充电状态? | custom 0x080047d2 | @2(DLC) | — | 充电相关 |
-| 0x2e5 | FrontTorque | custom idx0 0x0800756e | D0,D1(共用0x266) | — | 前电机功率(AWD) |
+| 0x2e5 | DIF_power? ◎ | custom idx0 0x0800756e | D0,D1(共用0x266) | — | 驱动单元(前)数值(单源,对称0x266) |
 | 0x312 | BMS_thermal | custom 0x080048ea | D4>>3,D5,D6,D7(温度位) | (写状态) | 热管理温度 |
 | 0x33a | UI_rangeSOC | custom 0x0800495e | D0&3,D1&3,D2>>4,D3,D5>>4 | — | 续航/能耗/SOC |
 | 0x3d2 | BMS_kwhCounter | **STATE idx10** | memcpy | →电池包[4..11] | 累计充/放电(§5) |

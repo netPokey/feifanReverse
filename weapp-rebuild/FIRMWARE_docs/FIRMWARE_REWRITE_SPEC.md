@@ -147,7 +147,8 @@ frame[10]  = CRC_table[frame[9]>>4];  // D7 重算CRC(查表~0x0800eb00)
 - ✅ **0xB0 仪表打包器位布局已解出**（8 个 getter→包字节位拼接，§5/`fwb0.py`）。
 - ✅ **官方命名交叉验证**（固件 2026.2，`tesla-can-explorer`，577帧/40484信号）：41/47 监控 ID 命中权威命名，
   修正 8 处+补全多处；关键 **0x339=VCSEC_authentication**(第三方前备箱/尾门请求=改装核心功能)、
-  0x293=UI_chassisControl、0x2f3=UI_hvacRequest、0x39d=IBST_status(刹车助力)。详见 `TESLA_CAN_OFFICIAL_NAMES.md`。
+  0x2f3=UI_hvacRequest(双源确认)、0x39d=IBST_status(刹车助力)；**0x293 三源分歧存疑、0x266/0x2e5 分歧**。
+  详见 `TESLA_CAN_OFFICIAL_NAMES.md`（含置信度分级与多源交叉）。
 - ✅ **控制簇 ID 命名**：0x3a1=VCFRONT_vehicleStatus；余 7 个不在公开 DBC/2026.2 ETH，判为车辆总线控制簇命令帧。
 - ⬜ **静态分析边界**（非遗漏，不影响重写）：~3 个 gp 触发点(0x08006dd2/f42/7466，纯间接 jalr)确切 ID、
   idx13(动态 idx) 依运行时；7 个控制簇 ID 精确信号名需 chassis/私有 DBC。
