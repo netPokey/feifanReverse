@@ -1,5 +1,9 @@
 # CH32V208 蓝牙 CAN 收发器固件 — CAN ID 分析报告
 
+> ⚠ **本文为早期分析**：部分 CAN ID 命名（0x118/0x266/0x293/0x2f3/0x31f/0x339 等）为校验前旧版。
+> **命名以 [`TESLA_CAN_OFFICIAL_NAMES.md`](./TESLA_CAN_OFFICIAL_NAMES.md)（多源交叉+置信度）为准**，
+> 逐位解析见 [`TESLA_CAN_DECODE_PERID.md`](./TESLA_CAN_DECODE_PERID.md)。文档导航见 [`README.md`](./README.md)。
+>
 > 分析对象：`c6eec2f9-firmware.bin`（62 464 字节 / 0xF400，裸二进制，无符号表）
 > 方法：RISC-V (RV32IMAC) 反汇编 + bxCAN 外设寄存器识别 + 常量表定位，并与本仓库
 > `handlers.h` / `TESLA_CAN_*_REFERENCE.md` 交叉印证。

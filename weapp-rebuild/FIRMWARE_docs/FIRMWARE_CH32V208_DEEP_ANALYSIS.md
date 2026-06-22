@@ -1,5 +1,8 @@
 # CH32V208 蓝牙 CAN 收发器固件 — 深度逆向分析（v2）
 
+> ⚠ **命名校验提示**：本文部分 CAN ID 命名（0x118/0x266/0x293/0x2f3/0x31f/0x339 等）为校验前旧版。
+> **命名以 [`TESLA_CAN_OFFICIAL_NAMES.md`](./TESLA_CAN_OFFICIAL_NAMES.md) 为准**；结构/例程分析仍有效。导航见 [`README.md`](./README.md)。
+>
 > 固件：`c6eec2f9-firmware.bin`（62 464 B / 0xF400，裸二进制，无符号）
 > 平台：WCH **CH32V208**（青稞 V4，RV32IMAC）+ `CH32V20x_BLE_LIB_V1.3` + bxCAN
 > 本文给出：① 复现方法 ② 整体结构 ③ 全部 ID 逐条标注 ④ 解码例程 ⑤ 注入/发送例程
