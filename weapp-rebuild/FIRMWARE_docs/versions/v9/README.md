@@ -1,3 +1,7 @@
+> ⚠ **结论修正（见 [`../COMPARE_8_vs_9.md`](../COMPARE_8_vs_9.md) v2）**：8/9 **仅 CAN 接收解析层相同**；9 独有 `gp+0x54` 配置访问层 + AP 免打扰 ModeMDR getter（`0x080001de` 读 config[29]&3，支持 val=0/1/2），8 没有（免打扰只能 val=0）。本文下方“CAN 功能完全相同”为初版表述，**以对比文档 v2 为准**。
+
+---
+
 # 固件 9（TSL9）— 综合分析
 
 > `9.bin`（77824 B / 0x13000，CH32V208 RISC-V，由 `tsl9.txt` 经 `../../scripts/tsl2bin.py` 转换）。
