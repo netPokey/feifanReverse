@@ -48,7 +48,7 @@
 > ✅ 原"可选增强（逐信号补全）"已完成 → #6 `TESLA_CAN_SIGNALS.md`（49 ID / 1311 信号 / 597 枚举）。
 > 至此**静态可达的内容均已覆盖**，剩余两项是固件运行时/多源证据的客观边界。
 
-## 🛠 复现脚本（`scripts/`，capstone 5.0.7 RISC-V，无外部依赖）
+## 🛠 复现脚本（`../../scripts/`，capstone 5.0.7 RISC-V，无外部依赖）
 `fwdis`(反汇编) · `fwall`/`fwbits`(分发器+逐ID读位) · `fwleaf`/`fwfind`(子树节点) · `fwpack`(打包器) ·
 `fwdecode`(单ID解码) · `fwtx`/`fwresign`/`fwsend`/`fwsend2`/`fwsend3`(发送点/重签名/改写映射) ·
 `fwcallers`(反向调用图) · `fwpipe`(主分发器ID分发) · `fwidx`/`fwstate`(signal_state idx) ·

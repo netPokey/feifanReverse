@@ -167,7 +167,7 @@ jr target                                    // 进入该动作码的 case
 | 14/15 | 32/16 | 副驾靠背 前/后 | | | |
 
 > 门(0/1/2/3)→内部号(1/4/7/10) 等差 3，说明门处理函数按 `内部号` 选择"哪个门+什么操作"。
-> 完整 72 项 case 地址见复现脚本 `scripts/symexec.py` 输出。
+> 完整 72 项 case 地址见复现脚本 `../../scripts/symexec.py` 输出。
 
 ### 4.3 注入封装 `tx_wrapper(0x08008062)` ✔FW
 ```
@@ -236,7 +236,7 @@ re-sign 处理函数各自改写的数据字节（✔FW 抽取）：
 - `187` 执行表(`functionOptions.js` `fun`，~200 项)：座椅/车门/AP/灯光/喇叭/模块控制(250 启停/253 重启)/4G/外接屏…
 > 这些是“**动作的人类语义**”；与 §4.2 的“内部动作号”一起，构成重写固件时动作子系统的行为规格。
 
-### 4.7 全部 32 发送点的改写映射（✔FW 批量，`scripts/fwsend.py`）
+### 4.7 全部 32 发送点的改写映射（✔FW 批量，`../../scripts/fwsend.py`）
 **核心结论**：除 BLE 透传(`0x08009a80` 构造新 ID)外，**31 个发送点全是"改写收到帧的数据位 + 原 ID 回注"**。
 即**固件控制车辆 = 改写特斯拉对应控制帧的特定位**（再重签名回注），**不构造全新帧**。各点触发状态+改写位：
 
@@ -356,12 +356,12 @@ re-sign 处理函数各自改写的数据字节（✔FW 抽取）：
 
 | 脚本 | 作用 |
 |------|------|
-| `scripts/fwdis.py <addr> [n]` | 任意地址反汇编 n 条 |
-| `scripts/fwall.py` | 扫描分发器(`0x08009e2e`)→thunk→decoder，抽取每个解码器对 D0..D7 的字节/位访问 |
-| `scripts/fwpack.py` | 抽取 0xD0 打包器读取的状态 idx（→源 CAN ID），定位命令分发器各命令码站点 |
-| `scripts/fwtx.py` | 扫描全部 `tx_wrapper(0x08008062)` 调用点（32 处） |
-| `scripts/fwresign.py` | 提取 re-sign 系列各函数改写的数据字节 |
-| `scripts/symexec.py` | 解析 167 跳转表(`0x0800ef38`,72 项)→case→内部动作号 |
+| `../../scripts/fwdis.py <addr> [n]` | 任意地址反汇编 n 条 |
+| `../../scripts/fwall.py` | 扫描分发器(`0x08009e2e`)→thunk→decoder，抽取每个解码器对 D0..D7 的字节/位访问 |
+| `../../scripts/fwpack.py` | 抽取 0xD0 打包器读取的状态 idx（→源 CAN ID），定位命令分发器各命令码站点 |
+| `../../scripts/fwtx.py` | 扫描全部 `tx_wrapper(0x08008062)` 调用点（32 处） |
+| `../../scripts/fwresign.py` | 提取 re-sign 系列各函数改写的数据字节 |
+| `../../scripts/symexec.py` | 解析 167 跳转表(`0x0800ef38`,72 项)→case→内部动作号 |
 
 核心反汇编初始化（内联，便于离线复刻）：
 ```python
@@ -396,7 +396,7 @@ md=Cs(CS_ARCH_RISCV, CS_MODE_RISCV32|CS_MODE_RISCVC); md.detail=True
 | | 每动作码→确切 CAN ID+8字节 | ⬜ 待逐点 | 异步分散，需逐 case/发送点反汇编(见下) |
 
 **推进方法（每个待办都可复现）**：
-1. **逐 ID 精确化解析**：`scripts/fwdis.py <decoder_addr>` 读解码器，把 `lbu/lhu off(s0)`+`srli/andi`
+1. **逐 ID 精确化解析**：`../../scripts/fwdis.py <decoder_addr>` 读解码器，把 `lbu/lhu off(s0)`+`srli/andi`
    翻成"Dn 的 [a:b] 位 = 信号"，再用小程序 parser/`functionOptions` 对照定标与命名。
 2. **打包器逐位**：反汇编 `0x080097cc`(电池)/`0x08008f44`(仪表)，记录 `signal_state(idx)`→读 state 偏移→
    写包 bit；与小程序 `batteryParser/gaugeParser` 的包位布局对接，即得"原始 CAN 帧→信号"全链。

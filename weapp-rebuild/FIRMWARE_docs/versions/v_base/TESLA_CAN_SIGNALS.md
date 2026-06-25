@@ -1,7 +1,7 @@
 # 特斯拉 CAN 监控 ID 逐信号清单（固件 2026.2 数据）
 
 > 数据源：[adamtash/tesla-can-explorer](https://github.com/adamtash/tesla-can-explorer) `can_frames_decoded_all_values_mcu3.json`（Model 3 固件 2026.2 MCU3）。
-> 生成：`scripts/gen_signals.py`。**本文仅补信号语义/枚举值**；**位布局以固件逆向（`TESLA_CAN_DECODE_PERID.md`）为准**，命名置信度见 `TESLA_CAN_OFFICIAL_NAMES.md §0`。
+> 生成：`../../scripts/gen_signals.py`。**本文仅补信号语义/枚举值**；**位布局以固件逆向（`TESLA_CAN_DECODE_PERID.md`）为准**，命名置信度见 `TESLA_CAN_OFFICIAL_NAMES.md §0`。
 >
 > ⚠ 局限：该数据集不含位起止（`limitations`：bitfield 未完全解码），且为 2026.2 版——与 feifan 固件存在版本漂移，**信号名/枚举作语义参考，不作位级依据**。
 
