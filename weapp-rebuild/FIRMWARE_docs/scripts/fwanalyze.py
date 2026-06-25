@@ -21,9 +21,13 @@ def analyze(fw):
     A = fwlocate.locate(fw)
     ds = A['can_dispatch'][0]
     state = A['state_helper'][0] if A['state_helper'] else None
-    # 扫分发表 ID->handler（逐字节自对齐，覆盖完整表，避免线性反汇编错位）
+    # 扫 ID->handler（逐字节自对齐）。环境变量 FULL=1 → 全固件扫(含子分发表/inline)，否则仅主分发表区
+    import os
     disp = {}; cur = None
-    a = ds - 0x100; o = a - BASE; end = ds + 0x500
+    if os.environ.get('FULL'):
+        a = BASE; o = 0; end = BASE + len(fw)
+    else:
+        a = ds - 0x100; o = a - BASE; end = ds + 0x500
     while a < end:
         g = list(md.disasm(fw[o:o + 4], a, count=1))
         if not g:
@@ -32,9 +36,12 @@ def analyze(fw):
         if i.mnemonic in ('addi', 'c.li') and s.split(',')[0] == 'a4':
             try: cur = int(s.split(',')[-1], 0)
             except Exception: cur = None
-        if i.mnemonic == 'beq' and 'a5,a4' in s and cur is not None and 0x80 <= cur < 0x800:
-            try: disp.setdefault(cur, i.address + int(s.split(',')[-1], 0))
-            except Exception: pass
+        if i.mnemonic in ('beq', 'bne') and 'a5,a4' in s and cur is not None and 0x80 <= cur < 0x800:
+            if i.mnemonic == 'beq':
+                try: disp.setdefault(cur, i.address + int(s.split(',')[-1], 0))
+                except Exception: pass
+            else:
+                disp.setdefault(cur, i.address + i.size)  # bne: handler 为 fall-through
         a += i.size; o += i.size
 
     def thunk_dec(t):
