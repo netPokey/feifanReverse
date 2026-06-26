@@ -30,12 +30,12 @@ int main(void){
 
     /* 环境温 0x321: D5=100 -> 100*5-400=100 (×10℃ = 10.0℃) */
     uint8_t a[8]={0,0,0,0,0,100,0,0}; f=mk(0x321,a); can_dispatch(&f);
-    CHECK(sig_get(SIG_AMBIENT_C10)==100,"0x321 环境温×10");
+    CHECK(sig_get(SIG_AMBIENT_RAW)==100,"0x321 环境温原值");
 
     /* 电压电流 0x132: V=D0|D1<<8; I=-(D2|D3<<8) */
     uint8_t v[8]={0x10,0x27,0x64,0x00,0,0,0,0}; f=mk(0x132,v); can_dispatch(&f);  /* V=0x2710=10000(×0.01=100V) I=-100(×0.1=-10A) */
-    CHECK(sig_get(SIG_PACK_V_C100)==0x2710,"0x132 电压");
-    CHECK(sig_get(SIG_PACK_I_D10)==-100,"0x132 电流(放电为负)");
+    CHECK(sig_get(SIG_PACK_V_RAW)==0x2710,"0x132 电压原值");
+    CHECK(sig_get(SIG_PACK_I_RAW)==0x64,"0x132 电流原值");
     CHECK(g_ss_idx[1][0]==0x10,"0x132 STATE 整帧入表");
 
     /* kwh 0x3d2 */

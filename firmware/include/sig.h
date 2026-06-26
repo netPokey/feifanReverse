@@ -8,12 +8,12 @@ typedef enum {
     SIG_SPEED,       /* 9bit raw (0x257); 0x1FF 无效→0; gp+0xF4 */
     SIG_SOC,         /* 7bit % (0x33a) */
     SIG_RANGE,       /* 10bit (0x33a) */
-    SIG_AMBIENT_C10, /* 环境温 ×10 ℃ (0x321 D5*5-400) */
+    SIG_AMBIENT_RAW, /* 环境温原值 D5 (0x321; app ×0.5-40) */
     SIG_STEER_RAW,   /* 转角拼 (0x129) gp+0x1d8 */
     SIG_DOOR_FL, SIG_DOOR_FR, SIG_DOOR_RL, SIG_DOOR_RR, /* 0x102/0x103 */
     SIG_HVAC_BLOWER, /* 11bit (0x20c) */
-    SIG_PACK_V_C100, /* 电压 ×100 V (0x132 D0|D1<<8) */
-    SIG_PACK_I_D10,  /* 电流 ×10 A 有符号 (0x132 D2|D3<<8 ×-0.1) */
+    SIG_PACK_V_RAW,  /* 电压原值 D0|D1<<8 (0x132; app ×0.01V) */
+    SIG_PACK_I_RAW,  /* 电流原值 D2|D3<<8 (0x132; app ×-0.1A) */
     SIG_KWH_DISCHG,  /* 放电 ×1000 kWh (0x3d2 D0..D3) */
     SIG_KWH_CHG,     /* 充电 ×1000 kWh (0x3d2 D4..D7) */
     SIG_BRAKE_T0, SIG_BRAKE_T1, SIG_BRAKE_T2, SIG_BRAKE_T3, /* 0x3fe 4×10bit */

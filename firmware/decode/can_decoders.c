@@ -26,7 +26,7 @@ static void dec_0x257(const tesla_frame_t *f){ uint32_t v=((D(f,4)&1)<<8)|D(f,3)
 static void dec_0x33a(const tesla_frame_t *f){
     sig_set(SIG_SOC,  ((D(f,3)&7)<<4)|(D(f,2)>>4));                                         /* SOC 7bit */
     if(D(f,5)!=0xFF) sig_set(SIG_RANGE, ((D(f,1)&3)<<8)|D(f,0)); }                          /* 续航 10bit */
-static void dec_0x321(const tesla_frame_t *f){ sig_set(SIG_AMBIENT_C10,(int32_t)D(f,5)*5-400); } /* 环境温×10 */
+static void dec_0x321(const tesla_frame_t *f){ sig_set(SIG_AMBIENT_RAW,(int32_t)D(f,5)); }       /* 环境温原值 D5 */
 static void dec_0x129(const tesla_frame_t *f){ sig_set(SIG_STEER_RAW,((D(f,2)&0x3f)<<6)|(D(f,3)&0x3f)); } /* 转角 */
 static void dec_0x102(const tesla_frame_t *f){ sig_set(SIG_DOOR_FL,D(f,0)&1); sig_set(SIG_DOOR_RL,(D(f,0)>>1)&1); }
 static void dec_0x103(const tesla_frame_t *f){ sig_set(SIG_DOOR_FR,D(f,0)&1); sig_set(SIG_DOOR_RR,(D(f,0)>>1)&1); }
@@ -39,8 +39,8 @@ static void dec_0x3fe(const tesla_frame_t *f){                                  
     sig_set(SIG_BRAKE_T3, ((D(f,7)&3)<<8)|D(f,6)); }
 /* STATE 型: 整帧入表 + 关键信号 (0x132 电压电流 / 0x3d2 kwh, ✔FW §2.4) */
 static void dec_0x132(const tesla_frame_t *f){ ss_store_frame(1,f->data);
-    sig_set(SIG_PACK_V_C100, D(f,0)|(D(f,1)<<8));
-    int32_t i=(int32_t)(int16_t)(D(f,2)|(D(f,3)<<8)); sig_set(SIG_PACK_I_D10, -i); }
+    sig_set(SIG_PACK_V_RAW, D(f,0)|(D(f,1)<<8));
+    sig_set(SIG_PACK_I_RAW, D(f,2)|(D(f,3)<<8)); }
 static void dec_0x3d2(const tesla_frame_t *f){
     sig_set(SIG_KWH_DISCHG, D(f,0)|(D(f,1)<<8)|(D(f,2)<<16)|(D(f,3)<<24));
     sig_set(SIG_KWH_CHG,    D(f,4)|(D(f,5)<<8)|(D(f,6)<<16)|(D(f,7)<<24)); }

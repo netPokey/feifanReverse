@@ -3,17 +3,21 @@ CFLAGS  ?= -std=c11 -Wall -Wextra -O2 -Iinclude
 CORE     = src/tesla_frame.c src/ble_proto.c src/signal_state.c \
            src/can_dispatch.c src/ble_router.c src/can_tx.c
 DECODE   = decode/can_decoders.c
+PACK     = src/packer.c
 
 .PHONY: test clean syntax-check-port
-test: build/test_modemdr build/test_framework build/test_decode
+test: build/test_modemdr build/test_framework build/test_decode build/test_packer
 	./build/test_modemdr
 	./build/test_framework
 	./build/test_decode
+	./build/test_packer
 build/test_modemdr: src/tesla_frame.c src/modemdr.c test/test_modemdr.c | build
 	$(CC) $(CFLAGS) $^ -o $@
 build/test_framework: $(CORE) test/test_framework.c | build
 	$(CC) $(CFLAGS) $^ -o $@
 build/test_decode: src/tesla_frame.c src/signal_state.c src/can_dispatch.c $(DECODE) test/test_decode.c | build
+	$(CC) $(CFLAGS) $^ -o $@
+build/test_packer: src/signal_state.c $(PACK) test/test_packer.c | build
 	$(CC) $(CFLAGS) $^ -o $@
 build:
 	mkdir -p build
