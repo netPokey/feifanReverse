@@ -5,14 +5,16 @@ CORE     = src/tesla_frame.c src/ble_proto.c src/signal_state.c \
 DECODE   = decode/can_decoders.c
 PACK     = src/packer.c
 BLE      = src/ble_app.c src/ble_auth.c src/ble_router.c src/ble_proto.c
+CTRL     = src/control.c src/can_tx.c
 
 .PHONY: test clean syntax-check-port
-test: build/test_modemdr build/test_framework build/test_decode build/test_packer build/test_ble
+test: build/test_modemdr build/test_framework build/test_decode build/test_packer build/test_ble build/test_control
 	./build/test_modemdr
 	./build/test_framework
 	./build/test_decode
 	./build/test_packer
 	./build/test_ble
+	./build/test_control
 build/test_modemdr: src/tesla_frame.c src/modemdr.c test/test_modemdr.c | build
 	$(CC) $(CFLAGS) $^ -o $@
 build/test_framework: $(CORE) test/test_framework.c | build
@@ -22,6 +24,8 @@ build/test_decode: src/tesla_frame.c src/signal_state.c src/can_dispatch.c $(DEC
 build/test_packer: src/signal_state.c $(PACK) test/test_packer.c | build
 	$(CC) $(CFLAGS) $^ -o $@
 build/test_ble: $(BLE) $(PACK) src/signal_state.c src/modemdr.c src/tesla_frame.c test/test_ble.c | build
+	$(CC) $(CFLAGS) $^ -o $@
+build/test_control: $(CTRL) src/tesla_frame.c test/test_control.c | build
 	$(CC) $(CFLAGS) $^ -o $@
 build:
 	mkdir -p build

@@ -24,4 +24,9 @@ int      tesla_checksum_ok(const tesla_frame_t *f);
 typedef uint8_t (*tesla_crc_fn)(const tesla_frame_t *f);
 void tesla_resign(tesla_frame_t *f, tesla_crc_fn crc);
 
+/* Tesla CRC8 (poly 0x2F) over data[0..dlc-2] (跳过 D7 校验字节); 多数 SCCM/控制帧用之。*/
+uint8_t tesla_crc8(const tesla_frame_t *f);
+/* 加法校验回调形式(给 tesla_resign): (IDhi+IDlo+Σdata[0..6])&0xFF */
+uint8_t tesla_addsum_d7(const tesla_frame_t *f);
+
 #endif
