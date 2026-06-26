@@ -5,6 +5,7 @@
 #include "ble_hal.h"
 #include "packer.h"
 #include "modemdr.h"
+#include "config_store.h"
 #include <string.h>
 
 static uint8_t s_devinfo[18];      /* 设备信息帧(≥18B); [0]=hw_ver 等, 由 0xA3/查询填 */
@@ -21,15 +22,26 @@ static void h_a8(const ble_msg_t *m){            /* 鉴权 */
 static void h_a0(const ble_msg_t *m){ (void)m; ble_hal_notify(0xA0, s_devinfo, sizeof s_devinfo); }
 static void h_a3(const ble_msg_t *m){            /* 写经典设置 */
     if (m->len) { uint16_t n=m->len>sizeof s_devinfo?sizeof s_devinfo:m->len; memcpy(s_devinfo,m->payload,n); }
+    config_write(m->payload, m->len);            /* 全量设备配置 */
     modemdr_on_ble_a3(m->payload, m->len);       /* 免打扰配置切片 */
     ble_hal_notify(0xA0, s_devinfo, sizeof s_devinfo);  /* 回读 */
 }
 static void h_b0(const ble_msg_t *m){ s_gauge_poll = (m->len && m->payload[0]); }
 static void h_d0(const ble_msg_t *m){ s_batt_poll  = (m->len && m->payload[0]); }
 static void h_ctrl(const ble_msg_t *m){ control_on_cmd(m->type, m->payload, m->len); }
+/* 256B 块配置: payload[0]=2 读组 / 否则 [0]=1,[1]=组,[2..] 256B 写 */
+static void h_block(const ble_msg_t *m){
+    cfg_block_kind_t k = m->type==0xAB?BLK_SHORTCUT : m->type==0xB9?BLK_RGB : BLK_BTN;
+    if (m->len>=1 && m->payload[0]==2){
+        uint8_t g = m->len>=2?m->payload[1]:0; const uint8_t *b=config_block(k,g);
+        if (b) ble_hal_notify(m->type, b, CFG_BLOCK_LEN);
+    } else if (m->len>=2+CFG_BLOCK_LEN && m->payload[0]==1){
+        config_block_write(k, m->payload[1], m->payload+2);
+    }
+}
 
 void ble_app_init(void){
-    ble_auth_init(); ble_router_reset();
+    ble_auth_init(); config_store_init(); ble_router_reset();
     ble_router_register(0xA8, h_a8);
     ble_router_register(0xA0, h_a0);
     ble_router_register(0xA3, h_a3);
@@ -38,6 +50,9 @@ void ble_app_init(void){
     ble_router_register(0xA7, h_ctrl);   /* 车辆控制 -> Phase D */
     ble_router_register(0xBB, h_ctrl);   /* 执行动作 */
     ble_router_register(0xA2, h_ctrl);   /* 模拟滚轮 */
+    ble_router_register(0xAB, h_block);  /* 171 快捷指令 256B */
+    ble_router_register(0xB9, h_block);  /* 185 RGB 256B */
+    ble_router_register(0xBA, h_block);  /* 186 蓝牙按钮 256B */
 }
 void ble_app_on_msg(const ble_msg_t *m){
     /* 鉴权门: 除 168 外, 未鉴权一律拒绝 (固件按密码门控所有指令, §5) */
