@@ -33,7 +33,7 @@
 - BLE 协议栈 `CH32V20x_BLE_LIB_V1.3`（与 base 同）。BLE 命令字典 160–240 机制见 `../v_base/FIRMWARE_CH32V208_BLE_PROTOCOL_DEEP_ANALYSIS.md`。
 
 ## 5. 版本关系
-- **8 vs 9**：同源码两次构建，**CAN 功能完全相同**（仅 TSL8/TSL9 + 布局微调）→ `../COMPARE_8_vs_9.md`。
+- **8 vs 9**：同源码两次构建，CAN 解析层 + 免打扰注入框架（`0x370`/CAN1）相同；**唯一功能差异=ModeMDR getter**（8 桩常量 1→免打扰固定滚轮；9 读 `config[29]` 支持无感）→ `../COMPARE_8_vs_9.md` v3。
 - **8 vs base**：功能演进，新增 ESP/DAS/PCS/SCS 监控、删除 BMS_thermal、+15KB → `../COMPARE_8_vs_base.md`。
 
 ## 6. 本目录文档

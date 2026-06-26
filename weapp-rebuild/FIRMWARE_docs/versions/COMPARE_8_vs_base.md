@@ -23,7 +23,7 @@
 - **0x145 ESP_status** — ESP 车身稳定系统状态（新增底盘动态监控）。
 - **0x399 DAS_status** — 驾驶辅助系统（Autopilot/DAS）状态。
 - **0x2b4 PCS_dcdcRailStatus** — 电源转换系统 DC-DC 轨道状态（低压供电监控）。
-- **0x370 SCS_alertMatrix2** — 底盘/安全系统告警矩阵。
+- **0x370** — ⚠ 固件按**转向/EPAS（hands-on）**语义改写（无感免打扰：摆动 12 位转向信号注入 CAN1，见 `COMPARE_8_vs_9.md` §6.4）；旧标 `SCS_alertMatrix2` 与此行为不符，命名待按 DBC 核实。
 
 > 即 8 把监控面从「车身/电池/UI」扩展到「**底盘稳定 + 驾驶辅助 + 电源系统**」，删除了独立的电池热帧
 > （`0x312`，可能并入 `0x352 BMS_energyStatus(mux)` 或 `0x332`）。

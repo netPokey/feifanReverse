@@ -1,4 +1,6 @@
-> ⚠ **8/9 对比结论已修正（v2）**：8/9 **CAN 接收解析层相同**，但 **9 新增 `gp+0x54` 配置层 + ModeMDR 免打扰差异**（9 支持 AP 免打扰 val=1/2，8 只能 val=0）。详见 `versions/COMPARE_8_vs_9.md`。下方“同源同功能”表述以对比文档 v2 为准。
+> ⚠ **8/9 对比结论已修正（v3）**：8/9 **CAN 接收解析层 + 免打扰注入框架均相同**（含 `0x370` 无感注入器，仅 gp 偏移平移）。
+> **唯一真实差异 = ModeMDR getter `0x080001de`**：8 桩为常量 1（免打扰固定滚轮、无感为死代码），9 改为读 `config[29]&3`（支持 val=0 滚轮 / 1 无感 / 2 两者）。
+> v2 “9 新增 gp+0x54 配置层 / ModeMDR getter 9 独有” 为 **gp 偏移布局错位伪差**（8 同一指针在 `gp+0x74`）。详见 `versions/COMPARE_8_vs_9.md` v3。
 
 # feifan 蓝牙↔CAN 固件逆向 — 多版本索引
 
@@ -12,11 +14,11 @@
 |------|------|------|-------------|
 | **base** (c6eec2f9) | `versions/v_base/` | 62464 B (0xF400) | ★完整逆向：10 文档（PERID/PROTOCOL/OFFICIAL_NAMES/SIGNALS/TSL/SPEC/3×CH32V208 等） |
 | **8** (TSL8) | `versions/v8/` | 77824 B (0x13000) | 功能演进版：新增 ESP/DAS/PCS/SCS 监控；含 PERID（72 ID）+ 综合 README |
-| **9** (TSL9) | `versions/v9/` | 77824 B (0x13000) | 与 8 **同源同功能**（仅版本号+布局微调）；PERID + 锚点差异 README |
+| **9** (TSL9) | `versions/v9/` | 77824 B (0x13000) | 与 8 同源；**唯一功能差异=ModeMDR 无感**（getter 读 `config[29]`，8 桩为常量 1）；PERID + 锚点差异 README |
 
 ## 🔀 版本对比
 
-- **`versions/COMPARE_8_vs_9.md`** — 8/9 同源码两次构建，**CAN 功能完全相同**（72 ID + 逐位解析全同，仅 TSL8/TSL9 + 地址微调）。
+- **`versions/COMPARE_8_vs_9.md`** — 8/9 同源码两次构建；CAN 解析层 + 免打扰注入框架（`0x370`/CAN1）相同，**唯一功能差异=ModeMDR getter**（9 读 `config[29]` 支持无感，8 桩为常量 1）。
 - **`versions/COMPARE_8_vs_base.md`** — 8 是 base 的**功能演进**：净 +5 个 CAN ID（新增 `0x145 ESP_status`、
   `0x399 DAS_status`、`0x2b4 PCS_dcdcRailStatus`、`0x370 SCS_alertMatrix2` 等，删除 `0x312 BMS_thermalStatus`），+15 KB，新增 `BLE-M3` 标识。
 
@@ -40,6 +42,6 @@
 - **证据等级**：✔FW 固件实证 / ✔APP 小程序佐证 / ✔✔ 多源一致 / ◎ 单源 / ⚠ 分歧（详见 `v_base/TESLA_CAN_OFFICIAL_NAMES.md §0`）。
 
 ## ✅ 关键结论速览
-- **8/9 = 同一逻辑固件**（同源构建），对 8 的逆向全部适用于 9。
+- **8/9 = 同源构建**，框架（含 `0x370` 无感注入器）相同；**唯一功能差异=ModeMDR getter**（9 读 `config[29]` 启用无感，8 桩常量 1）。
 - **base→8 = 监控扩展**（底盘稳定 ESP / 驾驶辅助 DAS / 电源 PCS），解析框架（state_helper/打包器/分发器）不变。
 - 三版均为 CH32V208 + `CH32V20x_BLE_LIB_V1.3`，控制注入机制一致（re-sign 改写 + 原 ID 回注 + BLE 透传）。

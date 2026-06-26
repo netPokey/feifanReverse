@@ -48,7 +48,7 @@
 | 0x339 | VCSEC_authentication | custom | D1>>4 |
 | 0x33a | UI_range | custom | D5 D2>>4&7 D3&7 D1&3 D0&3 |
 | 0x352 | BMS_energyStatus(mux) | custom | · |
-| 0x370 | SCS_alertMatrix2 (8/9新增) | custom | D6&0xe0 D8 |
+| 0x370 | ⚠转向/EPAS(hands-on) (旧标 SCS_alertMatrix2 待DBC核) | custom | D6&0xe0 D8 |
 | 0x37a | ? | custom | D0&0x40 D1&0x20 |
 | 0x399 | DAS_status (8/9新增) | custom | · |
 | 0x39b | ? (8/9新增) | custom | · |
