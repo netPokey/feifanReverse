@@ -27,12 +27,23 @@ Makefile          `make test` 本机编译+跑测
 - 门控: 未激活/远离中位/校验错/entry_gate/时间哨兵/s=0 → 不注入
 - 子模式恒低 0x7a8 / 恒高 0x85c; 分发 val=0/1/2; 时窗回调清零
 
-## 上板移植 (★ 待接 SDK)
-1. 实现 `mdr_hal_can1_send()` → bxCAN1 (`CAN_Transmit`, 基址 `0x40006400`)。
-2. 实现 `mdr_hal_schedule()` → 软件定时器 (WCH BLE 库 TMOS 或硬件 TIM)。
-3. 周期调用 `modemdr_dispatch(s)`; CAN RX 分发里对 `0x370`→`modemdr_on_can_0x370`、
-   `0x229`→`modemdr_on_can_0x229`; BLE 收到 `0xA3` 调 `modemdr_on_ble_a3`。
-4. 按需用强符号覆盖 `mdr_entry_gate / mdr_notouch_enabled / mdr_submode / mdr_scroll_enabled`。
+## CH32V208 端口层 (WCH CH32V20x SDK + CH32V20x_BLE_LIB)
+`port/mdr_port_ch32v208.c` 已实现 (拓扑实证: 收/发同在 **CAN1 0x40006400**):
+- `mdr_hal_can1_send()` → `CAN_Transmit(CAN1,…)`
+- `mdr_hal_schedule()`  → TMOS `tmos_start_task` 一次性事件 (无感时窗清零)
+- `MDR_CAN1_Init()`     → CAN1 GPIO/时钟/滤波(收全部)/RX0 中断
+- `USB_LP_CAN1_RX0_IRQHandler` → `CAN_Receive` → 按 ID 分发 (0x370/0x229)
+- `MDR_OnBleWrite(cmd,payload,len)` → cmd==0xA3 存配置
+- 门/态强符号 `mdr_entry_gate/notouch_enabled/submode/scroll_enabled` (按真实条件细化)
+
+**集成三步** (见 `port/example_integration.c`):
+1. 初始化里 `MDR_Init();`(+`MDR_SetTimeParam`)。
+2. BLE 写回调里 `MDR_OnBleWrite(cmd,payload,len);`。
+3. CAN1 RX 已自动喂核心; 自有 RX 分发则改用 `MDR_FeedRxFrame()`。
+
+> `[BOARD]` 标记处按你的板子改: CAN 引脚(示例 PB8/PB9 重映射)、波特率(示例 500kbps@APB1=36MHz)、时钟。
+> 语法自检: `make syntax-check-port` (用 `test/wch_syntax_stubs` 假头; 真实编译用你的 SDK)。
+> ISR 用 `__attribute__((interrupt("WCH-Interrupt-fast")))` (WCH riscv 工具链)。
 
 ## 已知 TODO (不影响无感主路径)
 - 滚轮 `0x229` re-sign 的 `data[0]` 量值表 (`0x08012140`) 需从固件导出。
