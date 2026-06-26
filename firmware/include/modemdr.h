@@ -25,6 +25,7 @@ void    modemdr_dispatch(int s);
 /* ---- 逐帧入口 (从 CAN RX 分发器调用) ---- */
 void    modemdr_on_can_0x370(const tesla_frame_t *f);  /* 无感: EPAS 转向 re-sign */
 void    modemdr_on_can_0x229(const tesla_frame_t *f);  /* 滚轮: SCCM_rightStalk re-sign */
+void    modemdr_scroll_trigger(uint8_t dir);           /* 0xA2 直接触发滚轮注入(下个 0x229 帧) */
 
 /* ---- 平台需提供的“门/态”读取 (弱符号, 默认实现见 modemdr.c) ---- */
 int     mdr_entry_gate(void);     /* 门1 @0x0800029e: 免打扰前置(总开关&AP在用) */

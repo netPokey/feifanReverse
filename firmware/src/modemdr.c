@@ -83,6 +83,8 @@ void modemdr_on_can_0x370(const tesla_frame_t *f) {
 /* ---- 滚轮注入: SCCM_rightStalk 0x229 re-sign (结构骨架, @0x08004f58) ----
  * 精确编码见 §6; data[0] 取自滚轮量表 @0x08012140 (待导出)。
  * 注: SCCM 帧校验形式需确认 (可能是 Tesla CRC8 而非加法校验) — 见 README TODO。*/
+void modemdr_scroll_trigger(uint8_t dir){ s_scroll.pending=1; s_scroll.type=dir; s_scroll.amount=0; s_scroll.param=1; }
+
 void modemdr_on_can_0x229(const tesla_frame_t *f) {
     if (!s_scroll.pending) return;
     tesla_frame_t t = *f;

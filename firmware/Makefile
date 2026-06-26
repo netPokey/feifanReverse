@@ -7,9 +7,12 @@ PACK     = src/packer.c
 BLE      = src/ble_app.c src/ble_auth.c src/ble_router.c src/ble_proto.c
 CTRL     = src/control.c src/can_tx.c
 CFG      = src/config_store.c
+ALL      = src/tesla_frame.c src/ble_proto.c src/signal_state.c src/can_dispatch.c \
+           src/ble_router.c src/can_tx.c src/modemdr.c src/packer.c src/ble_app.c \
+           src/ble_auth.c src/control.c src/config_store.c decode/can_decoders.c src/firmware_app.c
 
 .PHONY: test clean syntax-check-port
-test: build/test_modemdr build/test_framework build/test_decode build/test_packer build/test_ble build/test_control build/test_config
+test: build/test_modemdr build/test_framework build/test_decode build/test_packer build/test_ble build/test_control build/test_config build/test_integration
 	./build/test_modemdr
 	./build/test_framework
 	./build/test_decode
@@ -17,6 +20,7 @@ test: build/test_modemdr build/test_framework build/test_decode build/test_packe
 	./build/test_ble
 	./build/test_control
 	./build/test_config
+	./build/test_integration
 build/test_modemdr: src/tesla_frame.c src/modemdr.c test/test_modemdr.c | build
 	$(CC) $(CFLAGS) $^ -o $@
 build/test_framework: $(CORE) test/test_framework.c | build
@@ -30,6 +34,8 @@ build/test_ble: $(BLE) $(CFG) $(PACK) src/signal_state.c src/modemdr.c src/tesla
 build/test_control: $(CTRL) src/tesla_frame.c test/test_control.c | build
 	$(CC) $(CFLAGS) $^ -o $@
 build/test_config: $(CFG) test/test_config.c | build
+	$(CC) $(CFLAGS) $^ -o $@
+build/test_integration: $(ALL) test/test_integration.c | build
 	$(CC) $(CFLAGS) $^ -o $@
 build:
 	mkdir -p build

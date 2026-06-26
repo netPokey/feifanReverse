@@ -11,7 +11,9 @@
 void MDR_Init(void);
 
 /* BLE 写特征值回调里调用; 命令字==0xA3 时把 payload(76B) 交给配置处理。*/
-void MDR_OnBleWrite(uint8_t cmd, const uint8_t *payload, uint16_t len);
+void MDR_OnBleWrite(uint8_t cmd, const uint8_t *payload, uint16_t len); /* 旧 */
+/* BLE GATT 写回调: 喂原始帧(整机拆帧+鉴权+分发)。*/
+void MDR_OnGattWrite(const uint8_t *buf, int n);
 
 /* 免打扰时窗时间(秒): 传给 modemdr_dispatch(s)。可由上层依配置设置。*/
 void MDR_SetTimeParam(uint8_t seconds);

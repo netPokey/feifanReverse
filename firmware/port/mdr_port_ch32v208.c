@@ -10,6 +10,8 @@
 #include "mdr_port.h"
 #include "modemdr.h"
 #include "mdr_hal.h"
+#include "firmware_app.h"
+#include "can_tx.h"
 
 #include "ch32v20x.h"
 #include "ch32v20x_can.h"
@@ -44,6 +46,7 @@ static uint8_t     s_time_s   = 5;      /* 免打扰时窗秒数; 见 MDR_SetTim
  * ============================================================ */
 void mdr_hal_can1_send(const tesla_frame_t *f)
 {
+    if (can_tx_get_mode() != CAN_TX_NORMAL) return;   /* 门禁: 监听态不发 */
     CanTxMsg tx;
     tx.StdId = f->id;
     tx.ExtId = 0;
@@ -73,7 +76,7 @@ void mdr_hal_schedule(mdr_task_cb cb, uint32_t delay_ms)
 static tmosEvents MDR_ProcessEvent(tmosTaskID task_id, tmosEvents events)
 {
     if (events & MDR_EVT_DISPATCH) {
-        modemdr_dispatch((int)s_time_s);                 /* 固件 0x080022ee */
+        fw_tick((int)s_time_s);                          /* 整机: 免打扰分发 + 轮询推送 */
         tmos_start_task(task_id, MDR_EVT_DISPATCH, MS1_TO_SYSTEM_TIME(MDR_DISPATCH_MS));
         return events ^ MDR_EVT_DISPATCH;
     }
@@ -142,11 +145,7 @@ void USB_LP_CAN1_RX0_IRQHandler(void)
 /* 按 ID 把收到的帧分发到核心 (ModeMDR 关心 0x370/0x229; 其余可接你的桥接逻辑) */
 void MDR_FeedRxFrame(const tesla_frame_t *f)
 {
-    switch (f->id) {
-        case 0x370: modemdr_on_can_0x370(f); break;   /* 无感: EPAS 转向 re-sign */
-        case 0x229: modemdr_on_can_0x229(f); break;   /* 滚轮: SCCM_rightStalk re-sign */
-        default: /* MDR_OnOtherFrame(f); 其它 71 个 ID 接整桥逻辑 */ break;
-    }
+    fw_on_can_rx(f);   /* 整机分发: 72 ID 解码 + 0x370/0x229 re-sign + 控制 */
 }
 
 /* ============================================================
@@ -154,9 +153,10 @@ void MDR_FeedRxFrame(const tesla_frame_t *f)
  * ============================================================ */
 void MDR_OnBleWrite(uint8_t cmd, const uint8_t *payload, uint16_t len)
 {
-    if (cmd == MDR_BLE_CMD_WRITE_CONFIG)              /* 0xA3 */
-        modemdr_on_ble_a3(payload, (int)len);          /* 固件 0x0800c330 */
+    (void)cmd; (void)payload; (void)len;   /* 旧接口; 整机改用 MDR_OnGattWrite(原始帧) */
 }
+/* BLE GATT 写回调: 直接喂原始帧(0x55 0x7F ... 校验), 整机拆帧+鉴权+分发。*/
+void MDR_OnGattWrite(const uint8_t *buf, int n) { fw_on_ble_write(buf, n); }
 
 void MDR_SetTimeParam(uint8_t seconds) { s_time_s = seconds; }
 
@@ -166,6 +166,7 @@ void MDR_SetTimeParam(uint8_t seconds) { s_time_s = seconds; }
 void MDR_Init(void)
 {
     MDR_CAN1_Init();
+    fw_init();                              /* 整机初始化(配置/BLE命令/解码/注入) */
     mdr_taskID = TMOS_ProcessEventRegister(MDR_ProcessEvent);
     tmos_start_task(mdr_taskID, MDR_EVT_DISPATCH, MS1_TO_SYSTEM_TIME(MDR_DISPATCH_MS));
 }
