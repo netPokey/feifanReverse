@@ -50,7 +50,7 @@ int main(void){
     /* 4. 通用 re-sign: D6 高nibble+0x10, D7=crc */
     tesla_frame_t r={0}; r.id=0x229; r.dlc=8; r.data[6]=0x20; r.data[7]=0x00;
     tesla_resign(&r, s_crc);
-    CHECK(r.data[6]==0x30,"re-sign D6 计数器 +0x10");
+    CHECK(r.data[6]==0x21,"re-sign D6 计数器 低nibble+1 (9.bin)");
     CHECK(r.data[7]==0xAB,"re-sign D7 = crc 回调");
 
     /* 5. CAN_TX 门禁 */

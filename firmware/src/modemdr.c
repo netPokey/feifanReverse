@@ -88,10 +88,10 @@ void modemdr_scroll_trigger(uint8_t dir){ s_scroll.pending=1; s_scroll.type=dir;
 void modemdr_on_can_0x229(const tesla_frame_t *f) {
     if (!s_scroll.pending) return;
     tesla_frame_t t = *f;
-    t.data[2] = (uint8_t)((t.data[2] & 0xfc) | 0x1);                   /* 滚轮字段置位 */
-    t.data[1] = (uint8_t)((t.data[1] & 0xf0) | ((t.data[1] + 1) & 0xf)); /* 计数器++ */
-    /* t.data[0] = scroll_roll_table[idx];   // TODO: 导出 0x08012140 */
-    t.data[7] = tesla_addsum(&t, 7);              /* 占位; 待确认校验形式 */
+    t.data[2] = (uint8_t)((t.data[2] & 0xfc) | 0x1);                   /* D2 滚轮字段置位 */
+    t.data[1] = (uint8_t)((t.data[1] & 0xf0) | ((t.data[1] + 1) & 0xf)); /* D1 计数器++ (9.bin: 计数器在 D1) */
+    /* t.data[0] = scroll_roll_table[idx];   // TODO: 导出 0x08012140 滚轮量表 */
+    /* 注: 9.bin 的 0x229 re-sign 不重算 D7 校验(只改 D0/D1/D2), 故此处不写 data[7]。*/
     mdr_hal_can1_send(&t);
     s_scroll.pending = 0;
 }

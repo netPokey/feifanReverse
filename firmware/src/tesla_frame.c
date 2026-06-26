@@ -12,8 +12,8 @@ int tesla_checksum_ok(const tesla_frame_t *f) {
 }
 
 void tesla_resign(tesla_frame_t *f, tesla_crc_fn crc){
-    f->data[6] = (uint8_t)(f->data[6] + 0x10);   /* D6 滚动计数器(高 nibble) */
-    if (crc) f->data[7] = crc(f);                /* D7 帧族相关校验 */
+    f->data[6] = (uint8_t)((f->data[6] & 0xf0) | ((f->data[6]+1) & 0xf)); /* D6 计数器低nibble+1 (9.bin) */
+    if (crc) f->data[7] = crc(f);                /* D7 加法校验(9.bin 实测; 个别帧不重算) */
 }
 
 uint8_t tesla_crc8(const tesla_frame_t *f){

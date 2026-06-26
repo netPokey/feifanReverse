@@ -14,7 +14,8 @@ void control_init(void){ s_pending = 0; }
 uint8_t control_pending_action(void){ return s_pending; }
 
 void control_resign_send(tesla_frame_t *f, int use_crc8){
-    tesla_resign(f, use_crc8 ? tesla_crc8 : tesla_addsum_d7);  /* D6++ + D7 校验 */
+    /* 9.bin 实测: re-sign 用加法校验(use_crc8=0)。CRC8 为通用 Tesla 方案备选, 9.bin 未观测到。*/
+    tesla_resign(f, use_crc8 ? tesla_crc8 : tesla_addsum_d7);  /* D6 计数器 + D7 校验 */
     can_tx_send(f);                                            /* 过门禁 */
 }
 

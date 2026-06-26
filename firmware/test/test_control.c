@@ -36,7 +36,7 @@ int main(void){
     /* 3. re-sign: D6 计数器 +0x10, D7=crc8 */
     clr(); tesla_frame_t r={0}; r.id=0x229; r.dlc=8; r.data[6]=0x20;
     control_resign_send(&r, 1);
-    CHECK(g_sent_n==1 && g_sent[0].data[6]==0x30,"re-sign D6 +0x10");
+    CHECK(g_sent_n==1 && g_sent[0].data[6]==0x21,"re-sign D6 计数器 低nibble+1 (9.bin)");
     CHECK(g_sent[0].data[7]==tesla_crc8(&g_sent[0]),"re-sign D7=crc8 自洽");
     /* 加法校验形式 */
     clr(); tesla_frame_t r2={0}; r2.id=0x370; r2.dlc=8; control_resign_send(&r2,0);

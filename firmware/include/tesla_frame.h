@@ -18,7 +18,7 @@ uint8_t  tesla_addsum(const tesla_frame_t *f, int skip);
 /* 校验帧 data[7] 是否自洽 (接收过滤门 @0x08008736)。*/
 int      tesla_checksum_ok(const tesla_frame_t *f);
 
-/* 通用 re-sign (固件 §2.5c): D6 滚动计数器(高nibble +0x10) + D7 重算校验。
+/* 通用 re-sign (9.bin 实测): D6 滚动计数器(低nibble +1, mask 0xf) + D7 重算校验(加法)。
  * 校验形式按帧族不同(SCCM 等用 CRC8 表; EPAS 0x370 用加法校验, 见 modemdr)。
  * crc 回调返回 D7 值; 传 0 则保留原 D7。*/
 typedef uint8_t (*tesla_crc_fn)(const tesla_frame_t *f);
