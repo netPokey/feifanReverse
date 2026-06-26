@@ -1,0 +1,23 @@
+CC      ?= cc
+CFLAGS  ?= -std=c11 -Wall -Wextra -O2 -Iinclude
+CORE     = src/tesla_frame.c src/ble_proto.c src/signal_state.c \
+           src/can_dispatch.c src/ble_router.c src/can_tx.c
+
+.PHONY: test clean syntax-check-port
+test: build/test_modemdr build/test_framework
+	./build/test_modemdr
+	./build/test_framework
+build/test_modemdr: src/tesla_frame.c src/modemdr.c test/test_modemdr.c | build
+	$(CC) $(CFLAGS) $^ -o $@
+build/test_framework: $(CORE) test/test_framework.c | build
+	$(CC) $(CFLAGS) $^ -o $@
+build:
+	mkdir -p build
+clean:
+	rm -rf build
+
+# 端口层语法检查 (假头; 真实编译用本地 WCH SDK)
+syntax-check-port:
+	$(CC) -fsyntax-only -std=gnu11 -Wall -Wextra -Wno-unused-parameter \
+	  -DMDR_ISR_ATTR= -Iinclude -Itest/wch_syntax_stubs port/mdr_port_ch32v208.c \
+	  && echo "  port syntax OK (stubbed)"
