@@ -29,4 +29,5 @@
 ## 文档
 - `TESLA_CAN_DECODE_PERID.md` — 72 ID 逐位解析（与 v8 逐行相同，已生成）。
 - 综合分析、控制注入、通用语义：见 **`../v8/README.md`** 与 **`../v_base/`**（对 9 完全适用）。
+- **`FIRMWARE_REWRITE_ModeMDR.md`** — ★ AP 免打扰 ModeMDR 重写规格（业务流程+固件实现链+关键代码+常量表，滚轮/无感/两者）。
 - 与 8 的对比：`../COMPARE_8_vs_9.md`；版本演进（base→8/9）：`../COMPARE_8_vs_base.md`。
