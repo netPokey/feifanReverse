@@ -5,6 +5,7 @@
 #include "control.h"
 #include "can_tx.h"
 #include "ble_hal.h"
+#include "actions.h"
 
 static uint8_t s_pending;
 
@@ -32,11 +33,13 @@ int control_passthrough(const uint8_t *payload, uint16_t len){
 
 void control_on_cmd(uint8_t type, const uint8_t *payload, uint16_t len){
     switch (type) {
-        case 0xA7:                                       /* 167 车辆控制 (门/座椅/备箱…) */
-            if (len) { s_pending = payload[0]; uint8_t r[2]={payload[0],1}; ble_hal_notify(0xA7,r,2); }
+        case 0xA7:                                       /* 167 车辆控制; 执行器 @0x0800e474 */
+            if (len) { s_pending = payload[0]; (void)action_lookup(0xA7,payload[0]);
+                       uint8_t r[2]={payload[0],1}; ble_hal_notify(0xA7,r,2); }
             break;
-        case 0xBB:                                       /* 187 执行动作 (~200 码) */
-            if (len) { s_pending = payload[0]; ble_hal_notify(0xBB,payload,1); }
+        case 0xBB:                                       /* 187 执行动作; 执行器 @0x0800c1b2(查表0x0800d668) */
+            if (len) { s_pending = payload[0]; (void)action_lookup(0xBB,payload[0]);
+                       ble_hal_notify(0xBB,payload,1); }
             break;
         case 0xA2:                                       /* 162 模拟滚轮 1-6 */
             if (len) control_scroll(payload[0]);
