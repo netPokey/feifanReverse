@@ -12,6 +12,7 @@ void ble_hal_notify(uint8_t t, const uint8_t *p, uint16_t n){
     if(g_ntf_n<16){ g_ntf[g_ntf_n].type=t; g_ntf[g_ntf_n].len=n; if(n>64)n=64; memcpy(g_ntf[g_ntf_n].p,p,n); g_ntf_n++; } }
 void mdr_hal_can1_send(const tesla_frame_t *f){ (void)f; }
 void mdr_hal_schedule(void(*cb)(void),uint32_t ms){ (void)cb;(void)ms; }
+static int g_reboot; void ble_hal_reboot(void){ g_reboot=1; }
 static uint8_t g_ctrl_type; static void clear(void){ g_ntf_n=0; g_ctrl_type=0; }
 void control_on_cmd(uint8_t t,const uint8_t*p,uint16_t n){ (void)p;(void)n; g_ctrl_type=t; }
 
@@ -62,6 +63,18 @@ int main(void){
     CHECK(g_ctrl_type==0xA7,"0xA7 转交控制模块");
     clear(); { uint8_t a[1]={3}; ble_msg_t m=msg(0xBB,a,1); ble_app_on_msg(&m); }
     CHECK(g_ctrl_type==0xBB,"0xBB 转交控制模块");
+
+    /* 7. 新增命令 */
+    clear(); g_reboot=0; { uint8_t u[14]={0}; ble_msg_t m=msg(0xA5,u,14); ble_app_on_msg(&m); }
+    CHECK(g_reboot==1,"165 重启");
+    clear(); { uint8_t np[4]={'8','8','8','8'}; ble_msg_t m=msg(0xA9,np,4); ble_app_on_msg(&m); }
+    CHECK(got(0xA9),"169 改密回执");
+    { uint8_t np[4]={'8','8','8','8'}; CHECK(ble_auth_check(np)==1,"169 新密码生效"); }
+    clear(); { uint8_t on1[1]={1}; ble_msg_t m=msg(0xC0,on1,1); ble_app_on_msg(&m); }
+    CHECK(ble_app_debug_on()==1,"192 调试监听开");
+    clear(); { ble_msg_t m=msg(0xC1,0,0); ble_app_on_msg(&m); } CHECK(got(0xC1),"193 车型查询回");
+    clear(); { uint8_t cell[8]={1,2,3,4,5,6,7,8}; ble_app_set_cell(cell); uint8_t on1[1]={1}; ble_msg_t m=msg(0xD1,on1,1); ble_app_on_msg(&m); }
+    ble_app_poll_tick(); CHECK(got_len(0xD1)==8,"209 电芯轮询 8B");
 
     printf("\n  ble tests: %d passed, %d failed\n", g_pass,g_fail);
     return g_fail?1:0;

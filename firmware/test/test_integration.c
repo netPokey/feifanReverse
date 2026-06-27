@@ -10,6 +10,7 @@ void ble_hal_notify(uint8_t t,const uint8_t*p,uint16_t n){ if(g_ntf_n<16){g_ntf[
 static tesla_frame_t g_tx[8]; static int g_tx_n;
 void mdr_hal_can1_send(const tesla_frame_t*f){ if(g_tx_n<8) g_tx[g_tx_n++]=*f; }
 void mdr_hal_schedule(void(*cb)(void),uint32_t ms){ (void)cb;(void)ms; }
+void ble_hal_reboot(void){}
 
 static int g_pass,g_fail;
 #define CHECK(c,m) do{ if(c)g_pass++; else{g_fail++; printf("  FAIL: %s\n",m);} }while(0)

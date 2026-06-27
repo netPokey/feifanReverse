@@ -36,6 +36,7 @@ void RCC_APB1PeriphClockCmd(uint32_t,FunctionalState);
 /* NVIC */
 enum{USB_LP_CAN1_RX0_IRQn};
 void NVIC_EnableIRQ(int);
+void NVIC_SystemReset(void);
 /* TMOS */
 typedef uint8_t  tmosTaskID; typedef uint16_t tmosEvents;
 #define INVALID_TASK_ID 0xFF

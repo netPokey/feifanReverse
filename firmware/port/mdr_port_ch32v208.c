@@ -12,6 +12,8 @@
 #include "mdr_hal.h"
 #include "firmware_app.h"
 #include "can_tx.h"
+#include "ble_hal.h"
+#include "ble_proto.h"
 
 #include "ch32v20x.h"
 #include "ch32v20x_can.h"
@@ -159,6 +161,17 @@ void MDR_OnBleWrite(uint8_t cmd, const uint8_t *payload, uint16_t len)
 void MDR_OnGattWrite(const uint8_t *buf, int n) { fw_on_ble_write(buf, n); }
 
 void MDR_SetTimeParam(uint8_t seconds) { s_time_s = seconds; }
+
+/* ============================================================
+ *  BLE 通知出口 / 重启 (整机)
+ * ============================================================ */
+__attribute__((weak)) void MDR_BleSend(const uint8_t *buf, int n){ (void)buf;(void)n; } /* [BOARD] 接 BLE 库分片 notify FFF1 */
+void ble_hal_notify(uint8_t type, const uint8_t *payload, uint16_t len){
+    uint8_t buf[BLE_MAX_PAYLOAD + 8];
+    int n = ble_pack(type, payload, len, buf, (int)sizeof buf);
+    if (n > 0) MDR_BleSend(buf, n);          /* 0x55 0x7F type len payload crc → FFF1 */
+}
+void ble_hal_reboot(void){ NVIC_SystemReset(); }
 
 /* ============================================================
  *  对外初始化
