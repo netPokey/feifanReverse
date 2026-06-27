@@ -14,6 +14,7 @@ int main(void){
     sig_set(SIG_DOOR_FL,1); sig_set(SIG_DOOR_RR,1); sig_set(SIG_RANGE,321);
     sig_set(SIG_BRAKE_T0,0x123); sig_set(SIG_BRAKE_T3,0x2AB); sig_set(SIG_AMBIENT_RAW,150);
     sig_set(SIG_REAR_POWER,-256); sig_set(SIG_ALTITUDE,392); sig_set(SIG_FRONT_POWER,320);
+    sig_set(SIG_TPMS_FL,32); sig_set(SIG_TPMS_RR,31);
     uint8_t g[PACK_GAUGE_LEN]; pack_gauge(g);
     CHECK(fld(g,33,0,0,9)==288,"gauge speed");
     CHECK(fld(g,33,0,9,3)==4,"gauge gear");
@@ -27,6 +28,7 @@ int main(void){
     CHECK((int)(fld(g,33,12,8,11))==(-256 & 0x7ff),"gauge 后电机功率(11bit)");
     CHECK(fld(g,33,15,6,14)==392,"gauge 海拔(14bit)");
     CHECK(fld(g,33,12,19,11)==320,"gauge 前电机功率(11bit)");
+    CHECK(g[8]==32 && g[11]==31,"gauge 胎压×4 [8..11]");
 
     sig_set(SIG_PACK_V_RAW,0x2710); sig_set(SIG_PACK_I_RAW,0x64);
     sig_set(SIG_KWH_DISCHG,0x11223344); sig_set(SIG_KWH_CHG,0x55667788);

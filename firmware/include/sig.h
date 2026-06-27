@@ -22,6 +22,7 @@ typedef enum {
     SIG_ALTITUDE,    /* 海拔 sign14 (0x3d8) */
     SIG_FRONT_POWER, /* 前电机功率 sign11 (0x2e5, 与0x266同 handler 0x08008198) */
     SIG_HVAC_F2,     /* 0x20c 第二 HVAC 字段 ((D5&3)<<8)|D4 10bit (◎ watts/cabin 待 0xB0 getter 定槽) */
+    SIG_TPMS_FL, SIG_TPMS_FR, SIG_TPMS_RL, SIG_TPMS_RR, /* 胎压原值 (0x25a D0-D3; app ×0.025 bar) */
     SIG_COUNT
 } sig_t;
 void    sig_set(sig_t s, int32_t v);

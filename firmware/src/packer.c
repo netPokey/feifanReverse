@@ -30,6 +30,8 @@ void pack_gauge(uint8_t *out){
     F(18,30,10,sig_get(SIG_BRAKE_T3));
     F(23,0,10, sig_get(SIG_HVAC_BLOWER)); /* hvacBlowerRPM [23..26]b0-9 */
     F(23,10,11,sig_get(SIG_HVAC_F2));     /* ◎ wattsDemandEvap [23..26]b10-20 (槽待 0xB0 getter 确认) */
+    F(8,0,8,  sig_get(SIG_TPMS_FL)); F(9,0,8, sig_get(SIG_TPMS_FR)); /* pressure×4 [8..11] ×0.025bar */
+    F(10,0,8, sig_get(SIG_TPMS_RL)); F(11,0,8,sig_get(SIG_TPMS_RR));
     F(27,0,8,  sig_get(SIG_AMBIENT_RAW)); /* tempAmbient [27] */
     F(28,12,10,sig_get(SIG_RANGE));       /* remainRange [28..31]b12-21 */
     F(12,8,11, sig_get(SIG_REAR_POWER));  /* rearInverterPower [12]b8-18 (11bit signed) */

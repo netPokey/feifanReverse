@@ -37,6 +37,8 @@ static int32_t sgn(uint32_t v,int n){ return (v >= (1u<<(n-1))) ? (int32_t)v-(1<
 static void dec_0x266(const tesla_frame_t *f){ sig_set(SIG_REAR_POWER, sgn(((D(f,1)&7)<<8)|D(f,0),11)); } /* 后电机功率 ✔FW */
 static void dec_0x3d8(const tesla_frame_t *f){ sig_set(SIG_ALTITUDE,   sgn(((D(f,1)&0x3f)<<8)|D(f,0),14)); } /* 海拔 ✔FW */
 static void dec_0x2e5(const tesla_frame_t *f){ sig_set(SIG_FRONT_POWER,sgn(((D(f,1)&7)<<8)|D(f,0),11)); }     /* 前电机功率 ✔FW(共handler) */
+static void dec_0x25a(const tesla_frame_t *f){ sig_set(SIG_TPMS_FL,D(f,0)); sig_set(SIG_TPMS_FR,D(f,1));        /* 胎压×4 ✔FW(0x0800519c) */
+                                               sig_set(SIG_TPMS_RL,D(f,2)); sig_set(SIG_TPMS_RR,D(f,3)); }
 static void dec_0x3fe(const tesla_frame_t *f){                                              /* 刹车温 4×10bit */
     sig_set(SIG_BRAKE_T0, ((D(f,2)&0x3f)<<4)|(D(f,1)>>4));
     sig_set(SIG_BRAKE_T1, ((D(f,4)&3)<<8)|D(f,3));
@@ -78,7 +80,7 @@ void decoders_register_all(void){
     can_dispatch_register(0x3b6,dec_0x3b6); can_dispatch_register(0x3fe,dec_0x3fe);
     can_dispatch_register(0x132,dec_0x132); can_dispatch_register(0x3d2,dec_0x3d2);
     can_dispatch_register(0x266,dec_0x266); can_dispatch_register(0x3d8,dec_0x3d8);
-    can_dispatch_register(0x2e5,dec_0x2e5);
+    can_dispatch_register(0x2e5,dec_0x2e5); can_dispatch_register(0x25a,dec_0x25a);
     can_dispatch_register(0x273,dec_0x273); can_dispatch_register(0x332,dec_0x332);
     can_dispatch_register(0x3b3,dec_0x3b3); can_dispatch_register(0x3e9,dec_0x3e9);
 }

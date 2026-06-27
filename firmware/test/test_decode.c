@@ -50,6 +50,8 @@ int main(void){
     uint8_t hv[8]={0x10,0x01,0,0,0x55,0x02,0,0}; f=mk(0x20c,hv); can_dispatch(&f);
     CHECK(sig_get(SIG_HVAC_BLOWER)==((1&7)<<8|0x10),"0x20c 鼓风");
     CHECK(sig_get(SIG_HVAC_F2)==((2&3)<<8|0x55),"0x20c 第二HVAC字段");
+    uint8_t tp[8]={32,33,30,31,0,0,0,0}; f=mk(0x25a,tp); can_dispatch(&f);
+    CHECK(sig_get(SIG_TPMS_FL)==32 && sig_get(SIG_TPMS_RR)==31,"0x25a 胎压×4");
     /* 海拔 0x3d8: sign14(((D1&0x3f)<<8)|D0) */
     uint8_t al[8]={0x88,0x01,0,0,0,0,0,0}; f=mk(0x3d8,al); can_dispatch(&f);   /* 0x188=392 */
     CHECK(sig_get(SIG_ALTITUDE)==392,"0x3d8 海拔");
