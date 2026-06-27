@@ -45,6 +45,11 @@ int main(void){
     /* 后电机功率 0x266: sign11(((D1&7)<<8)|D0); 负值 */
     uint8_t pw[8]={0x00,0x07,0,0,0,0,0,0}; f=mk(0x266,pw); can_dispatch(&f);  /* value=0x700=1792 -> -256 */
     CHECK(sig_get(SIG_REAR_POWER)==-256,"0x266 后电机功率(有符号)");
+    uint8_t pwf[8]={0x40,0x01,0,0,0,0,0,0}; f=mk(0x2e5,pwf); can_dispatch(&f); /* 0x140=320 */
+    CHECK(sig_get(SIG_FRONT_POWER)==320,"0x2e5 前电机功率");
+    uint8_t hv[8]={0x10,0x01,0,0,0x55,0x02,0,0}; f=mk(0x20c,hv); can_dispatch(&f);
+    CHECK(sig_get(SIG_HVAC_BLOWER)==((1&7)<<8|0x10),"0x20c 鼓风");
+    CHECK(sig_get(SIG_HVAC_F2)==((2&3)<<8|0x55),"0x20c 第二HVAC字段");
     /* 海拔 0x3d8: sign14(((D1&0x3f)<<8)|D0) */
     uint8_t al[8]={0x88,0x01,0,0,0,0,0,0}; f=mk(0x3d8,al); can_dispatch(&f);   /* 0x188=392 */
     CHECK(sig_get(SIG_ALTITUDE)==392,"0x3d8 海拔");

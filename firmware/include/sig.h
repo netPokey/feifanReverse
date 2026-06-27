@@ -20,6 +20,8 @@ typedef enum {
     SIG_ODOMETER,    /* 0x3b6 */
     SIG_REAR_POWER,  /* 后电机功率 sign11 (0x266; app /2 kW) */
     SIG_ALTITUDE,    /* 海拔 sign14 (0x3d8) */
+    SIG_FRONT_POWER, /* 前电机功率 sign11 (0x2e5, 与0x266同 handler 0x08008198) */
+    SIG_HVAC_F2,     /* 0x20c 第二 HVAC 字段 ((D5&3)<<8)|D4 10bit (◎ watts/cabin 待 0xB0 getter 定槽) */
     SIG_COUNT
 } sig_t;
 void    sig_set(sig_t s, int32_t v);

@@ -30,11 +30,13 @@ static void dec_0x321(const tesla_frame_t *f){ sig_set(SIG_AMBIENT_RAW,(int32_t)
 static void dec_0x129(const tesla_frame_t *f){ sig_set(SIG_STEER_RAW,((D(f,2)&0x3f)<<6)|(D(f,3)&0x3f)); } /* 转角 */
 static void dec_0x102(const tesla_frame_t *f){ sig_set(SIG_DOOR_FL,D(f,0)&1); sig_set(SIG_DOOR_RL,(D(f,0)>>1)&1); }
 static void dec_0x103(const tesla_frame_t *f){ sig_set(SIG_DOOR_FR,D(f,0)&1); sig_set(SIG_DOOR_RR,(D(f,0)>>1)&1); }
-static void dec_0x20c(const tesla_frame_t *f){ sig_set(SIG_HVAC_BLOWER,((D(f,1)&7)<<8)|D(f,0)); } /* 鼓风 11bit */
+static void dec_0x20c(const tesla_frame_t *f){ sig_set(SIG_HVAC_BLOWER,((D(f,1)&7)<<8)|D(f,0));     /* 鼓风 11bit ✔FW */
+                                               sig_set(SIG_HVAC_F2,    ((D(f,5)&3)<<8)|D(f,4)); }   /* 第二字段 10bit ✔FW(0x08003428) */
 static void dec_0x3b6(const tesla_frame_t *f){ sig_set(SIG_ODOMETER, D(f,0)|(D(f,1)<<8)|(D(f,2)<<16)|(D(f,3)<<24)); }
 static int32_t sgn(uint32_t v,int n){ return (v >= (1u<<(n-1))) ? (int32_t)v-(1<<n) : (int32_t)v; }
 static void dec_0x266(const tesla_frame_t *f){ sig_set(SIG_REAR_POWER, sgn(((D(f,1)&7)<<8)|D(f,0),11)); } /* 后电机功率 ✔FW */
 static void dec_0x3d8(const tesla_frame_t *f){ sig_set(SIG_ALTITUDE,   sgn(((D(f,1)&0x3f)<<8)|D(f,0),14)); } /* 海拔 ✔FW */
+static void dec_0x2e5(const tesla_frame_t *f){ sig_set(SIG_FRONT_POWER,sgn(((D(f,1)&7)<<8)|D(f,0),11)); }     /* 前电机功率 ✔FW(共handler) */
 static void dec_0x3fe(const tesla_frame_t *f){                                              /* 刹车温 4×10bit */
     sig_set(SIG_BRAKE_T0, ((D(f,2)&0x3f)<<4)|(D(f,1)>>4));
     sig_set(SIG_BRAKE_T1, ((D(f,4)&3)<<8)|D(f,3));
@@ -76,6 +78,7 @@ void decoders_register_all(void){
     can_dispatch_register(0x3b6,dec_0x3b6); can_dispatch_register(0x3fe,dec_0x3fe);
     can_dispatch_register(0x132,dec_0x132); can_dispatch_register(0x3d2,dec_0x3d2);
     can_dispatch_register(0x266,dec_0x266); can_dispatch_register(0x3d8,dec_0x3d8);
+    can_dispatch_register(0x2e5,dec_0x2e5);
     can_dispatch_register(0x273,dec_0x273); can_dispatch_register(0x332,dec_0x332);
     can_dispatch_register(0x3b3,dec_0x3b3); can_dispatch_register(0x3e9,dec_0x3e9);
 }
