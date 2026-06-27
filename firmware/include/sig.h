@@ -18,6 +18,8 @@ typedef enum {
     SIG_KWH_CHG,     /* 充电 ×1000 kWh (0x3d2 D4..D7) */
     SIG_BRAKE_T0, SIG_BRAKE_T1, SIG_BRAKE_T2, SIG_BRAKE_T3, /* 0x3fe 4×10bit */
     SIG_ODOMETER,    /* 0x3b6 */
+    SIG_REAR_POWER,  /* 后电机功率 sign11 (0x266; app /2 kW) */
+    SIG_ALTITUDE,    /* 海拔 sign14 (0x3d8) */
     SIG_COUNT
 } sig_t;
 void    sig_set(sig_t s, int32_t v);

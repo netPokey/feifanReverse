@@ -31,6 +31,8 @@ void pack_gauge(uint8_t *out){
     F(23,0,10, sig_get(SIG_HVAC_BLOWER)); /* hvacBlowerRPM [23..26]b0-9 */
     F(27,0,8,  sig_get(SIG_AMBIENT_RAW)); /* tempAmbient [27] */
     F(28,12,10,sig_get(SIG_RANGE));       /* remainRange [28..31]b12-21 */
+    F(12,8,11, sig_get(SIG_REAR_POWER));  /* rearInverterPower [12]b8-18 (11bit signed) */
+    F(15,6,14, sig_get(SIG_ALTITUDE));    /* altitude [15..17]b6-19 (14bit signed) */
     /* TODO: turn/AP/frunk/trunk/altitude/cellVoltage/batteryTemp/power 等需补信号或按 fwb0 精确位 */
 }
 void pack_battery(uint8_t *out){

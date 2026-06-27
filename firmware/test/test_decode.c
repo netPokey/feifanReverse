@@ -42,6 +42,13 @@ int main(void){
     uint8_t k[8]={1,0,0,0,2,0,0,0}; f=mk(0x3d2,k); can_dispatch(&f);
     CHECK(sig_get(SIG_KWH_DISCHG)==1 && sig_get(SIG_KWH_CHG)==2,"0x3d2 充放电 kwh");
 
+    /* 后电机功率 0x266: sign11(((D1&7)<<8)|D0); 负值 */
+    uint8_t pw[8]={0x00,0x07,0,0,0,0,0,0}; f=mk(0x266,pw); can_dispatch(&f);  /* value=0x700=1792 -> -256 */
+    CHECK(sig_get(SIG_REAR_POWER)==-256,"0x266 后电机功率(有符号)");
+    /* 海拔 0x3d8: sign14(((D1&0x3f)<<8)|D0) */
+    uint8_t al[8]={0x88,0x01,0,0,0,0,0,0}; f=mk(0x3d8,al); can_dispatch(&f);   /* 0x188=392 */
+    CHECK(sig_get(SIG_ALTITUDE)==392,"0x3d8 海拔");
+
     /* 通用捕获: 未精确的 ID 原样存 */
     uint8_t g[8]={9,8,7,6,5,4,3,2}; f=mk(0x405,g); can_dispatch(&f);
     const uint8_t *slot=decoder_raw_slot(0x405);
