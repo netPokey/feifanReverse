@@ -13,13 +13,13 @@ int main(void){
     control_init(); can_tx_set_mode(CAN_TX_NORMAL);
     tesla_frame_t f={0}; f.id=0x189; f.dlc=8;
     /* 标志未置位: 不注入 */
-    g_tx_n=0; control_on_can_0x189(&f); CHECK(g_tx_n==0,"0x189 标志关不注入");
+    g_tx_n=0; control_on_can_0x189(&f); CHECK(g_tx_n==0,"标志关不注入");
     /* 置位: D0=2 注入 */
-    control_set_flag(CFLAG_189,1); g_tx_n=0; control_on_can_0x189(&f);
+    control_set_active(1); g_tx_n=0; control_on_can_0x189(&f);
     CHECK(g_tx_n==1 && g_tx[0].id==0x189 && g_tx[0].data[0]==2,"0x189 D0=2 注入");
-    f.id=0x68c; control_set_flag(CFLAG_68C,1); g_tx_n=0; control_on_can_0x68c(&f);
+    f.id=0x68c;  g_tx_n=0; control_on_can_0x68c(&f);
     CHECK(g_tx_n==1 && g_tx[0].data[3]==8,"0x68c D3=8 注入");
-    f.id=0x3a1; f.data[1]=14; control_set_flag(CFLAG_3A1,1); g_tx_n=0; control_on_can_0x3a1(&f);
+    f.id=0x3a1; f.data[1]=14;  g_tx_n=0; control_on_can_0x3a1(&f);
     CHECK(g_tx_n==1 && g_tx[0].data[1]==0 && g_tx[0].data[2]==0x30,"0x3a1 计数器mod15回绕+D2=0x30");
     printf("\n  ctrlframe tests: %d passed, %d failed\n",g_pass,g_fail);
     return g_fail?1:0;
