@@ -8,6 +8,28 @@
 #include "actions.h"
 
 static uint8_t s_pending;
+static uint8_t s_cflag[CFLAG_N];
+void    control_set_flag(int i, uint8_t v){ if((unsigned)i<CFLAG_N) s_cflag[i]=v; }
+uint8_t control_get_flag(int i){ return (unsigned)i<CFLAG_N ? s_cflag[i] : 0; }
+
+/* 控制帧 re-sign (固件实证 0x08008a5c/0x08008a98/0x08008aae):
+ * 收到目标帧→若激活标志置位→改写指定字节→原 ID 回注 CAN1(过门禁)。*/
+void control_on_can_0x189(const tesla_frame_t *f){       /* 0x08008a5c */
+    if (!s_cflag[CFLAG_189]) return;
+    tesla_frame_t t = *f; t.data[0] = 2; can_tx_send(&t);
+}
+void control_on_can_0x68c(const tesla_frame_t *f){       /* 0x08008a98 */
+    if (!s_cflag[CFLAG_68C]) return;
+    tesla_frame_t t = *f; t.data[3] = 8; can_tx_send(&t);
+}
+void control_on_can_0x3a1(const tesla_frame_t *f){       /* 0x08008aae */
+    if (!s_cflag[CFLAG_3A1]) return;
+    tesla_frame_t t = *f;
+    t.data[1] = (uint8_t)((t.data[1] + 1) % 15);         /* 计数器 mod 15 */
+    t.data[2] = 0x30;
+    /* t.data[?] = vcfront_table[idx];  // TODO 导出 0x080125e0 */
+    can_tx_send(&t);
+}
 
 __attribute__((weak)) void control_scroll(uint8_t dir){ (void)dir; }  /* 集成接 modemdr 滚轮 */
 

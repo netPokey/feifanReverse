@@ -30,6 +30,9 @@ void fw_init(void){
     can_dispatch_register(0x229, h_can_0x229);           /* 滚轮 SCCM re-sign (覆盖) */
     can_dispatch_register(0x401, h_can_0x401);           /* 电芯电压 mux */
     can_dispatch_register(0x2b4, h_can_0x2b4);           /* DCDC */
+    can_dispatch_register(0x189, control_on_can_0x189);  /* 控制 re-sign */
+    can_dispatch_register(0x68c, control_on_can_0x68c);
+    can_dispatch_register(0x3a1, control_on_can_0x3a1);
     can_tx_set_mode(CAN_TX_LISTEN_ONLY);    /* 默认监听(安全门禁) */
 }
 void fw_on_ble_write(const uint8_t *buf, int n){
