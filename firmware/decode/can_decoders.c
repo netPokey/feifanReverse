@@ -58,6 +58,13 @@ static void dec_0x332(const tesla_frame_t *f){ dec_state(5,f); }
 static void dec_0x3b3(const tesla_frame_t *f){ dec_state(7,f); }
 static void dec_0x3e9(const tesla_frame_t *f){ dec_state(12,f); }
 /* 通用 */
+static void dec_0x145(const tesla_frame_t *f){ sig_set(SIG_ESP, (D(f,3)>>6)&1); }                        /* ESP ✔FW(0x80056ca) */
+static void dec_0x339(const tesla_frame_t *f){ sig_set(SIG_VCSEC_AUTH, D(f,1)>>4); }                     /* VCSEC鉴权 ✔FW(0x8007168) */
+static void dec_0x39d(const tesla_frame_t *f){ sig_set(SIG_IBST, ((D(f,1)|(D(f,2)<<8))>>9)&1); }         /* 刹车助力 ✔FW(0x80056e2) */
+static void dec_0x238(const tesla_frame_t *f){ sig_set(SIG_MAPDATA, D(f,1)&0x1f); }                      /* 驾辅地图 ✔FW(0x8002c5c) */
+static void dec_0x243(const tesla_frame_t *f){ sig_set(SIG_HVAC_STATUS, D(f,0)&7); }                     /* VCRIGHT_hvac ✔FW(0x8003396) */
+static void dec_0x3c2(const tesla_frame_t *f){ sig_set(SIG_VCLEFT_SW, D(f,0)&3); }                       /* VCLEFT开关 ✔FW(0x80037c8) */
+static void dec_0x2e1(const tesla_frame_t *f){ sig_set(SIG_VCFRONT_ST, D(f,0)); }                        /* VCFRONT状态 ✔FW(0x8005b0c) */
 static void dec_generic(const tesla_frame_t *f){ raw_capture(f); }
 
 /* ===== 全 72 ID 注册 (v9 PERID) ===== */
@@ -81,6 +88,10 @@ void decoders_register_all(void){
     can_dispatch_register(0x132,dec_0x132); can_dispatch_register(0x3d2,dec_0x3d2);
     can_dispatch_register(0x266,dec_0x266); can_dispatch_register(0x3d8,dec_0x3d8);
     can_dispatch_register(0x2e5,dec_0x2e5); can_dispatch_register(0x25a,dec_0x25a);
+    can_dispatch_register(0x145,dec_0x145); can_dispatch_register(0x339,dec_0x339);
+    can_dispatch_register(0x39d,dec_0x39d); can_dispatch_register(0x238,dec_0x238);
+    can_dispatch_register(0x243,dec_0x243); can_dispatch_register(0x3c2,dec_0x3c2);
+    can_dispatch_register(0x2e1,dec_0x2e1);
     can_dispatch_register(0x273,dec_0x273); can_dispatch_register(0x332,dec_0x332);
     can_dispatch_register(0x3b3,dec_0x3b3); can_dispatch_register(0x3e9,dec_0x3e9);
 }

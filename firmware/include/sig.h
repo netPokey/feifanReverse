@@ -23,6 +23,13 @@ typedef enum {
     SIG_FRONT_POWER, /* 前电机功率 sign11 (0x2e5, 与0x266同 handler 0x08008198) */
     SIG_HVAC_F2,     /* 0x20c 第二 HVAC 字段 ((D5&3)<<8)|D4 10bit (◎ watts/cabin 待 0xB0 getter 定槽) */
     SIG_TPMS_FL, SIG_TPMS_FR, SIG_TPMS_RL, SIG_TPMS_RR, /* 胎压原值 (0x25a D0-D3; app ×0.025 bar) */
+    SIG_ESP,         /* 0x145 ESP 状态位 (D3>>6&1) */
+    SIG_VCSEC_AUTH,  /* 0x339 VCSEC 鉴权(前备箱/尾门请求) D1>>4 */
+    SIG_IBST,        /* 0x39d 刹车助力位 ((D1|D2<<8)>>9&1) */
+    SIG_MAPDATA,     /* 0x238 驾辅地图 D1&0x1f */
+    SIG_HVAC_STATUS, /* 0x243 VCRIGHT_hvac 状态 D0&7 */
+    SIG_VCLEFT_SW,   /* 0x3c2 VCLEFT 开关 D0&3 */
+    SIG_VCFRONT_ST,  /* 0x2e1 VCFRONT 状态 D0 */
     SIG_COUNT
 } sig_t;
 void    sig_set(sig_t s, int32_t v);
