@@ -67,6 +67,11 @@ int main(void){
     { uint8_t d2[8]={0,0x1f,0,0,0,0,0,0}; f=mk(0x238,d2); can_dispatch(&f); CHECK(sig_get(SIG_MAPDATA)==0x1f,"0x238 地图"); }
     { uint8_t d2[8]={0x07,0,0,0,0,0,0,0}; f=mk(0x243,d2); can_dispatch(&f); CHECK(sig_get(SIG_HVAC_STATUS)==7,"0x243 hvac状态"); }
     { uint8_t d2[8]={0x03,0,0,0,0,0,0,0}; f=mk(0x3c2,d2); can_dispatch(&f); CHECK(sig_get(SIG_VCLEFT_SW)==3,"0x3c2 开关"); }
+    { uint8_t d2[8]={0,0,0,0xE0,0,0,0,0}; f=mk(0x2f3,d2); can_dispatch(&f); CHECK(sig_get(SIG_UI_HVAC)==7,"0x2f3 D3>>5"); }
+    { uint8_t d2[8]={0,1,0,0,0,0,0,0}; f=mk(0x3e3,d2); can_dispatch(&f); CHECK(sig_get(SIG_VCRIGHT_LIGHT)==1,"0x3e3 D1&1"); }
+    { uint8_t d2[8]={0,0x40,0,0,0,0,0,0}; f=mk(0x3e2,d2); can_dispatch(&f); CHECK(sig_get(SIG_VCLEFT_LIGHT)==1,"0x3e2 D1>>6"); }
+    { uint8_t d2[8]={0x04,0,0,0,0,0,0,0}; f=mk(0x082,d2); can_dispatch(&f); CHECK(sig_get(SIG_TRIP)==1,"0x082 D0>>2"); }
+    { uint8_t d2[8]={0,0,0,0x77,0,0,0,0}; f=mk(0x249,d2); can_dispatch(&f); CHECK(sig_get(SIG_LEFTSTALK)==0x77,"0x249 D3"); }
 
     /* 全 72 ID 已注册 (随机抽查几个 dispatch 不崩) */
     uint8_t z[8]={0}; f=mk(0x7ff,z); can_dispatch(&f); f=mk(0x080,z); can_dispatch(&f);

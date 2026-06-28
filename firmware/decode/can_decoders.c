@@ -65,6 +65,12 @@ static void dec_0x238(const tesla_frame_t *f){ sig_set(SIG_MAPDATA, D(f,1)&0x1f)
 static void dec_0x243(const tesla_frame_t *f){ sig_set(SIG_HVAC_STATUS, D(f,0)&7); }                     /* VCRIGHT_hvac ✔FW(0x8003396) */
 static void dec_0x3c2(const tesla_frame_t *f){ sig_set(SIG_VCLEFT_SW, D(f,0)&3); }                       /* VCLEFT开关 ✔FW(0x80037c8) */
 static void dec_0x2e1(const tesla_frame_t *f){ sig_set(SIG_VCFRONT_ST, D(f,0)); }                        /* VCFRONT状态 ✔FW(0x8005b0c) */
+static void dec_0x2f3(const tesla_frame_t *f){ sig_set(SIG_UI_HVAC, D(f,3)>>5); }            /* UI_hvacRequest ✔FW(0x800349a) */
+static void dec_0x3e3(const tesla_frame_t *f){ sig_set(SIG_VCRIGHT_LIGHT, D(f,1)&1); }       /* VCRIGHT灯 ✔FW(0x800816e) */
+static void dec_0x3e2(const tesla_frame_t *f){ sig_set(SIG_VCLEFT_LIGHT, (D(f,1)>>6)&1); }   /* VCLEFT灯 ✔FW(0x800446c) */
+static void dec_0x3c3(const tesla_frame_t *f){ sig_set(SIG_3C3, D(f,0)&3); }                 /* ✔FW(0x800450a) */
+static void dec_0x082(const tesla_frame_t *f){ sig_set(SIG_TRIP, (D(f,0)>>2)&1); }           /* UI_tripPlanning ✔FW(0x8005320) */
+static void dec_0x249(const tesla_frame_t *f){ sig_set(SIG_LEFTSTALK, D(f,3)); }             /* SCCM_leftStalk ✔FW(0x800493a) */
 static void dec_generic(const tesla_frame_t *f){ raw_capture(f); }
 
 /* ===== 全 72 ID 注册 (v9 PERID) ===== */
@@ -92,6 +98,9 @@ void decoders_register_all(void){
     can_dispatch_register(0x39d,dec_0x39d); can_dispatch_register(0x238,dec_0x238);
     can_dispatch_register(0x243,dec_0x243); can_dispatch_register(0x3c2,dec_0x3c2);
     can_dispatch_register(0x2e1,dec_0x2e1);
+    can_dispatch_register(0x2f3,dec_0x2f3); can_dispatch_register(0x3e3,dec_0x3e3);
+    can_dispatch_register(0x3e2,dec_0x3e2); can_dispatch_register(0x3c3,dec_0x3c3);
+    can_dispatch_register(0x082,dec_0x082); can_dispatch_register(0x249,dec_0x249);
     can_dispatch_register(0x273,dec_0x273); can_dispatch_register(0x332,dec_0x332);
     can_dispatch_register(0x3b3,dec_0x3b3); can_dispatch_register(0x3e9,dec_0x3e9);
 }

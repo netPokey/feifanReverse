@@ -30,6 +30,12 @@ typedef enum {
     SIG_HVAC_STATUS, /* 0x243 VCRIGHT_hvac 状态 D0&7 */
     SIG_VCLEFT_SW,   /* 0x3c2 VCLEFT 开关 D0&3 */
     SIG_VCFRONT_ST,  /* 0x2e1 VCFRONT 状态 D0 */
+    SIG_UI_HVAC,     /* 0x2f3 UI_hvacRequest D3>>5 */
+    SIG_VCRIGHT_LIGHT,/* 0x3e3 VCRIGHT 灯 D1&1 */
+    SIG_VCLEFT_LIGHT,/* 0x3e2 VCLEFT 灯 D1>>6&1 */
+    SIG_3C3,         /* 0x3c3 D0&3 */
+    SIG_TRIP,        /* 0x082 UI_tripPlanning (D0>>2)&1 */
+    SIG_LEFTSTALK,   /* 0x249 SCCM_leftStalk D3 */
     SIG_COUNT
 } sig_t;
 void    sig_set(sig_t s, int32_t v);
