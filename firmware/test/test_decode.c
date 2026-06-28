@@ -72,6 +72,7 @@ int main(void){
     { uint8_t d2[8]={0,0x40,0,0,0,0,0,0}; f=mk(0x3e2,d2); can_dispatch(&f); CHECK(sig_get(SIG_VCLEFT_LIGHT)==1,"0x3e2 D1>>6"); }
     { uint8_t d2[8]={0x04,0,0,0,0,0,0,0}; f=mk(0x082,d2); can_dispatch(&f); CHECK(sig_get(SIG_TRIP)==1,"0x082 D0>>2"); }
     { uint8_t d2[8]={0,0,0,0x77,0,0,0,0}; f=mk(0x249,d2); can_dispatch(&f); CHECK(sig_get(SIG_LEFTSTALK)==0x77,"0x249 D3"); }
+    { uint8_t d2[8]={0x40,0,0,0,0,0,0,0}; f=mk(0x25d,d2); can_dispatch(&f); CHECK(sig_get(SIG_TRAFFIC)==1,"0x25d D0>>6"); }
 
     /* 全 72 ID 已注册 (随机抽查几个 dispatch 不崩) */
     uint8_t z[8]={0}; f=mk(0x7ff,z); can_dispatch(&f); f=mk(0x080,z); can_dispatch(&f);

@@ -71,6 +71,7 @@ static void dec_0x3e2(const tesla_frame_t *f){ sig_set(SIG_VCLEFT_LIGHT, (D(f,1)
 static void dec_0x3c3(const tesla_frame_t *f){ sig_set(SIG_3C3, D(f,0)&3); }                 /* ✔FW(0x800450a) */
 static void dec_0x082(const tesla_frame_t *f){ sig_set(SIG_TRIP, (D(f,0)>>2)&1); }           /* UI_tripPlanning ✔FW(0x8005320) */
 static void dec_0x249(const tesla_frame_t *f){ sig_set(SIG_LEFTSTALK, D(f,3)); }             /* SCCM_leftStalk ✔FW(0x800493a) */
+static void dec_0x25d(const tesla_frame_t *f){ sig_set(SIG_TRAFFIC, (D(f,0)>>6)&1); }        /* APP_trafficControl ✔FW(0x80053ca) */
 static void dec_generic(const tesla_frame_t *f){ raw_capture(f); }
 
 /* ===== 全 72 ID 注册 (v9 PERID) ===== */
@@ -101,6 +102,7 @@ void decoders_register_all(void){
     can_dispatch_register(0x2f3,dec_0x2f3); can_dispatch_register(0x3e3,dec_0x3e3);
     can_dispatch_register(0x3e2,dec_0x3e2); can_dispatch_register(0x3c3,dec_0x3c3);
     can_dispatch_register(0x082,dec_0x082); can_dispatch_register(0x249,dec_0x249);
+    can_dispatch_register(0x25d,dec_0x25d);
     can_dispatch_register(0x273,dec_0x273); can_dispatch_register(0x332,dec_0x332);
     can_dispatch_register(0x3b3,dec_0x3b3); can_dispatch_register(0x3e9,dec_0x3e9);
 }

@@ -36,6 +36,7 @@ typedef enum {
     SIG_3C3,         /* 0x3c3 D0&3 */
     SIG_TRIP,        /* 0x082 UI_tripPlanning (D0>>2)&1 */
     SIG_LEFTSTALK,   /* 0x249 SCCM_leftStalk D3 */
+    SIG_TRAFFIC,     /* 0x25d APP_trafficControl (D0>>6)&1 */
     SIG_COUNT
 } sig_t;
 void    sig_set(sig_t s, int32_t v);
