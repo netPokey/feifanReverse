@@ -7,5 +7,10 @@
 #include <stdint.h>
 typedef struct { uint16_t cmd; uint8_t code; const char *name; const char *target; } action_t;
 const action_t *action_lookup(uint16_t cmd, uint8_t code);  /* 查不到返回 0 */
+
+/* 187 动作码 → 子系统执行器映射 (9.bin 跳转表 0x080127bc 提取, 252 项) */
+typedef struct { uint8_t code; uint32_t exec; int16_t cmd; const char *subsys; } action_map_t;
+const action_map_t *action_map_lookup(uint8_t code);   /* 0=无 */
+int action_map_count(void);
 int action_count(void);
 #endif

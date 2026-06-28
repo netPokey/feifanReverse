@@ -1,6 +1,7 @@
 /* actions.c — 167(0xA7)/187(0xBB) 动作码枚举 (TSL_REFERENCE §2.2/§2.3)。*/
 #include "actions.h"
 #include <stddef.h>
+#include "action_map.inc"
 static const action_t A[] = {
  /* ---- 167 (0xA7) 直接车控 ---- */
  {0xA7,0,"左前门","VCSEC/门"},{0xA7,1,"右前门","VCSEC/门"},{0xA7,2,"左后门","VCSEC/门"},{0xA7,3,"右后门","VCSEC/门"},
@@ -34,6 +35,12 @@ static const action_t A[] = {
 };
 #define NA ((int)(sizeof(A)/sizeof(A[0])))
 int action_count(void){ return NA; }
+const action_map_t *action_map_lookup(uint8_t code){
+    for(int i=0;i<ACTION_MAP_N;i++) if(ACTION_MAP[i].code==code) return &ACTION_MAP[i];
+    return NULL;
+}
+int action_map_count(void){ return ACTION_MAP_N; }
+
 const action_t *action_lookup(uint16_t cmd, uint8_t code){
     for(int i=0;i<NA;i++) if(A[i].cmd==cmd && A[i].code==code) return &A[i];
     return NULL;
