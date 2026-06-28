@@ -13,7 +13,11 @@ void    control_set_active(uint8_t v){ s_active = v; }
 uint8_t control_get_active(void){ return s_active; }
 
 /* 控制帧 re-sign (固件实证 0x08008a5c/0x08008a98/0x08008aae):
- * 收到目标帧→若激活标志置位→改写指定字节→原 ID 回注 CAN1(过门禁)。*/
+ * 收到目标帧→若激活标志置位→改写指定字节→原 ID 回注 CAN1(过门禁)。
+ * ★ 步①发现: 激活标志 0x28003fb8 由 *AP/免打扰 调度器* 脉冲置位(setter 0x080088ae,
+ *   唯一调用者 0x0800236e=免打扰 dispatcher 出口; ~1000ms 后回调 0x080086b4 清零)。
+ *   故 0x189/0x68c/0x3a1 属 *AP 控制* re-sign(随 AP 状态注入), 非 BLE 整车动作触发。
+ *   整车动作(187 gear/lock/lights)路径另在: 187→查表 0x0800d668→0x0800c1b2→执行 0x0800bffe(含4字节鉴权key)。*/
 void control_on_can_0x189(const tesla_frame_t *f){       /* 0x08008a5c */
     if (!s_active) return;
     tesla_frame_t t = *f; t.data[0] = 2; can_tx_send(&t);
