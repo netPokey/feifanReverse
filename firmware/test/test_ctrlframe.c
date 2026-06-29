@@ -32,9 +32,12 @@ int main(void){
       CHECK(g_tx_n==1 && ((g_tx[0].data[2]>>1)&7)==2,"0x273 解锁→bits[3:1]=2"); }
     { tesla_frame_t s={0}; s.id=0x229; s.dlc=8; s.data[1]=0x75; s.data[2]=0x00;
       g_tx_n=0; control_on_can_0x229_gear(&s); CHECK(g_tx_n==0,"0x229 无挡位命令不注入");
-      control_cmd_set_gear(4); g_tx_n=0; control_on_can_0x229_gear(&s);
-      CHECK(g_tx_n==1 && (g_tx[0].data[1]&0x70)==0 && (g_tx[0].data[1]&0xf)==((0x75+1)&0xf) && (g_tx[0].data[2]&3)==1,
-            "0x229 挡位 D1清[6:4]+计数器 / D2[1:0]=01"); }
+      control_cmd_set_gear(4); g_tx_n=0; control_on_can_0x229_gear(&s);   /* D, d1=0x05→cnt=6, D0=GEAR_D0_D[6]=0x2c */
+      CHECK(g_tx_n==1 && (g_tx[0].data[1]&0x70)==0 && (g_tx[0].data[1]&0xf)==6 && (g_tx[0].data[2]&3)==1
+            && g_tx[0].data[0]==0x2c,"0x229 挡位D D1清[6:4]+计数器/D2[1:0]=01/D0=表[D][6]=0x2c");
+      tesla_frame_t s2={0}; s2.id=0x229; s2.dlc=8; s2.data[1]=0x00;          /* P, cnt=1, D0=GEAR_D0_P[1]=0xad */
+      control_cmd_set_gear(1); g_tx_n=0; control_on_can_0x229_gear(&s2);
+      CHECK(g_tx_n==1 && g_tx[0].data[0]==0xad && (g_tx[0].data[1]&0xf)==1,"0x229 挡位P D0=表[P][1]=0xad"); }
     /* 端到端: BLE 187(0xBB) 经 action_map 路由到命令槽 */
     { uint8_t p=102; control_on_cmd(0xBB,&p,1); CHECK(control_cmd_get_gear()==1,"0xBB 102挂P→gear槽=1");
       uint8_t q=62;  control_on_cmd(0xBB,&q,1); CHECK(control_cmd_get_lock()==2,"0xBB 62解锁→lock槽=2"); }

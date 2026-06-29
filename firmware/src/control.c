@@ -48,13 +48,25 @@ void control_on_can_0x3a1(const tesla_frame_t *f){       /* 0x08008aae */
 /* 挡位 re-sign — 拦截 0x229(SCCM_rightStalk), 构建器 0x08004f74 (CONTROL_INJECTION.md 控制映射表)。
  * 固件: D1 清 bits[6:4] + 计数器低 nibble; D2[1:0]=01(有效); D0=表[gear*16+cnt](表 0x08012140 待导出)。
  * gear 槽非 0 即注入(模拟拨杆保持位); 由新挡位命令或外部清。*/
+/* 挡位 stalk 量表 0x08012140 (已导出): data[0]=表[gearcode*16+counter], gearcode P=5/R=2/D=4 → 行 0x50/0x20/0x40。
+ * 固件另有 mod-3 帧子计数 @f3a((@f3a+1)%3): 每 3 帧发 1 active 挡位帧(其余 filler 用 row0); 此处直发 active。*/
+static const uint8_t GEAR_D0_R[16]={0xa9,0xab,0xbd,0x82,0xac,0xae,0x32,0x16,0xa3,0x4a,0x19,0x63,0xa6,0xc0,0xde,0xd4};
+static const uint8_t GEAR_D0_D[16]={0xb7,0xb5,0xa3,0x9c,0xb2,0xb0,0x2c,0x08,0xbd,0x54,0x07,0x7d,0xb8,0xde,0xc0,0xca};
+static const uint8_t GEAR_D0_P[16]={0xaf,0xad,0xbb,0x84,0xaa,0xa8,0x34,0x10,0xa5,0x4c,0x1f,0x65,0xa0,0xc6,0xd8,0xd2};
 void control_on_can_0x229_gear(const tesla_frame_t *f){
-    if (!s_cmd.gear) return;
+    const uint8_t *d0;
+    switch (s_cmd.gear) {                                                 /* 命令值 1=P 2=R 4=D → 行 */
+        case 2:  d0 = GEAR_D0_R; break;
+        case 4:  d0 = GEAR_D0_D; break;
+        case 1:  d0 = GEAR_D0_P; break;
+        default: return;
+    }
     tesla_frame_t t = *f;
-    t.data[1] = (uint8_t)(t.data[1] & 0x8f);                              /* 清 bits[6:4] */
-    t.data[1] = (uint8_t)((t.data[1] & 0xf0) | ((t.data[1] + 1) & 0xf));  /* 计数器低 nibble++ */
+    uint8_t d1  = (uint8_t)(t.data[1] & 0x8f);                            /* 清 bits[6:4] */
+    uint8_t cnt = (uint8_t)((d1 + 1) & 0xf);                              /* 计数器(低 nibble) */
+    t.data[1] = (uint8_t)((d1 & 0xf0) | cnt);
     t.data[2] = (uint8_t)((t.data[2] & 0xfc) | 0x1);                      /* D2[1:0]=01 有效 */
-    /* t.data[0] = gear_stalk_table[s_cmd.gear][cnt];  // TODO 导出 0x08012140 */
+    t.data[0] = d0[cnt];                                                  /* 表 0x08012140 → D0(已填) */
     can_tx_send(&t);                                                      /* 原 ID 0x229 回注 */
 }
 
