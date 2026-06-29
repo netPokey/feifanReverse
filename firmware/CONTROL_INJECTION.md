@@ -69,6 +69,10 @@
 
    - ✅ L1 完整映射(`action_map_lookup`) + L2 槽位图 + L3 挡位帧 **已实证**; 其余子系统 L3 确切帧字节
      按上表"合成器"入口可**增量补完**(标 TODO)。逐一穷举 ~40 构建器边际递减, 故先固化模型 + 样例 + 锚点。
+   - ✅ **已落 C 代码**(`control.c` + `test_ctrlframe.c`, 12 测全绿): 命令缓冲(`control_cmd_set_gear/lock/door`)
+     + 挡位 `control_on_can_0x229_gear`(D1 清[6:4]+计数器 / D2[1:0]=01; D0 表待导出)
+     + 锁/车身 `control_on_can_0x273`(data[2] bits[3:1]=cmd&7) + BLE 187(0xBB)经 `action_map_lookup` 路由到命令槽;
+     `firmware_app.c` 注册 0x229(复合 modemdr 滚轮)/0x273 分发。门 0x102/0x103/0x1f9 逐位转换待补(handler 锚点已给)。
 
 3. **解析区监控帧 re-sign** (路径1, 待续 步④): `0x2b6/0x293/0x333/...` 等 12 帧解析时改写回注。
 

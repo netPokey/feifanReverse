@@ -21,6 +21,24 @@ int main(void){
     CHECK(g_tx_n==1 && g_tx[0].data[3]==8,"0x68c D3=8 注入");
     f.id=0x3a1; f.data[1]=14;  g_tx_n=0; control_on_can_0x3a1(&f);
     CHECK(g_tx_n==1 && g_tx[0].data[1]==0 && g_tx[0].data[2]==0x30,"0x3a1 计数器mod15回绕+D2=0x30");
+
+    /* ---- 整车动作 re-sign: 锁 0x273 / 挡位 0x229 (统一命令缓冲模型) ---- */
+    { tesla_frame_t d={0}; d.id=0x273; d.dlc=8; d.data[2]=0xf1;
+      g_tx_n=0; control_on_can_0x273(&d); CHECK(g_tx_n==0,"0x273 无锁命令不注入");
+      control_cmd_set_lock(1); g_tx_n=0; control_on_can_0x273(&d);
+      CHECK(g_tx_n==1 && ((g_tx[0].data[2]>>1)&7)==1 && (g_tx[0].data[2]&0xf1)==0xf1,"0x273 锁→data[2]bits[3:1]=1 他位不变");
+      CHECK(control_cmd_get_lock()==0,"0x273 消费锁槽");
+      control_cmd_set_lock(2); g_tx_n=0; control_on_can_0x273(&d);
+      CHECK(g_tx_n==1 && ((g_tx[0].data[2]>>1)&7)==2,"0x273 解锁→bits[3:1]=2"); }
+    { tesla_frame_t s={0}; s.id=0x229; s.dlc=8; s.data[1]=0x75; s.data[2]=0x00;
+      g_tx_n=0; control_on_can_0x229_gear(&s); CHECK(g_tx_n==0,"0x229 无挡位命令不注入");
+      control_cmd_set_gear(4); g_tx_n=0; control_on_can_0x229_gear(&s);
+      CHECK(g_tx_n==1 && (g_tx[0].data[1]&0x70)==0 && (g_tx[0].data[1]&0xf)==((0x75+1)&0xf) && (g_tx[0].data[2]&3)==1,
+            "0x229 挡位 D1清[6:4]+计数器 / D2[1:0]=01"); }
+    /* 端到端: BLE 187(0xBB) 经 action_map 路由到命令槽 */
+    { uint8_t p=102; control_on_cmd(0xBB,&p,1); CHECK(control_cmd_get_gear()==1,"0xBB 102挂P→gear槽=1");
+      uint8_t q=62;  control_on_cmd(0xBB,&q,1); CHECK(control_cmd_get_lock()==2,"0xBB 62解锁→lock槽=2"); }
+
     printf("\n  ctrlframe tests: %d passed, %d failed\n",g_pass,g_fail);
     return g_fail?1:0;
 }

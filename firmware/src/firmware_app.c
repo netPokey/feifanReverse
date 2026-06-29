@@ -14,7 +14,7 @@
 #include "ble_hal.h"
 
 /* 0x229: 既是读链路(SCCM) 又是滚轮注入目标 → 复合处理 */
-static void h_can_0x229(const tesla_frame_t *f){ modemdr_on_can_0x229(f); }
+static void h_can_0x229(const tesla_frame_t *f){ modemdr_on_can_0x229(f); control_on_can_0x229_gear(f); }
 static void h_can_0x401(const tesla_frame_t *f){ ble_app_set_cell(f->data); } /* 电芯 mux → 0xD1 */
 static void h_can_0x2b4(const tesla_frame_t *f){ ble_app_set_dcdc(f->data); } /* PCS DCDC → 0xD2 */
 /* 0xA2 模拟滚轮 → modemdr 滚轮注入 (强符号覆盖 control.c 弱默认) */
@@ -33,6 +33,7 @@ void fw_init(void){
     can_dispatch_register(0x189, control_on_can_0x189);  /* 控制 re-sign */
     can_dispatch_register(0x68c, control_on_can_0x68c);
     can_dispatch_register(0x3a1, control_on_can_0x3a1);
+    can_dispatch_register(0x273, control_on_can_0x273);  /* 锁/车身 re-sign */
     can_tx_set_mode(CAN_TX_LISTEN_ONLY);    /* 默认监听(安全门禁) */
 }
 void fw_on_ble_write(const uint8_t *buf, int n){

@@ -21,4 +21,21 @@ uint8_t control_get_active(void);
 void control_on_can_0x189(const tesla_frame_t *f);  /* D0=2 */
 void control_on_can_0x68c(const tesla_frame_t *f);  /* D3=8 */
 void control_on_can_0x3a1(const tesla_frame_t *f);  /* 计数器(D1+1)%15 + D2=0x30 */
+
+/* ---- 整车动作命令缓冲 (镜像固件 RAM 命令槽; 见 CONTROL_INJECTION.md L2) ----
+ * 统一 re-sign 模型: 执行器只写槽, 真正改帧在对应被拦截帧的 re-sign handler。
+ * BLE 187(0xBB) 动作经 action_map_lookup 路由到对应 setter。*/
+void control_cmd_set_gear(uint8_t g);   /* @f38: 1=P 2=R 4=D (固件 a0) */
+void control_cmd_set_lock(uint8_t v);   /* @f91: 1=锁 2=解锁 */
+void control_cmd_set_door(uint8_t v);   /* @f80: 1..19 门/行李厢/窗子命令 */
+uint8_t control_cmd_get_gear(void);
+uint8_t control_cmd_get_lock(void);
+uint8_t control_cmd_get_door(void);
+
+/* 挡位 re-sign: 拦截 0x229(SCCM_rightStalk) → D1 清 bits[6:4]+计数器低nibble, D2[1:0]=01,
+ * D0=表[gear*16+cnt](表 0x08012140 待导出)。构建器 0x08004f74。*/
+void control_on_can_0x229_gear(const tesla_frame_t *f);
+/* 锁/车身 re-sign: 拦截 0x273(UI_vehicleControl) → 锁→data[2] bits[3:1]=(cmd&7)。
+ * 构建器 0x0800725a; 后视镜/窗/前后备厢=@f92..@fa7 其余槽(TODO 逐位)。*/
+void control_on_can_0x273(const tesla_frame_t *f);
 #endif
