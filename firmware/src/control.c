@@ -70,6 +70,34 @@ void control_on_can_0x273(const tesla_frame_t *f){
     s_cmd.lock = 0;                                            /* 固件 sb zero,@f91 消费 */
 }
 
+/* 门/行李厢/窗 re-sign — 拦截 0x1f9, 构建器 0x08005c64 + 跳转表 0x080121a4(door cmd-1 索引)。
+ * 每门子命令把一个字段写进 0x1f9 data[0..2] 后 send(0x08005cca), 无 counter/校验重算(faithful)。
+ * 已落 *常量字段* 案(逆向确证); 取内部子状态槽(@f6f..@f72)的案(1/2/4/5/7/8/10/16-24)字段结构见
+ * CONTROL_INJECTION.md, 值需建模内部子状态 → 标 TODO。data[N] 在帧偏移 3+N。*/
+void control_on_can_0x1f9(const tesla_frame_t *f){
+    if (!s_cmd.door) return;
+    tesla_frame_t t = *f;
+    switch (s_cmd.door) {
+        case 11: case 12:                                     /* 后视镜? data[1] bit7=1 */
+            t.data[1] = (uint8_t)((t.data[1] & 0x3f) | 0x80);
+            break;
+        case 13:                                              /* 全门关(action 133): 三字段常量 */
+            t.data[0] = (uint8_t)((t.data[0] & 0x1f) | 0xc0);
+            t.data[1] = 0xb6;
+            t.data[2] = (uint8_t)((t.data[2] & 0xf0) | 0x0d);
+            break;
+        case 14:                                              /* action 134: data[0]|0x60, data[1]=0xdb */
+            t.data[0] = (uint8_t)((t.data[0] & 0x1f) | 0x60);
+            t.data[1] = 0xdb;
+            break;
+        default:                                              /* 其余子命令字段值取内部子状态(TODO) */
+            s_cmd.door = 0;
+            return;                                           /* 未建模 → 不注入 */
+    }
+    can_tx_send(&t);                                          /* 原 ID 0x1f9 回注 */
+    s_cmd.door = 0;                                           /* 固件 sb zero,@f6e 消费 */
+}
+
 __attribute__((weak)) void control_scroll(uint8_t dir){ (void)dir; }  /* 集成接 modemdr 滚轮 */
 
 void control_init(void){ s_pending = 0; }

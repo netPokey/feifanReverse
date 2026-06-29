@@ -34,6 +34,7 @@ void fw_init(void){
     can_dispatch_register(0x68c, control_on_can_0x68c);
     can_dispatch_register(0x3a1, control_on_can_0x3a1);
     can_dispatch_register(0x273, control_on_can_0x273);  /* 锁/车身 re-sign */
+    can_dispatch_register(0x1f9, control_on_can_0x1f9);  /* 门/行李厢/窗 re-sign */
     can_tx_set_mode(CAN_TX_LISTEN_ONLY);    /* 默认监听(安全门禁) */
 }
 void fw_on_ble_write(const uint8_t *buf, int n){

@@ -38,4 +38,7 @@ void control_on_can_0x229_gear(const tesla_frame_t *f);
 /* 锁/车身 re-sign: 拦截 0x273(UI_vehicleControl) → 锁→data[2] bits[3:1]=(cmd&7)。
  * 构建器 0x0800725a; 后视镜/窗/前后备厢=@f92..@fa7 其余槽(TODO 逐位)。*/
 void control_on_can_0x273(const tesla_frame_t *f);
+/* 门/行李厢/窗 re-sign: 拦截 0x1f9 → 据门命令(@f6e)写对应车身字段。构建器 0x08005c64,
+ * 跳转表 0x080121a4(24 子命令)。已落常量字段案(11/13/14); 其余取内部子状态槽(@f6f..@f72)逐位待补。*/
+void control_on_can_0x1f9(const tesla_frame_t *f);
 #endif

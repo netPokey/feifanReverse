@@ -39,6 +39,21 @@ int main(void){
     { uint8_t p=102; control_on_cmd(0xBB,&p,1); CHECK(control_cmd_get_gear()==1,"0xBB 102挂P→gear槽=1");
       uint8_t q=62;  control_on_cmd(0xBB,&q,1); CHECK(control_cmd_get_lock()==2,"0xBB 62解锁→lock槽=2"); }
 
+    /* ---- 门 0x1f9 re-sign (跳转表常量字段案) ---- */
+    { tesla_frame_t v={0}; v.id=0x1f9; v.dlc=8;
+      g_tx_n=0; control_on_can_0x1f9(&v); CHECK(g_tx_n==0,"0x1f9 无门命令不注入");
+      v.data[0]=0x1f; v.data[1]=0x00; control_cmd_set_door(13); g_tx_n=0; control_on_can_0x1f9(&v);
+      CHECK(g_tx_n==1 && g_tx[0].data[0]==0xdf && g_tx[0].data[1]==0xb6 && (g_tx[0].data[2]&0xf)==0x0d,"0x1f9 门cmd13 三字段常量");
+      CHECK(control_cmd_get_door()==0,"0x1f9 消费门槽");
+      v.data[0]=0x03; v.data[1]=0x00; control_cmd_set_door(14); g_tx_n=0; control_on_can_0x1f9(&v);
+      CHECK(g_tx_n==1 && g_tx[0].data[0]==0x63 && g_tx[0].data[1]==0xdb,"0x1f9 门cmd14 data0|0x60/data1=0xdb");
+      v.data[1]=0x3f; control_cmd_set_door(11); g_tx_n=0; control_on_can_0x1f9(&v);
+      CHECK(g_tx_n==1 && (g_tx[0].data[1]&0x80)==0x80,"0x1f9 门cmd11 data1 bit7=1");
+      control_cmd_set_door(7); g_tx_n=0; control_on_can_0x1f9(&v);
+      CHECK(g_tx_n==0 && control_cmd_get_door()==0,"0x1f9 未建模门cmd 不注入并消费"); }
+    /* 端到端: BLE 187 全门关(133→door cmd13) */
+    { uint8_t r=133; control_on_cmd(0xBB,&r,1); CHECK(control_cmd_get_door()==13,"0xBB 133全门关→door槽=13"); }
+
     printf("\n  ctrlframe tests: %d passed, %d failed\n",g_pass,g_fail);
     return g_fail?1:0;
 }
